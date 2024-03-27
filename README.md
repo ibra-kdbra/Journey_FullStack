@@ -34,9 +34,10 @@ This project is a clone of LeetCode, built with a tech stack of Next.js, Firebas
 
 - [**react-youtube**](https://www.npmjs.com/package/react-youtube): A React component for playing YouTube videos.
 
-## Implementation 
+## Implementation
+
 <div align="center">
-<img src="tep.png"
+<img src="./public/tep.png"
      alt="markdown-image"
      style="float: left; margin-right: 10px;" />
 </div>

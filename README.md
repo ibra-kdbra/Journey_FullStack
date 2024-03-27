@@ -54,3 +54,6 @@ Full stack development refers to the development of both front end (client-side)
 **Cons**: Smaller community, fewer resources available.
 
 Remember, the best technology or framework depends on the requirements of the project. Each has its own strengths and weaknesses, and what works best will depend on factors like project requirements, team expertise, and the specific use case.
+
+# Deployed Projects:
+* [LeetCode_copy](https://leetcode-copy.netlify.app)

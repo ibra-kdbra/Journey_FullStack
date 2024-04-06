@@ -1,4 +1,4 @@
-import { UserPayload } from "../interfaces/google";
+import { UserPayload } from "interfaces/google";
 
 export function parseJwt(token: string): UserPayload {
   const base64Url = token.split(".")[1];
@@ -7,10 +7,8 @@ export function parseJwt(token: string): UserPayload {
     window
       .atob(base64)
       .split("")
-      .map(function (c) {
-        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-      })
-      .join("")
+      .map((c) => `%${`00${c.charCodeAt(0).toString(16)}`.slice(-2)}`)
+      .join(""),
   );
 
   return JSON.parse(jsonPayload);

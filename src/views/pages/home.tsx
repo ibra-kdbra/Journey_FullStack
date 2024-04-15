@@ -9,7 +9,7 @@ export const Home = () => {
             <h4>Hey There!</h4>
             <p>This is a BETH Stack Template</p>
           </div>
-          <a href="https://github.com/indrazm/BETH-Template" target="_blank" class="block w-fit">
+          <a href="https://github.com/ibra-kdbra/" target="_blank" class="block w-fit">
             Learn More
           </a>
           <div class="">

@@ -5,6 +5,13 @@ CREATE TABLE `user_key` (
 	FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
+CREATE TABLE `note` (
+	`id` text PRIMARY KEY NOT NULL,
+	`name` text NOT NULL,
+	`body` text NOT NULL,
+	`created_at` blob NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE `user_session` (
 	`id` text PRIMARY KEY NOT NULL,
 	`user_id` text NOT NULL,
@@ -14,5 +21,6 @@ CREATE TABLE `user_session` (
 );
 --> statement-breakpoint
 CREATE TABLE `user` (
-	`id` text PRIMARY KEY NOT NULL
+	`id` text PRIMARY KEY NOT NULL,
+	`name` text NOT NULL
 );

@@ -4,7 +4,7 @@
   "scripts": {
     "tailwindcss": "bunx tailwindcss -i ./src/views/styles/globals.css -o ./public/globals.css --watch",
     "db:generate": "drizzle-kit generate:sqlite",
-    "db:migrate": "bun run ./src/models/migrator.ts",
+    "db:migrate": "bun run ./src/models/db/migrator.ts",
     "db:studio": "drizzle-kit studio --port 3333",
     "dev": "bun run --watch src/main.tsx",
     "start": "concurrently \"bun run tailwindcss\" \"bun run dev\""
@@ -20,7 +20,7 @@
     "@lucia-auth/oauth": "^3.5.0",
     "concurrently": "^8.2.2",
     "dotenv": "^16.4.5",
-    "drizzle-kit": "^0.20.6",
+    "drizzle-kit": "^0.20.14",
     "drizzle-orm": "^0.29.0",
     "elysia": "latest",
     "lucia": "^2.7.4"

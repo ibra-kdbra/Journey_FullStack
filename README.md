@@ -1,8 +1,9 @@
 # Introduction:
 In the fast-paced world of web development, where user experience reigns supreme, a rising star has emerged — `HTMX`. 
 This lightweight, client-side web library is taking the development community by storm, promising to simplify and elevate the way we build interactive web applications. 
-
-![HTMX](./htmx.png)
+<div align="center">
+<img src="./HTMX.webp"/>
+</div>
 
 ## Understanding `HTMX`:
 

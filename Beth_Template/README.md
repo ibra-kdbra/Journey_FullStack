@@ -6,6 +6,18 @@ This is a template for a BETH stack project. It is a simple web application that
 - [E]lysia
 - [T]urso Database
 - [H]TMX
+- 
+<div align="center">
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/bun/bun-original.svg" height="60" />     
+  <img
+  src="htmx.svg"
+  alt="HTMX"
+  height="60"/>
+<img
+  src="turso.svg"
+  alt="Turso"
+  height="60"/>
+</div>
 
 Other technologies used:
 

@@ -10,11 +10,11 @@ This is a template for a BETH stack project. It is a simple web application that
 <div align="center">
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/bun/bun-original.svg" height="60" />     
   <img
-  src="htmx.svg"
+  src="./Icons/htmx.svg"
   alt="HTMX"
   height="60"/>
 <img
-  src="turso.svg"
+  src="./Icons/turso.svg"
   alt="Turso"
   height="60"/>
 </div>

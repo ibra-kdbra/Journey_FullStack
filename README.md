@@ -21,7 +21,7 @@
 - Vite
 - Tailwind CSS
 
-## <a name="features">🔋 Features</a>
+## <a name="features">🔋 Features:</a>
 
 👉 **Beautiful Subtle Smooth Animations using GSAP**: Enhanced user experience with seamless and captivating animations powered by GSAP.
 

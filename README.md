@@ -57,3 +57,5 @@ Remember, the best technology or framework depends on the requirements of the pr
 
 # Deployed Projects:
 * [LeetCode_copy](https://leetcode-copy.netlify.app)
+
+* [Web3Gi_animation](https://web3gi-animate.netlify.app/)

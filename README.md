@@ -1,4 +1,4 @@
-# Cloudv3
+# File Manager CLoud
 
 Web file manager which supports opening files
 
@@ -9,7 +9,7 @@ Inspired by [Thunar File Manager](https://docs.xfce.org/xfce/thunar/start), [Mat
 ## Installation
 
 - docker-compose is required
-- `git clone https://github.com/caydey/cloudv3`
+- `git clone https://github.com/ibra-kdbra/Journey_FullStack/cloudv3/)`
 - `cd cloudv3/`
 - `vim config.env`
 - `./deploy.sh`

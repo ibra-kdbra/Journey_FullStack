@@ -63,3 +63,5 @@ Remember, the best technology or framework depends on the project's requirements
 * [Iphone_3d_animation](https://iphone-3d-animate-vnext.vercel.app)
 
 * [Web_avatar](https://avatar-web-blend.netlify.app/)
+
+* [Quiz_Questions](https://gleaming-trivia.netlify.app/)

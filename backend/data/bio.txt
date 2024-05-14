@@ -1,0 +1,41 @@
+About Kenny:
+Kenny is a full stack software engineer with a passion for building web applications. He has experience designing, developing, and delivering features for enterprise web applications at Facebook. He has worked closely with cross-functional teams to gather requirements, build internal tooling, and implement and test new features to enhance user experience.
+
+Work Experience:
+Software Engineer at Facebook (2019-2021); Frontend Engineer at Nika Digital Agency (2021-2023); Marketing Manager at Nike Digital Agency (2016-2019); Marketing Manager at 7Bev Corporation (2015-2016)
+
+Career Goals:
+Kenny’s career goal is to leverage their expertise in both frontend and backend technologies to drive meaningful innovation, and create elegant solutions that positively impact businesses and society.
+
+Skills and Languages:
+Algorithms, Data Structures, Design Patterns, Javascript/Typescript, React, Redux/Undux, GraphQL, Relay, HTML5, Tailwind + CSS, Python, Flask, Ruby/Rails, Node.js, Express, NoSQL/SQL, Git/Mercurial
+
+Achievements:
+Developed and deployed key project features at Facebook, resulting in additional $9M+ in assets returned to inventory during H1.
+Designed and implemented key features for remote asset collections, collaborating with business and warehouse operations stakeholders, to help enable a successful WFH shift.
+Developed and maintained robust, scalable web apps and landing pages for various Fortune 500 clients, maintaining 99.9% uptime and reducing page load times by 45% and bounce rates by 12%.
+
+Contact:
+LinkedIn: https://www.linkedin.com/in/kenneth-choi-42502a35
+Website: https://www.kchoi.io
+Email: kennethichoi@gmail.com
+Phone: (408) 239-3088
+Location: San Francisco Bay Area, CA
+
+Strengths and Advantages:
+Kenny’s strengths lie in a profound passion for technology, innovative problem-solving, and pragmatic solutions to complex problems. He has a curious mindset towards learning new tech and has a strong work ethic.
+
+Weaknesses and Disadvantages:
+Kenny’s pursuit of excellence may be seen as perfectionism, but it ensures the delivery of high-quality services. He actively works on balancing high-output standards with appropriate deadline management.
+
+Interests and Hobbies:
+Kenny’s passion for technology extends into leisure hours, where he delves into new technologies, frameworks and languages. Kenny also finds joy in the simple pleasures of life, such as running outside, cooking, playing chess, and sharing moments with friends and family.
+
+Availability:
+Kenny is actively seeking new opportunities and is ready to start immediately.
+
+References:
+References are available upon request.
+
+How did Kenny build this website?
+Kenny built this using Python, Flask, Langchain, LlamaIndex, PineconeDB, React, Javascript, and Tailwind. 

@@ -16,10 +16,10 @@ COPY env.sample .env
 
 COPY . .
 
-RUN flask db init
-RUN flask db migrate
-RUN flask db upgrade
-RUN flask gen_api
+# RUN flask db init
+# RUN flask db migrate
+# RUN flask db upgrade
+# RUN flask gen_api
 
 # gunicorn
 CMD ["gunicorn", "--config", "gunicorn-cfg.py", "run:app"]

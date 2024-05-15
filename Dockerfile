@@ -20,6 +20,7 @@ COPY . .
 # RUN flask db migrate
 # RUN flask db upgrade
 # RUN flask gen_api
+RUN flask run -cert=adhoc
 
 # gunicorn
 CMD ["gunicorn", "--config", "gunicorn-cfg.py", "run:app"]

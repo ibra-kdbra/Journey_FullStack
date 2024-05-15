@@ -15,7 +15,7 @@ function ChatInput({
         <input
           type="text"
           value={query}
-          placeholder="Ask about Kenny..."
+          placeholder="Ask about ibra..."
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={handleKeyDown}
           ref={inputRef}

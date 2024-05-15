@@ -35,7 +35,7 @@ function ChatResponse({ isLoading, responseData }) {
           expertise in both frontend and backend technologies, passion for
           innovation, and track record of delivering high-quality work, he could
           be a valuable addition to your team. But hey, don't just take my word
-          for it! Reach out to Kenny directly through his LinkedIn, website,
+          for it! Reach out to ibra directly through his LinkedIn, website,
           email, or phone number to get more information and see if he's the
           right fit for your company. Would you like any more help?
         </span> */}

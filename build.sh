@@ -6,7 +6,7 @@ python -m pip install --upgrade pip
 
 pip install -r requirements.txt
 
-flask db init
-flask db migrate
-flask db upgrade
-flask gen_api
+# flask db init
+# flask db migrate
+# flask db upgrade
+# flask gen_api

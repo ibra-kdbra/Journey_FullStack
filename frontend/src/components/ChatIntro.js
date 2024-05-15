@@ -1,7 +1,7 @@
 import React from "react";
 import { TypeAnimation } from "react-type-animation";
 import { useMediaQuery } from "@uidotdev/usehooks";
-import { MediaQuery } from "../utill/MediaQuery";
+import { MediaQuery } from "../util/MediaQuery";
 
 function ChatIntro({ setShowIntro }) {
   const isMobileDevice = useMediaQuery(MediaQuery.MOBILE);

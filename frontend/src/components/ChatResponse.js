@@ -2,7 +2,7 @@ import React from "react";
 import { TypeAnimation } from "react-type-animation";
 import { v4 as uuidv4 } from "uuid";
 import { useMediaQuery } from "@uidotdev/usehooks";
-import { MediaQuery } from "../utill/MediaQuery";
+import { MediaQuery } from "../util/MediaQuery";
 
 function ChatResponse({ isLoading, responseData }) {
   const isMobileDevice = useMediaQuery(MediaQuery.MOBILE);

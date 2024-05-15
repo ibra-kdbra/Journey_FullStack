@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { useMediaQuery } from "@uidotdev/usehooks";
-import { MediaQuery } from "../utill/MediaQuery";
+import { MediaQuery } from "../util/MediaQuery";
 import { motion } from "framer-motion";
 import { DarkModeSwitch } from "react-toggle-dark-mode";
 import useDarkMode from "../hooks/useDarkMode";

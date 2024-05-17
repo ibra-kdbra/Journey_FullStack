@@ -1,5 +1,20 @@
+<!--
+=========================================================
+* * Black Dashboard - v1.0.1
+=========================================================
+
+* Product Page: https://www.creative-tim.com/product/black-dashboard
+* Copyright 2019 Creative Tim (https://www.creative-tim.com)
+
+
+* Coded by Creative Tim
+
+=========================================================
+
+* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+-->
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 
 <head>
   <meta charset="utf-8" />
@@ -8,57 +23,49 @@
   <link rel="icon" type="image/png" href="{{ config.ASSETS_ROOT }}/img/favicon.png">
 
   <title>
-    Soft UI Dashboard - {% block title %}{% endblock %} | AppSeed
+    Flask Dashboard Black - {% block title %}{% endblock %} | AppSeed
   </title>
-
+  
   <!--     Fonts and icons     -->
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css?family=Poppins:200,300,400,600,700,800" rel="stylesheet" />
+  <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
   <!-- Nucleo Icons -->
   <link href="{{ config.ASSETS_ROOT }}/css/nucleo-icons.css" rel="stylesheet" />
-  <link href="{{ config.ASSETS_ROOT }}/css/nucleo-svg.css" rel="stylesheet" />
-  <!-- Font Awesome Icons -->
-  <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
-  <link href="{{ config.ASSETS_ROOT }}/css/nucleo-svg.css" rel="stylesheet" />
   <!-- CSS Files -->
-  <link id="pagestyle" href="{{ config.ASSETS_ROOT }}/css/soft-ui-dashboard.css?v=1.0.6" rel="stylesheet" />
-  <link id="pagestyle_dark" href="{{ config.ASSETS_ROOT }}/css/dark-theme-core.css" rel="stylesheet" />
+  <link href="{{ config.ASSETS_ROOT }}/css/black-dashboard.css?v=1.0.0" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-rtl/3.4.0/css/bootstrap-rtl.css" rel="stylesheet" />
+  <link href="{{ config.ASSETS_ROOT }}/css/theme-switcher.css" rel="stylesheet"/>
+  <!-- CSS Just for demo purpose, don't include it in your project -->
+  <link href="{{ config.ASSETS_ROOT }}/demo/demo.css" rel="stylesheet" />
 
-  <!-- Specific CSS goes HERE -->
-  {% block stylesheets %}{% endblock stylesheets %}  
+    <!-- Specific Page CSS goes HERE  -->
+    {% block stylesheets %}{% endblock stylesheets %}
 
 </head>
-<body class="g-sidenav-show rtl bg-gray-100">
-  
-  {% include "includes/sidebar-rtl.html" %}
+<body class=" rtl menu-on-right ">
 
-  <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg overflow-x-hidden">
+    <div class="wrapper">
 
-    {% include "includes/navigation-rtl.html" %}
-   
-    {% block content %}{% endblock content %}
-    
-  </main>
+        {% include 'includes/sidebar-rtl.html' %} 
 
-  {% include "includes/fixed-plugin.html" %}
+        <div class="main-panel">
 
-  {% include "includes/scripts.html" %}
+        {% include 'includes/navigation-rtl.html' %}  
 
-  <!-- Specific JS goes HERE --> 
-  {% block javascripts %}{% endblock javascripts %}
-  
-  <script>
-    var win = navigator.platform.indexOf('Win') > -1;
-    if (win && document.querySelector('#sidenav-scrollbar')) {
-      var options = {
-        damping: '0.5'
-      }
-      Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
-    }
-  </script>
-  <!-- Github buttons -->
-  <script async defer src="https://buttons.github.io/buttons.js"></script>
-  <!-- Control Center for Soft Dashboard: parallax effects, scripts for the example pages etc -->
-  <script src="{{ config.ASSETS_ROOT }}/js/soft-ui-dashboard.min.js?v=1.0.6"></script>
+        {% block content %}{% endblock content %}
+
+        {% include 'includes/footer.html' %}
+
+        </div>
+
+    </div>
+
+    {% include 'includes/fixed-plugin.html' %}
+
+    {% include 'includes/scripts.html' %}
+
+    <!-- Specific Page JS goes HERE  -->
+    {% block javascripts %}{% endblock javascripts %}
 
 </body>
 </html>

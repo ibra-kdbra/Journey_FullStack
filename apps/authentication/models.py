@@ -1,3 +1,8 @@
+# -*- encoding: utf-8 -*-
+"""
+Copyright (c) 2022 - 2023 ibra-kdbra
+"""
+
 from flask_login import UserMixin
 
 from sqlalchemy.orm import relationship
@@ -17,9 +22,6 @@ class Users(db.Model, UserMixin):
     password      = db.Column(db.LargeBinary)
 
     oauth_github  = db.Column(db.String(100), nullable=True)
-
-    api_token     = db.Column(db.String(100))
-    api_token_ts  = db.Column(db.Integer)    
 
     def __init__(self, **kwargs):
         for property, value in kwargs.items():
@@ -53,4 +55,3 @@ def request_loader(request):
 class OAuth(OAuthConsumerMixin, db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey("Users.id", ondelete="cascade"), nullable=False)
     user = db.relationship(Users)
-    

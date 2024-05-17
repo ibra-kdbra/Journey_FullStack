@@ -1,7 +1,13 @@
 /*
 
+
+
+     Creative Tim Modifications
+
      Lines: 238, 239 was changed from top: 5px to top: 50% and we added margin-top: -13px. In this way the close button will be aligned vertically
      Line:222 - modified when the icon is set, we add the class "alert-with-icon", so there will be enough space for the icon.
+
+
 
 
 */

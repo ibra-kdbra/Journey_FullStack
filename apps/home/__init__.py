@@ -1,3 +1,8 @@
+# -*- encoding: utf-8 -*-
+"""
+Copyright (c) 2022 - 2023 ibra-kdbra
+"""
+
 from flask import Blueprint
 
 blueprint = Blueprint(

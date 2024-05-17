@@ -1,3 +1,8 @@
+# -*- encoding: utf-8 -*-
+"""
+Copyright (c) 2022 - 2023 ibra-kdbra
+"""
+
 bind = '0.0.0.0:5005'
 workers = 1
 accesslog = '-'

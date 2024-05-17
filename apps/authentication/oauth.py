@@ -1,9 +1,15 @@
+# -*- encoding: utf-8 -*-
+"""
+Copyright (c) 2022 - 2023 ibra-kdbra
+"""
+
 import os
 from flask import current_app as app 
 from flask_login import current_user, login_user
 from flask_dance.consumer import oauth_authorized
 from flask_dance.contrib.github import github, make_github_blueprint
 from flask_dance.consumer.storage.sqla import SQLAlchemyStorage
+from flask_dance.contrib.twitter import twitter, make_twitter_blueprint
 from sqlalchemy.orm.exc import NoResultFound
 from apps.config import Config
 from .models import Users, db, OAuth

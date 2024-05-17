@@ -1,14 +1,20 @@
+# -*- encoding: utf-8 -*-
+"""
+Copyright (c) 2022 - 2023 ibra-kdbra
+"""
+
 from apps.home import blueprint
 from flask import render_template, request
 from flask_login import login_required
 from jinja2 import TemplateNotFound
 
-from apps.config import API_GENERATOR
 
 @blueprint.route('/index')
 @login_required
 def index():
-    return render_template('home/index.html', segment='index', API_GENERATOR=len(API_GENERATOR))
+
+    return render_template('home/index.html', segment='index')
+
 
 @blueprint.route('/<template>')
 @login_required
@@ -23,7 +29,7 @@ def route_template(template):
         segment = get_segment(request)
 
         # Serve the file (if exists) from app/templates/home/FILE.html
-        return render_template("home/" + template, segment=segment, API_GENERATOR=len(API_GENERATOR))
+        return render_template("home/" + template, segment=segment)
 
     except TemplateNotFound:
         return render_template('home/page-404.html'), 404

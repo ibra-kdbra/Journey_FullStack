@@ -21,7 +21,7 @@ RUN flask db migrate
 RUN flask db upgrade
 
 # Expose the port for Back4App
-EXPOSE 5000
+EXPOSE 5005
 
 # gunicorn
 CMD ["gunicorn", "--config", "gunicorn-cfg.py", "run:app"]

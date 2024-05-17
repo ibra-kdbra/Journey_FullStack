@@ -8,5 +8,5 @@ dist/
 htmlcov/
 .tox/
 docs/_build/
-envN
 .env
+env/

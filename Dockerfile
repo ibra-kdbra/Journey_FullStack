@@ -24,4 +24,4 @@ RUN flask db upgrade
 EXPOSE 5085
 
 # gunicorn
-CMD ["gunicorn", "--config", "gunicorn-cfg.py", "run:app"]
+CMD ["flask", "run"]

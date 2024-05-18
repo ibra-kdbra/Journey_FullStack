@@ -1,6 +1,6 @@
 # SOLID principles in Vue.js components
 
-The goal of this project is to showcase how you can apply the SOLID principles to Vue.js components, by following a series of refactorings:
+The goal of this direcotry is to showcase how you can apply the SOLID principles to Vue.js components, by following a series of refactorings:
 
 🎯 SRP - The Single Responsibility Principle
 
@@ -22,7 +22,7 @@ The goal of this project is to showcase how you can apply the SOLID principles t
 
 - [Invert dependency between products view and productsService](./src/components/products-list.vue)
 
-## Project Setup
+## Directory Setup
 
 ```sh
 npm install

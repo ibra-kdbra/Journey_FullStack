@@ -65,3 +65,5 @@ Remember, the best technology or framework depends on the project's requirements
 * [Web_avatar](https://avatar-web-blend.netlify.app/)
 
 * [Quiz_Questions](https://gleaming-trivia.netlify.app/)
+
+* [Django_Dashboard_Template](https://django-datta-able-whtm.onrender.com/)

@@ -68,4 +68,4 @@ Remember, the best technology or framework depends on the project's requirements
 
 * [Django_Dashboard_Template](https://django-datta-able-whtm.onrender.com/)
 
-*[Transition_glider](https://transition-glider.netlify.app/) 
+* [Transition_glider](https://transition-glider.netlify.app/) 

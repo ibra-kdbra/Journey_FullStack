@@ -37,14 +37,17 @@ social = [
     dev +
     '" target="blank">dev.to/ibra-kdbra' +
     "</a>",
+
   'linkedin       <a href="' +
     linkedin +
     '" target="blank">linkedin/' +
     "</a>",
-  'instagram      <a href="' +
-    telegram, +
+
+  'telegram      <a href="' +
+    telegram +
     '" target="blank">t.me/Ibra_22khe' +
     "</a>",
+
   'github         <a href="' +
     github +
     '" target="blank">github/ibra-kdbra' +

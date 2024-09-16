@@ -1,0 +1,95 @@
+/* TailwindCSS Colors: https://tailwindcss.com/docs/customizing-colors */
+
+:root {
+    --stone-50: #fafaf9;
+    --stone-100: #f5f5f4;
+    --stone-200: #e7e5e4;
+    --stone-300: #d6d3d1;
+    --stone-400: #a8a29e;
+    --stone-500: #78716c;
+    --stone-600: #57534e;
+    --stone-700: #44403c;
+    --stone-800: #292524;
+    --stone-900: #1c1917;
+    --stone-950: #0c0a09;
+    --red-50: #fef2f2;
+    --red-100: #fee2e2;
+    --red-200: #fecaca;
+    --red-300: #fca5a5;
+    --red-400: #f87171;
+    --red-500: #ef4444;
+    --red-600: #dc2626;
+    --red-700: #b91c1c;
+    --red-800: #991b1b;
+    --red-900: #7f1d1d;
+    --red-950: #450a0a;
+    --amber-500: #f59e0b;
+    --amber-700: #b45309;
+    --green-500: #22c55e;
+    --green-700: #15803d;
+    --blue-500: #3b82f6;
+    --blue-700: #1d4ed8;
+    --violet-500: #8b5cf6;
+    --violet-700: #6d28d9;
+    --fuchsia-500: #d946ef;
+    --fuchsia-700: #a21caf;
+}
+
+body {
+    background-color: var(--stone-900);
+    color: var(--stone-100);
+    font-size: 100%;
+    font-family: sans-serif;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+}
+
+button {
+    min-width: 32px;
+    min-height: 32px;
+    padding: 2px 16px;
+    font-size: 1em;
+    text-align: center;
+    background-color: var(--stone-700);
+    border: solid 1px var(--stone-500);
+    border-radius: 6px;
+    color: var(--stone-100);
+    fill: var(--stone-100);
+}
+
+button:hover:not([disabled]) {
+    background-color: var(--stone-600);
+    color: var(--stone-50);
+    fill: var(--stone-50);
+}
+
+button:active {
+    background-color: var(--stone-500);
+    color: var(--stone-50);
+    fill: var(--stone-50);
+}
+
+button:focus {
+    border: solid 1px var(--stone-300);
+    outline: none;
+}
+
+button:disabled {
+    background-color: var(--stone-900);
+    color: var(--stone-700);
+    fill: var(--stone-700);
+    border:solid 1px var(--stone-700);
+}
+
+.divider {
+    background-color: transparent;
+    border-top: solid 1px var(--stone-600);
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}

@@ -1,8 +1,10 @@
-# Quill - A Modern Fullstack SaaS-Platform
+# Parleen - The Ai Web-App for you to talk with your PDFs
 
-Built with the Next.js 13.5 App Router, tRPC, TypeScript, Prisma & Tailwind
+Built with the Next.js 14 App Router, tRPC, TypeScript, Prisma & Tailwind
 
-![Project Image](https://github.com/joschan21/quill/blob/master/public/thumbnail.png)
+UI created using Shadcn
+
+![Project Image](public/thumbnail.png)
 
 ## Features
 
@@ -26,19 +28,38 @@ Built with the Next.js 13.5 App Router, tRPC, TypeScript, Prisma & Tailwind
 
 ## Getting started
 
-To get started with this project, run
+Copy the .env.example variables into a separate .env file, fill them out & and that's all you need to get started!
+
+Install the dependencies by running
 
 ```bash
-  git clone https://github.com/joschan21/quill.git
+npm install
+# or
+yarn install
+# or
+pnpm install
+# or
+bun install
 ```
 
-and copy the .env.example variables into a separate .env file, fill them out & and that's all you need to get started!
+Lastly, run the development server:
 
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-## Acknowledgements
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-- [Kinde Auth](https://link.joshtriedcoding.com/kinde) for making this project possible
+## Learn More
 
-## License
+To learn more about Next.js, take a look at the following resources:
 
-[MIT](https://choosealicense.com/licenses/mit/)
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+

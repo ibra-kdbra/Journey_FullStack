@@ -58,8 +58,6 @@ Remember, the best technology or framework depends on the project's requirements
 # Deployed Projects:
 * [LeetCode_copy](https://leetcode-copy.netlify.app)
 
-* [Web3Gi_animation](https://web3gi-animate.netlify.app/)
-
 * [Iphone_3d_animation](https://iphone-3d-animate-vnext.vercel.app)
 
 * [Web_avatar](https://avatar-web-blend.netlify.app/)

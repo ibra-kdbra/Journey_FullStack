@@ -67,7 +67,7 @@ export const ourFileRouter = {
 
         //vectorize and index entire document
         // const pinecone = await getPineconeClient()
-        const pineconeIndex = pinecone.Index("pdf-insight");
+        const pineconeIndex = pinecone.Index("parleen");
 
         const embeddings = new OpenAIEmbeddings({
           openAIApiKey: process.env.OPENAI_API_KEY,

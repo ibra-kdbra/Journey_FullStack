@@ -17,6 +17,7 @@
     "@editorjs/warning": "^1.4.0",
     "@excalidraw/excalidraw": "^0.17.3",
     "@kinde-oss/kinde-auth-nextjs": "^2.1.13",
+    "@netlify/plugin-nextjs": "^5.8.0",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-dropdown-menu": "^2.0.6",
     "@radix-ui/react-popover": "^1.0.7",

@@ -49,6 +49,7 @@ Nubilum is built with a robust tech stack:
 - **[Editor.js](https://editorjs.io)**: A block-styled editor for creating structured content.
 - **[Excalidraw](https://excalidraw.com)**: A whiteboard tool for sketching diagrams.
 - **[Convex](https://convex.dev)**: A backend-as-a-service platform for modern applications.
+- **[Kinde](https://kinde.com)**: An authentication platform for modern applications.
 
 ## Getting Started
 

@@ -71,3 +71,5 @@ Remember, the best technology or framework depends on the project's requirements
 * [Terminal_Chat_Portfolio](https://terminal-theme-resume.netlify.app/)
   
 * [Inventory_Manager_Backend](https://drive.google.com/file/d/1PZkC4S7X-VxIHeRyu2QMBo1XIYu1vxxM/view)
+
+* [Nubilum Idea](https://nubilum.netlify.app/)

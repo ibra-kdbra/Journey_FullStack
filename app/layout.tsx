@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import { cn } from "@/lib/utils";
 import ConvexClientProvider from "./ConvexClientProvider";
 import { Toaster } from "@/components/ui/sonner";
-import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -14,25 +14,16 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
-    <html lang="en">
-      {/* Metadata and head elements can be added directly to the RootLayout */}
-      <body className={inter.className}>
+    <html lang="en" suppressHydrationWarning>
+      <body className={cn(inter.className, "bg-neutral-900 text-white")}>
         <ConvexClientProvider>
           {children}
           <Toaster />
         </ConvexClientProvider>
-        
-        {/* Google Ads Script */}
-        <Script
-          async
-          src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_GOOGLE_ADS_CLIENT_ID}`}
-          strategy="lazyOnload"
-          crossOrigin="anonymous"
-        />
       </body>
     </html>
   );

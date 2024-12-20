@@ -33,7 +33,7 @@
 	},
 	"devDependencies": {
 		"prettier": "^3.0.3",
-		"prisma": "^5.2.0",
+		"prisma": "^6.1.0",
 		"ts-node": "^10.9.1"
 	}
 }

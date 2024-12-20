@@ -1,0 +1,10 @@
+{
+  "github": {
+    "enabled": true,
+    "autoJobCancelation": true,
+    "deployments": {
+      "productionBranch": "main",
+      "previewBranches": []
+    }
+  }
+}

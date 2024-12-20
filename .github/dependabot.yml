@@ -5,7 +5,45 @@
 
 version: 2
 updates:
-  - package-ecosystem: "npm" # See documentation for possible values
-    directory: "/" # Location of package manifests
+  - package-ecosystem: "npm"
+  directory: "/angular-s.o.l.i.d-advanced"
+  schedule:
+    interval: "weekly"
+
+- package-ecosystem: "npm"
+  directory: "/API_s.o.l.i.d_TS"
+  schedule:
+    interval: "weekly"
+
+- package-ecosystem: "npm"
+  directory: "/nestjs-s.o.l.i.d"
+  schedule:
+    interval: "weekly"
+
+- package-ecosystem: "npm"
+  directory: "/next-prisma-starter"
+  schedule:
+    interval: "weekly"
+
+- package-ecosystem: "npm"
+  directory: "/nodejs-s.o.l.i.d"
+  schedule:
+    interval: "weekly"
+
+- package-ecosystem: "npm"
+  directory: "/react-s.o.l.i.d"
+  schedule:
+    interval: "weekly"
+
+- package-ecosystem: "npm"
+  directory: "/vue.js-s.o.l.i.d"
+  schedule:
+    interval: "weekly"
+
+- package-ecosystem: "npm"
+  directory: "/vue3-clean-architecture"
+  schedule:
+    interval: "weekly"
     schedule:
-      interval: "weekly" # Interval
+      interval: "weekly"
+

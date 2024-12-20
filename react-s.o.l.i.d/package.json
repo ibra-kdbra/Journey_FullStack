@@ -22,7 +22,7 @@
     "react-rating-stars-component": "^2.2.0",
     "react-simple-star-rating": "^5.1.6",
     "styled-components": "^5.3.6",
-    "uuid": "^9.0.1",
+    "uuid": "^11.0.3",
     "zod": "^3.22.4"
   },
   "devDependencies": {

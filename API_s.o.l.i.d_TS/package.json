@@ -34,7 +34,7 @@
         "typescript": "^5.1.6"
     },
     "dependencies": {
-        "@types/multer": "^1.4.7",
+        "@types/multer": "^1.4.12",
         "bcrypt": "^5.1.1",
         "csv-parse": "^5.5.0",
         "dayjs": "^1.11.10",

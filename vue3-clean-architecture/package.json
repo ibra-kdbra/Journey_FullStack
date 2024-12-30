@@ -23,7 +23,7 @@
     "@types/jsdom": "^21.1.7",
     "@types/node": "^22.10.2",
     "@vitejs/plugin-vue": "^5.2.1",
-    "@vue/eslint-config-prettier": "^7.0.0",
+    "@vue/eslint-config-prettier": "^10.1.0",
     "@vue/eslint-config-typescript": "^11.0.0",
     "@vue/test-utils": "^2.2.6",
     "@vue/tsconfig": "^0.1.3",

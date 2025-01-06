@@ -3,7 +3,7 @@
     "enabled": true,
     "autoJobCancelation": true,
     "deployments": {
-      "productionBranch": "main",
+      "productionBranch": "iphone-3d_animation",
       "previewBranches": []
     }
   }

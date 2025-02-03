@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker'
-
+import { randomInt } from 'crypto';
 import { prisma } from '../src/utils/client'
 import config from '../src/config/default'
 
@@ -35,7 +35,7 @@ const feedSomeData = async (length: number) => {
 		})
 
 		const getRandomUserId = () => {
-			const index = Math.floor(Math.random() * 11)
+			const index = randomInt(0, 11)
 
 			if (users.at(index) !== undefined) {
 				return users[index].id

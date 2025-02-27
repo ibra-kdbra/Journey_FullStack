@@ -1,0 +1,38 @@
+{
+  "name": "nuxt-clean-architecture",
+  "private": true,
+  "type": "module",
+  "version": "0.0.2",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "test:ui": "vitest --coverage --ui",
+    "test:unit": "vitest run",
+    "test:e2e": "playwright test",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
+  },
+  "dependencies": {
+    "@nuxt/eslint": "^1.0.0",
+    "@nuxtjs/supabase": "^1.4.6",
+    "@nuxtjs/tailwindcss": "^6.13.1",
+    "nuxt": "^3.15.4",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.0"
+  },
+  "packageManager": "pnpm@9.15.5",
+  "devDependencies": {
+    "@nuxt/test-utils": "^3.15.4",
+    "@playwright/test": "^1.50.1",
+    "@vitest/ui": "^3.0.5",
+    "@vue/test-utils": "^2.4.6",
+    "happy-dom": "^16.8.1",
+    "playwright-core": "^1.50.1",
+    "vitest": "^3.0.5"
+  }
+}

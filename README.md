@@ -22,6 +22,8 @@ Full-stack development is like having the Swiss Army knife of web development—
 
 * [Nubilum Idea](https://nubilum.netlify.app/)
 
+* [Honor Gsap](https://honor-gsap.netlify.app/)
+
 ---
 
 ## Why Full Stack is Cool (and Sometimes Tricky)

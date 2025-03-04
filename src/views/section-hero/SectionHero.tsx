@@ -1,0 +1,43 @@
+import React from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
+import { getImageUrl } from '@/utils/utils';
+import './section-hero.scss';
+
+gsap.registerPlugin(ScrollTrigger, useGSAP);
+
+function SectionHero(): React.ReactElement {
+  useGSAP(() => {
+    gsap.timeline({
+      scrollTrigger: {
+        trigger: '.section-hero .section-wrapper',
+        toggleClass: 'animated'
+      }
+    });
+  });
+
+  return (
+    <section className="section-hero">
+      <div className="section-wrapper">
+        <img
+          className="cover"
+          src={getImageUrl('/src/assets/section-hero/magic-kv.png')}
+          alt=""
+        />
+        <div className="content">
+          <img
+            className="magic-os"
+            src={getImageUrl('/src/assets/section-hero/magic-os.svg')}
+            alt=""
+          />
+          <h2 className="slogan">
+            The More You Use It, The Better It Gets, The More It Understands You
+          </h2>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export default SectionHero;

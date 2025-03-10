@@ -46,7 +46,7 @@
         "reflect-metadata": "^0.2.2",
         "swagger-ui-express": "^5.0.0",
         "tsyringe": "^4.8.0",
-        "typeorm": "0.3.20",
+        "typeorm": "0.3.21",
         "uuid": "^11.0.3"
     }
 }

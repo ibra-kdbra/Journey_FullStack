@@ -14,14 +14,14 @@ const eb_garamond = EB_Garamond({
 })
 
 export const metadata: Metadata = {
-	metadataBase: new URL('https://padabot.vercel.app'),
+	metadataBase: new URL('https://padabot.netlify.app'),
 	title: "PadaBot - Real-time monitoring made easy!",
 	description: "Customizable notifications, proactive monitoring, and easy setup. All in one place.",
 	icons: [{ rel: "icon", url: "/favicon.ico" }],
 	openGraph: {
 		title: "PadaBot - Real-time monitoring made easy!",
 		description: "Customizable notifications, proactive monitoring, and easy setup. All in one place.",
-		url: "https://padabot.vercel.app",
+		url: "https://padabot.netlify.app",
 	}
 }
 

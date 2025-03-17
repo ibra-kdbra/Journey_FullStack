@@ -1,4 +1,4 @@
-const res = fetch("https://padabot.vercel.app/api/v1/events",{
+const res = fetch("https://padabot.netlify.app/api/v1/events",{
     method: 'POST',
     headers: {
         Authorization: "Bearer cm58jx26i000111ms2vf5g944"

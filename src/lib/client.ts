@@ -1,7 +1,7 @@
 import { AppType } from "@/server"
 import { hc } from "hono/client"
 import { HTTPException } from "hono/http-exception"
-import { StatusCode } from "hono/utils/http-status"
+import { ContentfulStatusCode, StatusCode } from "hono/utils/http-status"
 import superjson from "superjson"
 
 const getBaseUrl = () => {
@@ -23,13 +23,16 @@ const getBaseUrl = () => {
 	// `npm run deploy`, which deploys your server to cloudflare
 	return "https://<YOUR_DEPLOYED_WORKER_URL>/"
 }
+const validStatusCodes: number[] = [200, 201, 202, 204, 400, 401, 403, 404, 500];
 
 export const baseClient = hc<AppType>(getBaseUrl(), {
+	
 	fetch: async (input: RequestInfo | URL, init?: RequestInit) => {
 		const response = await fetch(input, { ...init, cache: "no-store" })
 
 		if (!response.ok) {
-			throw new HTTPException(response.status as StatusCode, {
+			const status = validStatusCodes.includes(response.status) ? response.status as ContentfulStatusCode : 500;
+			throw new HTTPException(status, {
 				message: response.statusText,
 				res: response,
 			})

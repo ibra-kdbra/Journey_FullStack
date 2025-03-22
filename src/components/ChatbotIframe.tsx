@@ -37,19 +37,19 @@ const ChatbotIframe = () => {
       } catch (error) {
         console.error('Invalid message data:', e.data);
       }
-      iframe.contentWindow?.postMessage("0283db25-13b7-4f61-b52a-e239eed2f298", "https://jj-smartrep.vercel.app/");
+      iframe.contentWindow?.postMessage("c153d3d4-15a3-4b01-93dd-c170ec6d6d61", "https://jj-smartrep.vercel.app/");
     };
 
     window.addEventListener("message", handleMessage);
 
-    // Cleanup the event listener and iframe on component unmount
     return () => {
       window.removeEventListener("message", handleMessage);
       document.body.removeChild(iframe);
     };
   }, []);
 
-  return null; // This component does not render anything itself
+  return null;
 };
 
 export default ChatbotIframe;
+  

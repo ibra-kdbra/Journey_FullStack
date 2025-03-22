@@ -30,6 +30,11 @@ updates:
     schedule:
       interval: "weekly"
 
+  - package-ecosystem: "npm" # For nodejs-s.o.l.i.d
+    directory: "/nuxt-clean-architecture" # Location of the package.json
+    schedule:
+      interval: "weekly"
+
   - package-ecosystem: "npm" # For react-s.o.l.i.d
     directory: "/react-s.o.l.i.d" # Location of the package.json
     schedule:

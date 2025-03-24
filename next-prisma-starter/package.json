@@ -18,7 +18,7 @@
 		"@prisma/client": "^6.1.0",
 		"@reduxjs/toolkit": "^2.5.0",
 		"@types/node": "22.13.11",
-		"@types/react": "19.0.10",
+		"@types/react": "19.0.12",
 		"@types/react-dom": "19.0.4",
 		"autoprefixer": "10.4.21",
 		"eslint": "9.23.0",

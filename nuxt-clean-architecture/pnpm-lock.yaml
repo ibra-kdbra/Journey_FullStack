@@ -29,7 +29,7 @@ importers:
     devDependencies:
       '@nuxt/test-utils':
         specifier: ^3.17.2
-        version: 3.17.2(@playwright/test@1.51.1)(@types/node@22.13.11)(@vitest/ui@3.0.5)(@vue/test-utils@2.4.6)(happy-dom@17.4.4)(jiti@2.4.2)(magicast@0.3.5)(playwright-core@1.51.1)(terser@5.39.0)(typescript@5.6.3)(vitest@3.0.5)(yaml@2.7.1)
+        version: 3.17.2(@playwright/test@1.51.1)(@types/node@22.13.11)(@vitest/ui@3.0.5)(@vue/test-utils@2.4.6)(happy-dom@17.4.4)(jiti@2.4.2)(magicast@0.3.5)(playwright-core@1.52.0)(terser@5.39.0)(typescript@5.6.3)(vitest@3.0.5)(yaml@2.7.1)
       '@playwright/test':
         specifier: ^1.51.1
         version: 1.51.1
@@ -43,8 +43,8 @@ importers:
         specifier: ^17.4.4
         version: 17.4.4
       playwright-core:
-        specifier: ^1.51.1
-        version: 1.51.1
+        specifier: ^1.52.0
+        version: 1.52.0
       vitest:
         specifier: ^3.0.5
         version: 3.0.5(@types/node@22.13.11)(@vitest/ui@3.0.5)(happy-dom@17.4.4)(jiti@2.4.2)(terser@5.39.0)(yaml@2.7.1)
@@ -521,6 +521,12 @@ packages:
 
   '@eslint-community/eslint-utils@4.5.1':
     resolution: {integrity: sha512-soEIOALTfTK6EjmKMMoLugwaP0rzkad90iIWd1hMO9ARkSAyjfMfkRRhLvD5qH7vvM0Cg72pieUfR6yh6XxC4w==}
+    engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
+    peerDependencies:
+      eslint: ^6.0.0 || ^7.0.0 || >=8.0.0
+
+  '@eslint-community/eslint-utils@4.6.1':
+    resolution: {integrity: sha512-KTsJMmobmbrFLe3LDh0PC2FXpcSYJt/MLjlkh/9LEnmKYLSYmT/0EW9JWANjeoemiuZrmogti0tW5Ch+qNUYDw==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     peerDependencies:
       eslint: ^6.0.0 || ^7.0.0 || >=8.0.0
@@ -3516,6 +3522,11 @@ packages:
     engines: {node: '>=18'}
     hasBin: true
 
+  playwright-core@1.52.0:
+    resolution: {integrity: sha512-l2osTgLXSMeuLZOML9qYODUQoPPnUsKsb5/P6LJ2e6uPKXUdPK5WYhN4z03G+YNbWmGDY4YENauNu4ZKczreHg==}
+    engines: {node: '>=18'}
+    hasBin: true
+
   playwright@1.51.1:
     resolution: {integrity: sha512-kkx+MB2KQRkyxjYPc3a0wLZZoDczmppyGJIvQ43l+aZihkaVvmu/21kiyaHeHjiFxjxNNFnUncKmcGIyOojsaw==}
     engines: {node: '>=18'}
@@ -5176,6 +5187,11 @@ snapshots:
       eslint: 9.14.0(jiti@2.4.2)
       eslint-visitor-keys: 3.4.3
 
+  '@eslint-community/eslint-utils@4.6.1(eslint@9.14.0(jiti@2.4.2))':
+    dependencies:
+      eslint: 9.14.0(jiti@2.4.2)
+      eslint-visitor-keys: 3.4.3
+
   '@eslint-community/regexpp@4.12.1': {}
 
   '@eslint/compat@1.2.8(eslint@9.14.0(jiti@2.4.2))':
@@ -5604,7 +5620,7 @@ snapshots:
     transitivePeerDependencies:
       - magicast
 
-  '@nuxt/test-utils@3.17.2(@playwright/test@1.51.1)(@types/node@22.13.11)(@vitest/ui@3.0.5)(@vue/test-utils@2.4.6)(happy-dom@17.4.4)(jiti@2.4.2)(magicast@0.3.5)(playwright-core@1.51.1)(terser@5.39.0)(typescript@5.6.3)(vitest@3.0.5)(yaml@2.7.1)':
+  '@nuxt/test-utils@3.17.2(@playwright/test@1.51.1)(@types/node@22.13.11)(@vitest/ui@3.0.5)(@vue/test-utils@2.4.6)(happy-dom@17.4.4)(jiti@2.4.2)(magicast@0.3.5)(playwright-core@1.52.0)(terser@5.39.0)(typescript@5.6.3)(vitest@3.0.5)(yaml@2.7.1)':
     dependencies:
       '@nuxt/kit': 3.16.1(magicast@0.3.5)
       '@nuxt/schema': 3.16.1
@@ -5630,14 +5646,14 @@ snapshots:
       ufo: 1.5.4
       unplugin: 2.2.2
       vite: 6.2.3(@types/node@22.13.11)(jiti@2.4.2)(terser@5.39.0)(yaml@2.7.1)
-      vitest-environment-nuxt: 1.0.1(@playwright/test@1.51.1)(@types/node@22.13.11)(@vitest/ui@3.0.5)(@vue/test-utils@2.4.6)(happy-dom@17.4.4)(jiti@2.4.2)(magicast@0.3.5)(playwright-core@1.51.1)(terser@5.39.0)(typescript@5.6.3)(vitest@3.0.5)(yaml@2.7.1)
+      vitest-environment-nuxt: 1.0.1(@playwright/test@1.51.1)(@types/node@22.13.11)(@vitest/ui@3.0.5)(@vue/test-utils@2.4.6)(happy-dom@17.4.4)(jiti@2.4.2)(magicast@0.3.5)(playwright-core@1.52.0)(terser@5.39.0)(typescript@5.6.3)(vitest@3.0.5)(yaml@2.7.1)
       vue: 3.5.13(typescript@5.6.3)
     optionalDependencies:
       '@playwright/test': 1.51.1
       '@vitest/ui': 3.0.5(vitest@3.0.5)
       '@vue/test-utils': 2.4.6
       happy-dom: 17.4.4
-      playwright-core: 1.51.1
+      playwright-core: 1.52.0
       vitest: 3.0.5(@types/node@22.13.11)(@vitest/ui@3.0.5)(happy-dom@17.4.4)(jiti@2.4.2)(terser@5.39.0)(yaml@2.7.1)
     transitivePeerDependencies:
       - '@types/node'
@@ -7348,7 +7364,7 @@ snapshots:
 
   eslint@9.14.0(jiti@2.4.2):
     dependencies:
-      '@eslint-community/eslint-utils': 4.5.1(eslint@9.14.0(jiti@2.4.2))
+      '@eslint-community/eslint-utils': 4.6.1(eslint@9.14.0(jiti@2.4.2))
       '@eslint-community/regexpp': 4.12.1
       '@eslint/config-array': 0.18.0
       '@eslint/core': 0.7.0
@@ -8610,6 +8626,8 @@ snapshots:
 
   playwright-core@1.51.1: {}
 
+  playwright-core@1.52.0: {}
+
   playwright@1.51.1:
     dependencies:
       playwright-core: 1.51.1
@@ -9725,9 +9743,9 @@ snapshots:
       terser: 5.39.0
       yaml: 2.7.1
 
-  vitest-environment-nuxt@1.0.1(@playwright/test@1.51.1)(@types/node@22.13.11)(@vitest/ui@3.0.5)(@vue/test-utils@2.4.6)(happy-dom@17.4.4)(jiti@2.4.2)(magicast@0.3.5)(playwright-core@1.51.1)(terser@5.39.0)(typescript@5.6.3)(vitest@3.0.5)(yaml@2.7.1):
+  vitest-environment-nuxt@1.0.1(@playwright/test@1.51.1)(@types/node@22.13.11)(@vitest/ui@3.0.5)(@vue/test-utils@2.4.6)(happy-dom@17.4.4)(jiti@2.4.2)(magicast@0.3.5)(playwright-core@1.52.0)(terser@5.39.0)(typescript@5.6.3)(vitest@3.0.5)(yaml@2.7.1):
     dependencies:
-      '@nuxt/test-utils': 3.17.2(@playwright/test@1.51.1)(@types/node@22.13.11)(@vitest/ui@3.0.5)(@vue/test-utils@2.4.6)(happy-dom@17.4.4)(jiti@2.4.2)(magicast@0.3.5)(playwright-core@1.51.1)(terser@5.39.0)(typescript@5.6.3)(vitest@3.0.5)(yaml@2.7.1)
+      '@nuxt/test-utils': 3.17.2(@playwright/test@1.51.1)(@types/node@22.13.11)(@vitest/ui@3.0.5)(@vue/test-utils@2.4.6)(happy-dom@17.4.4)(jiti@2.4.2)(magicast@0.3.5)(playwright-core@1.52.0)(terser@5.39.0)(typescript@5.6.3)(vitest@3.0.5)(yaml@2.7.1)
     transitivePeerDependencies:
       - '@cucumber/cucumber'
       - '@jest/globals'

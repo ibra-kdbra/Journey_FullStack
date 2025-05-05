@@ -31,7 +31,7 @@
     "@playwright/test": "^1.52.0",
     "@vitest/ui": "^3.0.5",
     "@vue/test-utils": "^2.4.6",
-    "happy-dom": "^17.4.4",
+    "happy-dom": "^17.4.6",
     "playwright-core": "^1.52.0",
     "vitest": "^3.0.5"
   }

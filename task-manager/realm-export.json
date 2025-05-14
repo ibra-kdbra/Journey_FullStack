@@ -1,0 +1,15 @@
+{
+    "id": "task-manager-realm",
+    "realm": "task-manager",
+    "enabled": true,
+    "clients": [{
+      "clientId": "task-manager-api",
+      "secret": "api-secret",
+      "publicClient": false,
+      "bearerOnly": true
+    }],
+    "roles": {
+      "realm": [{ "name": "user" }]
+    }
+  }
+  

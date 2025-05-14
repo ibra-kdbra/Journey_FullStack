@@ -1,0 +1,27 @@
+server:
+  port: 8080
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/tms
+    driver-class-name: org.postgresql.Driver
+    username: keycloak
+    password: keycloak
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/task-manager
+          jwk-set-uri: http://localhost:8080/realms/task-manager/protocol/openid-connect/certs
+
+logging:
+  level:
+    com.example.taskmanager: DEBUG

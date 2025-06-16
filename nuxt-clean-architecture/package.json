@@ -32,7 +32,7 @@
     "@vitest/ui": "^3.0.5",
     "@vue/test-utils": "^2.4.6",
     "happy-dom": "^17.5.7",
-    "playwright-core": "^1.52.0",
+    "playwright-core": "^1.53.0",
     "vitest": "^3.0.5"
   }
 }

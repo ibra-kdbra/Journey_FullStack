@@ -28,7 +28,7 @@
   "packageManager": "pnpm@9.15.5",
   "devDependencies": {
     "@nuxt/test-utils": "^3.19.1",
-    "@playwright/test": "^1.53.0",
+    "@playwright/test": "^1.53.1",
     "@vitest/ui": "^3.0.5",
     "@vue/test-utils": "^2.4.6",
     "happy-dom": "^17.6.3",

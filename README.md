@@ -33,6 +33,8 @@ Full-stack development is like having the Swiss Army knife of web development—
 * [Art Library](https://live-wallpapers-css.vercel.app/)
 
 * [Template Astro Doc](https://mintlify-beta.vercel.app/)
+
+* [MiniMap Showcase](https://minimap3d.netlify.app/)
 ---
 
 ## Why Full Stack is Cool (and Sometimes Tricky)

@@ -1,7 +1,6 @@
 {
   "name": "hda-calendar",
   "description": "Hypermedia-driven application for managing events on a calendar",
-  "author": "Erik Rogers <ewrogers@gmail.com>",
   "module": "src/index.ts",
   "type": "module",
   "scripts": {

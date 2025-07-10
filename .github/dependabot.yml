@@ -45,6 +45,11 @@ updates:
     schedule:
       interval: "weekly"
 
+  - package-ecosystem: "npm" # For tauri-sveltekit
+    directory: "/tauri-sveltekit"
+    schedule:
+      interval: "weekly"
+
   - package-ecosystem: "npm" # For vue.js-s.o.l.i.d
     directory: "/vue.js-s.o.l.i.d"
     schedule:

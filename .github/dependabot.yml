@@ -6,46 +6,51 @@
 version: 2
 updates:
   - package-ecosystem: "npm" # See documentation for possible values
-    directory: "/angular-s.o.l.i.d-advanced" # Location of the package.json
+    directory: "/angular-s.o.l.i.d-advanced"
     schedule:
       interval: "weekly"
 
   - package-ecosystem: "npm" # For API_s.o.l.i.d_TS
-    directory: "/API_s.o.l.i.d_TS" # Location of the package.json
+    directory: "/API_s.o.l.i.d_TS"
+    schedule:
+      interval: "weekly"
+
+  - package-ecosystem: "npm" # For astro-starter
+    directory: "/astro-starter"
     schedule:
       interval: "weekly"
 
   - package-ecosystem: "npm" # For nestjs-s.o.l.i.d
-    directory: "/nestjs-s.o.l.i.d" # Location of the package.json
+    directory: "/nestjs-s.o.l.i.d"
     schedule:
       interval: "weekly"
 
   - package-ecosystem: "npm" # For next-prisma-starter
-    directory: "/next-prisma-starter" # Location of the package.json
+    directory: "/next-prisma-starter"
     schedule:
       interval: "weekly"
 
   - package-ecosystem: "npm" # For nodejs-s.o.l.i.d
-    directory: "/nodejs-s.o.l.i.d" # Location of the package.json
+    directory: "/nodejs-s.o.l.i.d"
     schedule:
       interval: "weekly"
 
-  - package-ecosystem: "npm" # For nodejs-s.o.l.i.d
-    directory: "/nuxt-clean-architecture" # Location of the package.json
+  - package-ecosystem: "npm" # For nuxt-clean-architecture
+    directory: "/nuxt-clean-architecture"
     schedule:
       interval: "weekly"
 
   - package-ecosystem: "npm" # For react-s.o.l.i.d
-    directory: "/react-s.o.l.i.d" # Location of the package.json
+    directory: "/react-s.o.l.i.d"
     schedule:
       interval: "weekly"
 
   - package-ecosystem: "npm" # For vue.js-s.o.l.i.d
-    directory: "/vue.js-s.o.l.i.d" # Location of the package.json
+    directory: "/vue.js-s.o.l.i.d"
     schedule:
       interval: "weekly"
 
   - package-ecosystem: "npm" # For vue3-clean-architecture
-    directory: "/vue3-clean-architecture" # Location of the package.json
+    directory: "/vue3-clean-architecture"
     schedule:
       interval: "weekly"

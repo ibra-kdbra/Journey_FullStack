@@ -36,7 +36,7 @@
     "dependencies": {
         "@types/multer": "^2.0.0",
         "bcrypt": "^6.0.0",
-        "csv-parse": "^5.5.0",
+        "csv-parse": "^6.0.0",
         "dayjs": "^1.11.10",
         "express": "^5.1.0",
         "express-async-errors": "^3.1.1",

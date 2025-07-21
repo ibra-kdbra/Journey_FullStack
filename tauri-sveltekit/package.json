@@ -20,7 +20,7 @@
 		"@tauri-apps/cli": "^2.6.2",
 		"autoprefixer": "^10.4.21",
 		"eslint": "^8.57.1",
-		"eslint-config-prettier": "^10.1.5",
+		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.11.0",
 		"postcss": "^8.5.6",
 		"prettier": "^3.6.2",

@@ -17,7 +17,7 @@
 	"devDependencies": {
 		"@sveltejs/adapter-static": "^3.0.8",
 		"@sveltejs/kit": "^2.25.1",
-		"@tauri-apps/cli": "^2.6.2",
+		"@tauri-apps/cli": "^2.7.1",
 		"autoprefixer": "^10.4.21",
 		"eslint": "^8.57.1",
 		"eslint-config-prettier": "^10.1.8",

@@ -19,7 +19,7 @@
 		"@sveltejs/kit": "^2.25.1",
 		"@tauri-apps/cli": "^2.6.2",
 		"autoprefixer": "^10.4.21",
-		"eslint": "^8.57.1",
+		"eslint": "^9.32.0",
 		"eslint-config-prettier": "^10.1.8",
 		"eslint-plugin-svelte": "^3.11.0",
 		"postcss": "^8.5.6",

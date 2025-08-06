@@ -1,0 +1,192 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url('/fonts/Montserrat-VariableFont.ttf') format('truetype');
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Sora';
+  src: url('/fonts/Sora-VariableFont.ttf') format('truetype');
+  font-display: swap;
+}
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: var(--color-white);
+  --foreground: var(--color-stone-950);
+  --muted: var(--color-stone-100);
+  --muted-foreground: var(--color-stone-500);
+  --popover: var(--color-white);
+  --popover-foreground: var(--color-stone-950);
+  --card: var(--color-white);
+  --card-foreground: var(--color-stone-950);
+  --border: var(--color-stone-200);
+  --input: var(--color-stone-200);
+  --primary: var(--color-stone-900);
+  --primary-foreground: var(--color-stone-50);
+  --secondary: var(--color-stone-100);
+  --secondary-foreground: var(--color-stone-900);
+  --accent: var(--color-stone-100);
+  --accent-foreground: var(--color-stone-900);
+  --destructive: var(--color-red-600);
+  --destructive-foreground: var(--color-stone-50);
+  --ring: var(--color-stone-950);
+  --radius: 0.5rem;
+  --sidebar-background: var(--color-stone-50);
+  --sidebar-foreground: var(--color-stone-700);
+  --sidebar-primary: var(--color-stone-900);
+  --sidebar-primary-foreground: var(--color-stone-50);
+  --sidebar-accent: var(--color-stone-100);
+  --sidebar-accent-foreground: var(--color-stone-700);
+  --sidebar-border: var(--color-stone-200);
+  --sidebar-ring: var(--ring);
+
+  --brand-primary: var(--color-yellow-300);
+  --brand-secondary: var(--color-teal-300);
+  --brand-tertiary: var(--color-rose-400);
+}
+
+.dark {
+  --background: var(--color-stone-950);
+  --foreground: var(--color-stone-50);
+  --muted: var(--color-stone-800);
+  --muted-foreground: var(--color-stone-400);
+  --popover: var(--color-stone-950);
+  --popover-foreground: var(--color-stone-50);
+  --card: var(--color-stone-950);
+  --card-foreground: var(--color-stone-50);
+  --border: var(--color-stone-800);
+  --input: var(--color-stone-800);
+  --primary: var(--color-stone-50);
+  --primary-foreground: var(--color-stone-900);
+  --secondary: var(--color-stone-800);
+  --secondary-foreground: var(--color-stone-50);
+  --accent: var(--color-stone-800);
+  --accent-foreground: var(--color-stone-50);
+  --destructive: var(--color-red-600);
+  --destructive-foreground: var(--color-stone-50);
+  --ring: var(--color-stone-300);
+  --sidebar-background: var(--color-stone-900);
+  --sidebar-foreground: var(--color-stone-200);
+  --sidebar-primary: var(--color-white);
+  --sidebar-primary-foreground: var(--color-white);
+  --sidebar-accent: var(--color-stone-800);
+  --sidebar-accent-foreground: var(--color-stone-200);
+  --sidebar-border: var(--color-stone-800);
+  --sidebar-ring: var(--ring);
+
+  --brand-primary: var(--color-teal-300);
+  --brand-secondary: var(--color-yellow-300);
+  --brand-tertiary: var(--color-rose-400);
+}
+
+@theme {
+  /* Fonts */
+  --font-primary: 'Montserrat', sans-serif;
+  --font-secondary: 'Sora', sans-serif;
+  --font-sans:
+    'Inter Variable', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+    'Noto Color Emoji';
+  --font-mono:
+    'Source Code Pro Variable', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+    monospace;
+
+  /* Typography */
+  --text-sm: 0.825rem;
+
+  /* Colors */
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-caution: var(--color-red-500);
+  --color-warning: var(--color-amber-500);
+  --color-info: var(--color-sky-500);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-sidebar: var(--sidebar-background);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-brand-primary: var(--brand-primary);
+  --color-brand-secondary: var(--brand-secondary);
+  --color-brand-tertiary: var(--brand-tertiary);
+
+  /* Border */
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  *:focus-visible {
+    @apply ring-ring ring-1 outline-none;
+  }
+
+  html {
+    scrollbar-color: color-mix(in oklch, var(--muted-foreground), transparent 70%) transparent;
+    scrollbar-width: thin;
+  }
+
+  body {
+    @apply bg-background font-primary text-foreground antialiased;
+  }
+
+  ::-webkit-scrollbar {
+    @apply size-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-muted;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-muted-foreground/30 rounded-sm;
+  }
+
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility container {
+  margin-inline: auto;
+  padding-inline: 2rem;
+}
+
+@media (min-width: 1400px) {
+  .container {
+    max-width: 1400px;
+  }
+}

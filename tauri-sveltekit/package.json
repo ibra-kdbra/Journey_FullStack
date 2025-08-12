@@ -15,7 +15,7 @@
 		"format": "prettier --write ."
 	},
 	"devDependencies": {
-		"@sveltejs/adapter-static": "^3.0.8",
+		"@sveltejs/adapter-static": "^3.0.9",
 		"@sveltejs/kit": "^2.27.3",
 		"@tauri-apps/cli": "^2.7.1",
 		"autoprefixer": "^10.4.21",

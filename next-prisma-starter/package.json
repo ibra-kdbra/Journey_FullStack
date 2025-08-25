@@ -14,7 +14,7 @@
 		"format": "npx prisma format && prettier . --write"
 	},
 	"dependencies": {
-		"@faker-js/faker": "^9.3.0",
+		"@faker-js/faker": "^10.0.0",
 		"@prisma/client": "^6.1.0",
 		"@reduxjs/toolkit": "^2.5.0",
 		"@types/node": "24.2.1",

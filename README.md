@@ -4,7 +4,7 @@ A comprehensive repository showcasing my full-stack development journey, featuri
 
 ## 🎯 Repository Overview
 
-Full-stack development is like having the Swiss Army knife of web development—it means you're equipped to handle both the **front-end (user interface)** and the **back-end (server, databases, logic)** of an application. This repository serves as both a personal learning archive and a practical resource for developers at different stages of their journey.
+Full-stack development is like having the Swiss Army knife of web development; it means you're equipped to handle both the **front-end (user interface)** and the **back-end (server, databases, logic)** of an application. This repository serves as both a personal learning archive and a practical resource for developers at different stages of their journey.
 
 ---
 
@@ -188,7 +188,7 @@ Live demos and production applications I've built:
 ## Why Full Stack is Cool (and Sometimes Tricky)
 
 - **Pro:** You get to wear many hats. You can take a project from idea to deployment without needing someone else to fill in the gaps. 
-- **Pro:** It’s cost-effective—companies love hiring someone who can juggle both sides of the coin.
+- **Pro:** It’s cost-effective; companies love hiring someone who can juggle both sides of the coin.
 - **Con:** The downside? You can end up being a “Jack of all trades, master of none.” Staying *really good* at everything is tough because tech evolves constantly.
 
 ---
@@ -197,7 +197,7 @@ Live demos and production applications I've built:
 
 ### **1. Node.js**
 - **Why it’s awesome:** It’s like a superhero for real-time apps (think chats, live notifications). Node uses non-blocking I/O, which means it handles tons of requests without breaking a sweat.  
-- **What you might not know:** Its event-driven architecture pairs perfectly with microservices and serverless apps—great for scaling projects.  
+- **What you might not know:** Its event-driven architecture pairs perfectly with microservices and serverless apps; great for scaling projects.  
 - **Solid advice:** Use modular architecture with Node. Split your code into services (authentication, database handling) to keep things clean and maintainable. Async/await helps squash callback hell.
 
 ---
@@ -212,14 +212,14 @@ Live demos and production applications I've built:
 ### **3. Angular**
 - **What stands out:** Two-way data binding saves you from writing boilerplate to sync the front-end and back-end. Plus, TypeScript support makes large apps safer to build.  
 - **What’s tricky:** It’s huge and opinionated, meaning it takes longer to learn and has a steeper curve.  
-- **Solid practice:** Stick to its modular design—organize features into lazy-loaded modules. Angular loves **dependency injection**, so lean into it for clean architecture.
+- **Solid practice:** Stick to its modular design; organize features into lazy-loaded modules. Angular loves **dependency injection**, so lean into it for clean architecture.
 
 ---
 
 ### **4. Next.js**
 - **What’s the deal:** Next.js is React’s high-performance sibling. It gives you server-side rendering (SSR) out of the box, meaning faster initial page loads and better SEO.  
 - **Why advanced devs dig it:** You can mix SSR, static generation, and client-side rendering depending on what your page needs.  
-- **Solid approach:** Use a file-based routing system carefully. It’s also perfect for **domain-driven design (DDD)**—organize your app by business domains, not features.
+- **Solid approach:** Use a file-based routing system carefully. It’s also perfect for **domain-driven design (DDD)**; organize your app by business domains, not features.
 
 ---
 
@@ -231,14 +231,14 @@ Live demos and production applications I've built:
 ---
 
 ### **6. Firebase**
-- **Why it’s great:** It’s the ultimate quick-start tool—authentication, hosting, and a NoSQL database all rolled into one.  
+- **Why it’s great:** It’s the ultimate quick-start tool; authentication, hosting, and a NoSQL database all rolled into one.  
 - **What’s the catch:** The querying capabilities of its Firestore database are limited. Complex relationships between data can feel clunky.  
-- **Pro tip:** Think twice before tying your app too deeply to Firebase—it can lead to vendor lock-in. Instead, isolate Firebase-related code into a service layer.
+- **Pro tip:** Think twice before tying your app too deeply to Firebase; it can lead to vendor lock-in. Instead, isolate Firebase-related code into a service layer.
 
 ---
 
 ### **7. React Native**
-- **Why devs flock to it:** Write one codebase and run it on iOS and Android—no need for separate native teams!  
+- **Why devs flock to it:** Write one codebase and run it on iOS and Android; no need for separate native teams!  
 - **Hidden challenge:** Navigation in React Native can be a headache, especially with heavy animations or complex screens.  
 - **Solid strategy:** Stick to the **Clean Architecture** pattern: keep your UI layer separate from business logic. Libraries like `react-query` can help manage data fetching cleanly.
 
@@ -263,7 +263,7 @@ Regardless of the tool or framework you choose, always design your app with thes
 
 ## Final Thoughts
 
-Every tool here is like a piece of a puzzle—it depends on your project’s needs. Are you building a data-heavy dashboard? React with Next.js could be your go-to. A quick MVP? Firebase or Vue might be your best bet. Whatever you choose, keep your code clean, your structure solid, and don't be afraid to refactor when things start getting messy!
+Every tool here is like a piece of a puzzle; it depends on your project’s needs. Are you building a data-heavy dashboard? React with Next.js could be your go-to. A quick MVP? Firebase or Vue might be your best bet. Whatever you choose, keep your code clean, your structure solid, and don't be afraid to refactor when things start getting messy!
 
 ---
 

@@ -37,7 +37,7 @@
     "@testing-library/svelte": "^5.2.8",
     "@types/eslint": "^9.6.1",
     "@types/node": "^24.0.10",
-    "bits-ui": "2.8.10",
+    "bits-ui": "2.11.4",
     "clsx": "^2.1.1",
     "dotenv": "^17.0.1",
     "drizzle-kit": "^0.31.4",

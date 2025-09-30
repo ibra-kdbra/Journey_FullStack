@@ -29,7 +29,7 @@
     "@lucide/svelte": "^0.525.0",
     "@playwright/test": "^1.53.2",
     "@sveltejs/adapter-auto": "^6.0.1",
-    "@sveltejs/kit": "^2.22.2",
+    "@sveltejs/kit": "^2.43.5",
     "@sveltejs/vite-plugin-svelte": "^5.1.0",
     "@tailwindcss/vite": "^4.1.11",
     "@tanstack/table-core": "^8.21.3",

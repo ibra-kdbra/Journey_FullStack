@@ -61,8 +61,8 @@ updates:
       interval: "weekly"
   
   - package-ecosystem: "npm" # For vue3-clean-architecture
-  directory: "/sveltekit"
-  schedule:
-    interval: "weekly"
+    directory: "/sveltekit"
+    schedule:
+      interval: "weekly"
   
  

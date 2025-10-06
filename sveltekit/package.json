@@ -62,7 +62,7 @@
     "sveltekit-rate-limiter": "^0.7.0",
     "sveltekit-superforms": "^2.27.1",
     "tailwind-merge": "^3.3.1",
-    "tailwind-variants": "^1.0.0",
+    "tailwind-variants": "^3.1.1",
     "tailwindcss": "^4.1.11",
     "tw-animate-css": "^1.3.4",
     "typescript": "^5.8.3",

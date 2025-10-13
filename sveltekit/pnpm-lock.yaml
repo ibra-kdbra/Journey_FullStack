@@ -124,8 +124,8 @@ importers:
         specifier: ^9.1.7
         version: 9.1.7
       layerchart:
-        specifier: 2.0.0-next.40
-        version: 2.0.0-next.40(svelte@5.35.1)
+        specifier: 2.0.0-next.41
+        version: 2.0.0-next.41(svelte@5.35.1)
       lint-staged:
         specifier: ^16.1.2
         version: 16.1.2
@@ -2150,8 +2150,8 @@ packages:
     resolution: {integrity: sha512-ndfJ/JxxMd3nw31uyKoY2naivF+r29V+Lc0svZxe1JvvIRmi8hUsrMvdOwgS1o6uBHmiz91geQ0ylPP0aj1VUA==}
     engines: {node: '>=12'}
 
-  d3-tricontour@1.0.2:
-    resolution: {integrity: sha512-HIRxHzHagPtUPNabjOlfcyismJYIsc+Xlq4mlsts4e8eAcwyq9Tgk/sYdyhlBpQ0MHwVquc/8j+e29YjXnmxeA==}
+  d3-tricontour@1.1.0:
+    resolution: {integrity: sha512-G7gHKj89n2owmkGb6WX6ixcnQ0Kf/0wpa9VIh9DGdbHu8wdrlaHU4ir3/bFNERl8N8nn4G7e7qbtBG8N9caihQ==}
     engines: {node: '>=12'}
 
   data-uri-to-buffer@4.0.1:
@@ -2843,8 +2843,8 @@ packages:
   known-css-properties@0.37.0:
     resolution: {integrity: sha512-JCDrsP4Z1Sb9JwG0aJ8Eo2r7k4Ou5MwmThS/6lcIe1ICyb7UBJKGRIUUdqc2ASdE/42lgz6zFUnzAIhtXnBVrQ==}
 
-  layerchart@2.0.0-next.40:
-    resolution: {integrity: sha512-hf6VdPqMjinuKfh1HfFbqjWUPnxJupBhaYHHtSWCcyCOTROBBHf8b8+bLNPweLT3CcoeNrYMy68y45kDxVhGkg==}
+  layerchart@2.0.0-next.41:
+    resolution: {integrity: sha512-0TKf5TPJoNRJMKrWncWTdPtJa6ojxXdpH3sT3uMIJ/A9r9cWRbr0nq8s7dNtNwBeOBM4HxFMndOyZnZ35D2rEA==}
     peerDependencies:
       svelte: ^5.0.0
 
@@ -6462,7 +6462,7 @@ snapshots:
       d3-array: 3.2.4
       d3-delaunay: 6.0.4
       d3-geo: 3.1.1
-      d3-tricontour: 1.0.2
+      d3-tricontour: 1.1.0
 
   d3-geo@3.1.1:
     dependencies:
@@ -6522,7 +6522,7 @@ snapshots:
 
   d3-timer@3.0.1: {}
 
-  d3-tricontour@1.0.2:
+  d3-tricontour@1.1.0:
     dependencies:
       d3-delaunay: 6.0.4
       d3-scale: 4.0.2
@@ -7185,7 +7185,7 @@ snapshots:
 
   known-css-properties@0.37.0: {}
 
-  layerchart@2.0.0-next.40(svelte@5.35.1):
+  layerchart@2.0.0-next.41(svelte@5.35.1):
     dependencies:
       '@dagrejs/dagre': 1.1.5
       '@layerstack/svelte-actions': 1.0.1-next.14

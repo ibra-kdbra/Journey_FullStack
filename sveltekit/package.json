@@ -33,7 +33,7 @@
     "@sveltejs/vite-plugin-svelte": "^5.1.0",
     "@tailwindcss/vite": "^4.1.11",
     "@tanstack/table-core": "^8.21.3",
-    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/svelte": "^5.2.8",
     "@types/eslint": "^9.6.1",
     "@types/node": "^24.7.2",

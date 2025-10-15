@@ -15,7 +15,7 @@
     "axios": "0.27.2",
     "inversify": "6.0.1",
     "inversify-inject-decorators": "3.1.0",
-    "react": "18.3.1",
+    "react": "19.2.0",
     "react-native": "0.75.3",
     "react-native-fast-image": "8.5.11",
     "reflect-metadata": "0.1.13",

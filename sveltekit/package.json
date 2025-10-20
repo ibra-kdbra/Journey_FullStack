@@ -30,7 +30,7 @@
     "@playwright/test": "^1.53.2",
     "@sveltejs/adapter-auto": "^6.1.1",
     "@sveltejs/kit": "^2.46.5",
-    "@sveltejs/vite-plugin-svelte": "^5.1.0",
+    "@sveltejs/vite-plugin-svelte": "^6.2.1",
     "@tailwindcss/vite": "^4.1.11",
     "@tanstack/table-core": "^8.21.3",
     "@testing-library/jest-dom": "^6.9.1",

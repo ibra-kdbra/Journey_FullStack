@@ -58,8 +58,8 @@ importers:
         specifier: ^9.9.0
         version: 9.9.0
       '@lucide/svelte':
-        specifier: ^0.545.0
-        version: 0.545.0(svelte@5.35.1)
+        specifier: ^0.546.0
+        version: 0.546.0(svelte@5.35.1)
       '@playwright/test':
         specifier: ^1.53.2
         version: 1.53.2
@@ -947,8 +947,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@lucide/svelte@0.545.0':
-    resolution: {integrity: sha512-RlAtWefx9MdpXaOMbx3Qv3/NqpeZKOIPxN2D0RBN2+op0opKly8VgYEEWZTT6Ow/zf7UwyTg6/0ExJlsVLK+8g==}
+  '@lucide/svelte@0.546.0':
+    resolution: {integrity: sha512-qFVQ+BUJH9Swns7cag3Wik7VqKZfN2hwDZ2VazbZJc8VSqI0kgOZCZ2OVwrvNxdkl8Mw9M9H1ROB0BXh/WH/sA==}
     peerDependencies:
       svelte: ^5
 
@@ -1663,6 +1663,9 @@ packages:
 
   '@types/node@24.7.2':
     resolution: {integrity: sha512-/NbVmcGTP+lj5oa4yiYxxeBjRivKQ5Ns1eSZeB99ExsEQ6rX5XYU1Zy/gGxY/ilqtD4Etx9mKyrPxZRetiahhA==}
+
+  '@types/node@24.8.1':
+    resolution: {integrity: sha512-alv65KGRadQVfVcG69MuB4IzdYVpRwMG/mq8KWOaoOdyY617P5ivaDiMCGOFDWD2sAn5Q0mR3mRtUOgm99hL9Q==}
 
   '@types/pg@8.11.10':
     resolution: {integrity: sha512-LczQUW4dbOQzsH2RQ5qoeJ6qJPdrcM/DcMLoqWQkMLMsq83J5lAX3LXjdkWdpscFy67JSOWDnh7Ny/sPFykmkg==}
@@ -5170,7 +5173,7 @@ snapshots:
   '@libsql/win32-x64-msvc@0.5.22':
     optional: true
 
-  '@lucide/svelte@0.545.0(svelte@5.35.1)':
+  '@lucide/svelte@0.546.0(svelte@5.35.1)':
     dependencies:
       svelte: 5.35.1
 
@@ -5965,9 +5968,14 @@ snapshots:
     dependencies:
       undici-types: 7.14.0
 
+  '@types/node@24.8.1':
+    dependencies:
+      undici-types: 7.14.0
+    optional: true
+
   '@types/pg@8.11.10':
     dependencies:
-      '@types/node': 24.7.2
+      '@types/node': 24.8.1
       pg-protocol: 1.10.3
       pg-types: 4.1.0
     optional: true

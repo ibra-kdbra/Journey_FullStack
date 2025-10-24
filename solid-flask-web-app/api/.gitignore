@@ -1,0 +1,8 @@
+.env
+
+__pycache__
+*.egg-info/
+.coverage
+
+secrets.env
+api.log

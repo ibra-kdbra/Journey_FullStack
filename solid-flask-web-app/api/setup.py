@@ -2,8 +2,8 @@ from setuptools import setup, find_packages
 
 
 setup(
-    name="solid-flask-web-app-template",
+    name="solid-flask-web-app",
     version="0.1.0",
-    author="Bram de Wit",
+    author="ibra-kdbra",
     packages=find_packages(),
 )

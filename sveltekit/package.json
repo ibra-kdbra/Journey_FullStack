@@ -75,7 +75,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.899.0",
-    "@aws-sdk/s3-request-presigner": "^3.842.0",
+    "@aws-sdk/s3-request-presigner": "^3.917.0",
     "@libsql/client": "^0.15.15",
     "@node-rs/argon2": "^2.0.2",
     "@oslojs/crypto": "^1.0.1",

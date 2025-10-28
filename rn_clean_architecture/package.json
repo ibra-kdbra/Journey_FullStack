@@ -39,7 +39,7 @@
     "babel-plugin-module-resolver": "^5.0.0",
     "babel-plugin-transform-remove-console": "^6.9.4",
     "eslint": "8.22.0",
-    "jest": "^29.6.3",
+    "jest": "^30.2.0",
     "metro-react-native-babel-preset": "0.76.8",
     "prettier": "3.6.2",
     "react-test-renderer": "18.3.1",

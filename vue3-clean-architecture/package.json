@@ -37,7 +37,7 @@
     "start-server-and-test": "^2.0.9",
     "typescript": "~5.9.2",
     "vite": "^7.0.0",
-    "vitest": "^3.0.2",
+    "vitest": "^4.0.3",
     "vue-tsc": "^3.0.1"
   }
 }

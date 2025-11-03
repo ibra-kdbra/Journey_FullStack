@@ -20,7 +20,7 @@
     "react-native-fast-image": "8.5.11",
     "reflect-metadata": "0.2.2",
     "rxjs": "^7.8.1",
-    "styled-components": "5.3.5"
+    "styled-components": "6.1.19"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

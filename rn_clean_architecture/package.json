@@ -20,7 +20,7 @@
     "react-native-fast-image": "8.5.11",
     "reflect-metadata": "0.2.2",
     "rxjs": "^7.8.1",
-    "styled-components": "5.3.5"
+    "styled-components": "6.1.19"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
@@ -30,9 +30,9 @@
     "@react-native/babel-preset": "0.75.3",
     "@react-native/eslint-config": "0.82.1",
     "@react-native/metro-config": "0.82.0",
-    "@react-native/typescript-config": "0.75.3",
+    "@react-native/typescript-config": "0.82.1",
     "@tsconfig/react-native": "^3.0.0",
-    "@types/react": "^18.2.6",
+    "@types/react": "^19.2.2",
     "@types/react-test-renderer": "^18.0.0",
     "@types/styled-components": "^5.1.26",
     "babel-jest": "^30.2.0",
@@ -40,9 +40,9 @@
     "babel-plugin-transform-remove-console": "^6.9.4",
     "eslint": "9.38.0",
     "jest": "^30.2.0",
-    "metro-react-native-babel-preset": "0.76.8",
+    "metro-react-native-babel-preset": "0.77.0",
     "prettier": "3.6.2",
-    "react-test-renderer": "18.3.1",
+    "react-test-renderer": "19.2.0",
     "typescript": "5.9.3"
   },
   "engines": {

@@ -14,7 +14,7 @@ const __dirname = path.dirname(__filename)
 
 const LOCALES_PATH = path.join(__dirname, '../src/locales')
 const DEFAULT_LOCALE = 'en.ts'
-const NON_DEFAULT_LOCALES = ['nl.ts'] // add more if you have them
+const NON_DEFAULT_LOCALES = ['ja.ts'] // add more if you have them
 const MAX_LINE_LENGTH = 100 // only cosmetic – for wrapping long strings
 // ────────────────────────────────────────────────────────────────
 

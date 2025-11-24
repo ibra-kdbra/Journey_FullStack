@@ -17,7 +17,7 @@
 		"@faker-js/faker": "^10.0.0",
 		"@prisma/client": "^7.0.0",
 		"@reduxjs/toolkit": "^2.5.0",
-		"@types/react": "19.2.2",
+		"@types/react": "19.2.6",
 		"@types/node": "24.10.0",
 		"@types/react-dom": "19.2.2",
 		"autoprefixer": "10.4.21",

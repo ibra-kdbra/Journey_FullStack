@@ -148,8 +148,8 @@ importers:
         specifier: 5.41.1
         version: 5.41.1
       svelte-check:
-        specifier: ^4.3.3
-        version: 4.3.3(picomatch@4.0.2)(svelte@5.41.1)(typescript@5.8.3)
+        specifier: ^4.3.4
+        version: 4.3.4(picomatch@4.0.2)(svelte@5.41.1)(typescript@5.8.3)
       svelte-sonner:
         specifier: ^1.0.5
         version: 1.0.5(svelte@5.41.1)
@@ -3852,8 +3852,8 @@ packages:
     resolution: {integrity: sha512-qpCAvRl9stuOHveKsn7HncJRvv501qIacKzQlO/+Lwxc9+0q2wLyv4Dfvt80/DPn2pqOBsJdDiogXGR9+OvwRw==}
     engines: {node: '>=8'}
 
-  svelte-check@4.3.3:
-    resolution: {integrity: sha512-RYP0bEwenDXzfv0P1sKAwjZSlaRyqBn0Fz1TVni58lqyEiqgwztTpmodJrGzP6ZT2aHl4MbTvWP6gbmQ3FOnBg==}
+  svelte-check@4.3.4:
+    resolution: {integrity: sha512-DVWvxhBrDsd+0hHWKfjP99lsSXASeOhHJYyuKOFYJcP7ThfSCKgjVarE8XfuMWpS5JV3AlDf+iK1YGGo2TACdw==}
     engines: {node: '>= 18.0.0'}
     hasBin: true
     peerDependencies:
@@ -8298,7 +8298,7 @@ snapshots:
     dependencies:
       has-flag: 4.0.0
 
-  svelte-check@4.3.3(picomatch@4.0.2)(svelte@5.41.1)(typescript@5.8.3):
+  svelte-check@4.3.4(picomatch@4.0.2)(svelte@5.41.1)(typescript@5.8.3):
     dependencies:
       '@jridgewell/trace-mapping': 0.3.31
       chokidar: 4.0.3

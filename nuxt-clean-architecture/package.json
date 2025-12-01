@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@nuxtjs/supabase": "^2.0.1",
-    "@nuxt/eslint": "^1.10.0",
+    "@nuxt/eslint": "^1.11.0",
     "@nuxtjs/tailwindcss": "^6.14.0",
     "nuxt": "^4.2.1",
     "vue": "^3.5.24",

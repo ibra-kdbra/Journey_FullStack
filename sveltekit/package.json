@@ -85,7 +85,7 @@
     "drizzle-orm": "^0.44.2",
     "mjml": "^4.15.3",
     "nanoid": "^5.1.6",
-    "resend": "^6.4.0",
+    "resend": "^6.5.2",
     "sailkit": "^0.3.3"
   },
   "pnpm": {

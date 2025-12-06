@@ -40,7 +40,7 @@
     "bits-ui": "2.14.4",
     "clsx": "^2.1.1",
     "dotenv": "^17.2.3",
-    "drizzle-kit": "^0.31.6",
+    "drizzle-kit": "^0.31.8",
     "embla-carousel-svelte": "^8.6.0",
     "eslint": "^9.37.0",
     "eslint-config-prettier": "^10.1.8",

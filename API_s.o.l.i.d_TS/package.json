@@ -1,5 +1,5 @@
 {
-    "name": "ApiSolid",
+    "name": "api-solid-ts",
     "version": "1.0.0",
     "main": "index.js",
     "license": "MIT",

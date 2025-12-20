@@ -1,5 +1,5 @@
 {
-  "name": "refactor-node",
+  "name": "nodejs-solid",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -14,9 +14,6 @@
     "start": "yarn build && nodemon dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "dotenv": "^17.0.0",

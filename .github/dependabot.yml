@@ -70,3 +70,7 @@ updates:
     schedule:
       interval: "weekly"
  
+  - package-ecosystem: "npm" # For Hono-Postgres
+    directory: "/Hono-Postgres"
+    schedule:
+      interval: "weekly"

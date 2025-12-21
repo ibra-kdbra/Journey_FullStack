@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "@nuxtjs/supabase": "^2.0.1",
-    "@nuxt/eslint": "^1.10.0",
+    "@nuxt/eslint": "^1.11.0",
     "@nuxtjs/tailwindcss": "^6.14.0",
     "nuxt": "^4.2.1",
     "vue": "^3.5.24",
@@ -32,7 +32,7 @@
     "@vitest/ui": "^3.0.5",
     "@vue/test-utils": "^2.4.6",
     "happy-dom": "^17.6.3",
-    "playwright-core": "^1.56.1",
+    "playwright-core": "^1.57.0",
     "vitest": "^3.0.5"
   }
 }

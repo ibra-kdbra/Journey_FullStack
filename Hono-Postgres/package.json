@@ -33,7 +33,7 @@
     "@types/bun": "latest",
     "@types/es6-shim": "^0.31.46",
     "@types/jest": "^30.0.0",
-    "@types/node": "^24.9.1",
+    "@types/node": "^25.0.3",
     "@types/winston": "^2.4.4",
     "drizzle-kit": "^0.31.5",
     "husky": "^9.1.7",

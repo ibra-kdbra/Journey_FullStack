@@ -142,8 +142,8 @@ importers:
         specifier: ^3.4.0
         version: 3.4.0(prettier@3.6.2)(svelte@5.41.1)
       prettier-plugin-tailwindcss:
-        specifier: ^0.7.1
-        version: 0.7.1(prettier-plugin-svelte@3.4.0(prettier@3.6.2)(svelte@5.41.1))(prettier@3.6.2)
+        specifier: ^0.7.2
+        version: 0.7.2(prettier-plugin-svelte@3.4.0(prettier@3.6.2)(svelte@5.41.1))(prettier@3.6.2)
       svelte:
         specifier: 5.41.1
         version: 5.41.1
@@ -1795,6 +1795,9 @@ packages:
 
   '@types/node@25.0.2':
     resolution: {integrity: sha512-gWEkeiyYE4vqjON/+Obqcoeffmk0NF15WSBwSs7zwVA2bAbTaE0SJ7P0WNGoJn8uE7fiaV5a7dKYIJriEqOrmA==}
+
+  '@types/node@25.0.3':
+    resolution: {integrity: sha512-W609buLVRVmeW693xKfzHeIV6nJGGz98uCPfeXI1ELMLXVeKYZ9m15fAMSaUPBHYLGFsVRcMmSCksQOrZV9BYA==}
 
   '@types/pg@8.11.10':
     resolution: {integrity: sha512-LczQUW4dbOQzsH2RQ5qoeJ6qJPdrcM/DcMLoqWQkMLMsq83J5lAX3LXjdkWdpscFy67JSOWDnh7Ny/sPFykmkg==}
@@ -3509,8 +3512,8 @@ packages:
     resolution: {integrity: sha512-nAUSGfSDGOaOAEGwqsRY27GPOea7CNipJPOA7lPbdEpx5Kg3qzdP0AaWC5MlhTWV9s4hFX39nomVZ+C4tnGOJQ==}
     engines: {node: '>=12'}
 
-  postgres-bytea@1.0.0:
-    resolution: {integrity: sha512-xy3pmLuQqRBZBXDULy7KbaitYqLcmxigw14Q5sj8QBVLqEwXfeybIKVWiqAXTlcvdvb0+xkOtDbfQMOf4lST1w==}
+  postgres-bytea@1.0.1:
+    resolution: {integrity: sha512-5+5HqXnsZPE65IJZSMkZtURARZelel2oXUEO8rH83VS/hxH5vv1uHquPg5wZs8yMAfdv971IU+kcPUczi7NVBQ==}
     engines: {node: '>=0.10.0'}
 
   postgres-bytea@3.0.0:
@@ -3546,8 +3549,8 @@ packages:
       prettier: ^3.0.0
       svelte: ^3.2.0 || ^4.0.0-next.0 || ^5.0.0-next.0
 
-  prettier-plugin-tailwindcss@0.7.1:
-    resolution: {integrity: sha512-Bzv1LZcuiR1Sk02iJTS1QzlFNp/o5l2p3xkopwOrbPmtMeh3fK9rVW5M3neBQzHq+kGKj/4LGQMTNcTH4NGPtQ==}
+  prettier-plugin-tailwindcss@0.7.2:
+    resolution: {integrity: sha512-LkphyK3Fw+q2HdMOoiEHWf93fNtYJwfamoKPl7UwtjFQdei/iIBoX11G6j706FzN3ymX9mPVi97qIY8328vdnA==}
     engines: {node: '>=20.19'}
     peerDependencies:
       '@ianvs/prettier-plugin-sort-imports': '*'
@@ -6161,9 +6164,14 @@ snapshots:
     dependencies:
       undici-types: 7.16.0
 
+  '@types/node@25.0.3':
+    dependencies:
+      undici-types: 7.16.0
+    optional: true
+
   '@types/pg@8.11.10':
     dependencies:
-      '@types/node': 25.0.2
+      '@types/node': 25.0.3
       pg-protocol: 1.10.3
       pg-types: 4.1.0
     optional: true
@@ -8036,7 +8044,7 @@ snapshots:
     dependencies:
       pg-int8: 1.0.1
       postgres-array: 2.0.0
-      postgres-bytea: 1.0.0
+      postgres-bytea: 1.0.1
       postgres-date: 1.0.7
       postgres-interval: 1.2.0
     optional: true
@@ -8118,7 +8126,7 @@ snapshots:
   postgres-array@3.0.4:
     optional: true
 
-  postgres-bytea@1.0.0:
+  postgres-bytea@1.0.1:
     optional: true
 
   postgres-bytea@3.0.0:
@@ -8150,7 +8158,7 @@ snapshots:
       prettier: 3.6.2
       svelte: 5.41.1
 
-  prettier-plugin-tailwindcss@0.7.1(prettier-plugin-svelte@3.4.0(prettier@3.6.2)(svelte@5.41.1))(prettier@3.6.2):
+  prettier-plugin-tailwindcss@0.7.2(prettier-plugin-svelte@3.4.0(prettier@3.6.2)(svelte@5.41.1))(prettier@3.6.2):
     dependencies:
       prettier: 3.6.2
     optionalDependencies:

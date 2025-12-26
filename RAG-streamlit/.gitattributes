@@ -1,0 +1,6 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+## Mark Jupyter notebooks as not detectable by linguist
+*.ipynb linguist-detectable=false
+# Exclude specific notebook from detection
+backend/test_notebook.ipynb linguist-detectable=false

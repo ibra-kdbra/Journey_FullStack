@@ -1,0 +1,43 @@
+[tool.poetry]
+name = "rag-backend"
+version = "0.1.0"
+description = "Backend API for RAG application"
+authors = ["Your Name <your.email@example.com>"]
+readme = "README.md"
+packages = [{include = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.109.2"
+uvicorn = "^0.27.1"
+pymilvus = "^2.3.6"
+pydantic = "^2.6.1"
+pydantic-settings = "^2.1.0"
+langchain = "^0.3.22"
+langchain-ollama = "^0.3.0" 
+langchain-community = "^0.3.20"
+python-multipart = "^0.0.20"
+sentence-transformers = "^2.5.1"
+langgraph = "^0.3.26"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+pytest-asyncio = "^0.23.5"
+pytest-cov = "^4.1.0"
+httpx = "^0.28.1"
+black = "^24.1.1"
+mypy = "^1.8.0"
+pylint = "^3.0.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 100
+target-version = ['py312']
+
+[tool.isort]
+profile = "black"
+line_length = 100
+multi_line_output = 3

@@ -1,4 +1,4 @@
-import pytest
+import pytest # type: ignore
 import os
 from pathlib import Path
 from unittest.mock import Mock, patch, MagicMock

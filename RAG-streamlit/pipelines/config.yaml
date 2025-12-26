@@ -1,0 +1,37 @@
+embedding_model: "all-MiniLM-L6-v2"
+keyword_model: "all-MiniLM-L6-v2"
+chunk_size: 500
+chunk_overlap: 100
+markdown_folder: "../docs"
+milvus:
+  host: "localhost"
+  port: "19530"
+collection: 
+  name: "knowledge_base"
+  schema:
+    fields:
+      - name: "id"
+        data_type: "INT64"
+        description: "Primary key"
+        is_primary: true
+        auto_id: true
+      - name: "embedding"
+        data_type: "FLOAT_VECTOR"
+        description: "Document embedding"
+        dim: 384  # Dimension for all-MiniLM-L6-v2
+      - name: "content"
+        data_type: "VARCHAR"
+        description: "Document content"
+        max_length: 65535
+      - name: "metadata"
+        data_type: "JSON"
+        description: "Document metadata"
+      - name: "keywords"
+        data_type: "ARRAY"
+        description: "Document keywords"
+        element_type: "VARCHAR"
+        max_capacity: 100
+        max_length: 65535
+      - name: "created_at"
+        data_type: "VARCHAR"
+        description: "Creation timestamp"

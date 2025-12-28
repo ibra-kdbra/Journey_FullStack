@@ -167,10 +167,10 @@ importers:
         version: 3.3.1
       tailwind-variants:
         specifier: ^3.2.2
-        version: 3.2.2(tailwind-merge@3.3.1)(tailwindcss@4.1.16)
+        version: 3.2.2(tailwind-merge@3.3.1)(tailwindcss@4.1.18)
       tailwindcss:
-        specifier: ^4.1.16
-        version: 4.1.16
+        specifier: ^4.1.18
+        version: 4.1.18
       tw-animate-css:
         specifier: ^1.4.0
         version: 1.4.0
@@ -3964,11 +3964,11 @@ packages:
       tailwind-merge:
         optional: true
 
-  tailwindcss@4.1.16:
-    resolution: {integrity: sha512-pONL5awpaQX4LN5eiv7moSiSPd/DLDzKVRJz8Q9PgzmAdd1R4307GQS2ZpfiN7ZmekdQrfhZZiSE5jkLR4WNaA==}
-
   tailwindcss@4.1.17:
     resolution: {integrity: sha512-j9Ee2YjuQqYT9bbRTfTZht9W/ytp5H+jJpZKiYdP/bpnXARAuELt9ofP0lPnmHjbga7SNQIxdTAXCmtKVYjN+Q==}
+
+  tailwindcss@4.1.18:
+    resolution: {integrity: sha512-4+Z+0yiYyEtUVCScyfHCxOYP06L5Ne+JiHhY2IjR2KWMIWhJOYZKLSGZaP5HkZ8+bY0cxfzwDE5uOmzFXyIwxw==}
 
   tapable@2.3.0:
     resolution: {integrity: sha512-g9ljZiwki/LfxmQADO3dEY1CbpmXT5Hm2fJ+QaGKwSXUylMybePR7/67YW7jOrrvjEgL1Fmz5kzyAjWVWLlucg==}
@@ -8537,15 +8537,15 @@ snapshots:
 
   tailwind-merge@3.3.1: {}
 
-  tailwind-variants@3.2.2(tailwind-merge@3.3.1)(tailwindcss@4.1.16):
+  tailwind-variants@3.2.2(tailwind-merge@3.3.1)(tailwindcss@4.1.18):
     dependencies:
-      tailwindcss: 4.1.16
+      tailwindcss: 4.1.18
     optionalDependencies:
       tailwind-merge: 3.3.1
 
-  tailwindcss@4.1.16: {}
-
   tailwindcss@4.1.17: {}
+
+  tailwindcss@4.1.18: {}
 
   tapable@2.3.0: {}
 

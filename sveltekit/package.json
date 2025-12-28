@@ -49,7 +49,7 @@
     "globals": "^16.4.0",
     "husky": "^9.1.7",
     "layerchart": "2.0.0-next.43",
-    "lint-staged": "^16.2.6",
+    "lint-staged": "^16.2.7",
     "mode-watcher": "^1.1.0",
     "paneforge": "1.0.2",
     "prettier": "^3.7.4",

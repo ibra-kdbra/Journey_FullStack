@@ -1,0 +1,29 @@
+tsconfig.tsbuildinfo
+/auth-schema.ts
+/node_modules
+next-env.d.ts
+.vercel
+.next
+.yarn
+.env
+package-lock.json
+/public/_pagefind
+target
+temp-search
+
+# Build outputs
+dist
+build
+
+# IDE
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.idea
+
+# OS
+.DS_Store
+*.swp
+*.swo

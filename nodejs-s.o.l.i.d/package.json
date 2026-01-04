@@ -22,7 +22,7 @@
     "joi": "^18.0.0",
     "mysql2": "^3.3.5",
     "nodemailer": "^7.0.2",
-    "pdfmake": "^0.2.7",
+    "pdfmake": "^0.3.0",
     "reflect-metadata": "^0.2.2",
     "sequelize": "^6.32.0",
     "sequelize-cli": "^6.6.1",

@@ -82,7 +82,7 @@
     "@oslojs/encoding": "^1.1.0",
     "@pilcrowjs/object-parser": "^0.0.4",
     "arctic": "^3.7.0",
-    "drizzle-orm": "^0.45.0",
+    "drizzle-orm": "^0.45.1",
     "mjml": "^4.15.3",
     "nanoid": "^5.1.6",
     "resend": "^6.5.2",

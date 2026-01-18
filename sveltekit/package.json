@@ -23,7 +23,7 @@
     "prepare": "husky"
   },
   "devDependencies": {
-    "@eslint/compat": "^2.0.0",
+    "@eslint/compat": "^2.0.1",
     "@eslint/js": "^9.37.0",
     "@faker-js/faker": "^10.1.0",
     "@lucide/svelte": "^0.562.0",

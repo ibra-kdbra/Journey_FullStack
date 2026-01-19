@@ -2,6 +2,19 @@
 
 A comprehensive repository showcasing my full-stack development journey, featuring production-ready starters, architectural patterns, and best practices across multiple frameworks and technologies. This collection demonstrates everything from solid software engineering principles to modern deployment strategies.
 
+## 📐 Architecture & SOLID Principles
+
+> **New!** Check out the comprehensive [ARCHITECTURE.md](ARCHITECTURE.md) guide for detailed patterns, code examples, and best practices used across all projects in this repository.
+
+**Key Features:**
+- 📚 **SOLID Principles** - Detailed explanations with code examples (S.R.P, O.C.P, L.S.P, I.S.P, D.I.P)
+- 🏗️ **Clean Architecture** - Layer separation patterns for all frameworks
+- 📁 **Folder Structure Standards** - Consistent organization across projects
+- 🔌 **Dependency Injection** - Patterns for React, Vue, Angular, and Node.js
+- 🧪 **Testing Patterns** - In-memory repository implementations
+
+---
+
 ## 🎯 Repository Overview
 
 Full-stack development is like having the Swiss Army knife of web development; it means you're equipped to handle both the **front-end (user interface)** and the **back-end (server, databases, logic)** of an application. This repository serves as both a personal learning archive and a practical resource for developers at different stages of their journey.

@@ -13,7 +13,9 @@ export class LocalStorageProductRepository implements IProductRepository {
     // Initialize ID counter based on existing products
     const products = this.getProductsFromStorage();
     if (products.length > 0) {
-      this.currentId = Math.max(...products.map(p => p.id || 0)) + 1;
+      // Filter out products without IDs before calculating max
+      const productIds = products.map(p => p.id).filter((id): id is number => id !== undefined);
+      this.currentId = productIds.length > 0 ? Math.max(...productIds) + 1 : 1;
     }
   }
 

@@ -3,6 +3,12 @@ import { IProductRepository } from './interfaces/IProductRepository';
 import { ProductRepository } from './repositories/ProductRepository';
 
 /**
+ * Default singleton instance of ProductRepository
+ * This ensures we don't create multiple instances unnecessarily
+ */
+const defaultProductRepository = new ProductRepository();
+
+/**
  * Services container interface
  * Add all repository interfaces here
  */
@@ -44,7 +50,7 @@ interface ServicesProviderProps {
  */
 export function ServicesProvider({ children, customServices }: ServicesProviderProps) {
   const services: Services = useMemo(() => ({
-    productRepository: customServices?.productRepository || new ProductRepository(),
+    productRepository: customServices?.productRepository || defaultProductRepository,
   }), [customServices]);
 
   return (

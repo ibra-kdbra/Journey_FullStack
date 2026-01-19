@@ -11,10 +11,12 @@ export class InMemoryProductRepository implements IProductRepository {
   constructor(initialProducts: Product[] = []) {
     this.products = initialProducts.map((p, index) => ({
       ...p,
-      id: p.id || index + 1,
+      id: p.id ?? index + 1,
     }));
     if (this.products.length > 0) {
-      this.currentId = Math.max(...this.products.map(p => p.id!)) + 1;
+      // All products now have IDs after the map operation
+      const productIds = this.products.map(p => p.id).filter((id): id is number => id !== undefined);
+      this.currentId = productIds.length > 0 ? Math.max(...productIds) + 1 : 1;
     }
   }
 

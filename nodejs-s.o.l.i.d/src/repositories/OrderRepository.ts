@@ -8,7 +8,13 @@ import { IOrderRepository } from './IOrderRepository';
  */
 export class OrderRepository implements IOrderRepository {
   async create(data: Omit<OrderAttributes, 'id' | 'createdAt' | 'updatedAt'>): Promise<OrderAttributes> {
-    const order = await Order.create(data as any);
+    // Sequelize's create method handles the type conversion internally
+    const order = await Order.create({
+      userId: data.userId,
+      product: data.product,
+      quantity: data.quantity,
+      price: data.price,
+    });
     return order.get({ plain: true });
   }
 

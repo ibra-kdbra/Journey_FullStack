@@ -1,0 +1,137 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+@layer base {
+
+  /* Light Theme - Clean, modern, warm */
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 224 71.4% 4.1%;
+
+    --muted: 220 14.3% 95.9%;
+    --muted-foreground: 220 8.9% 46.1%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 224 71.4% 4.1%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 224 71.4% 4.1%;
+
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+
+    --primary: 262 83.3% 57.8%;
+    --primary-foreground: 210 20% 98%;
+
+    --secondary: 220 14.3% 95.9%;
+    --secondary-foreground: 220.9 39.3% 11%;
+
+    --accent: 262 83.3% 57.8%;
+    --accent-foreground: 210 20% 98%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 20% 98%;
+
+    --ring: 262 83.3% 57.8%;
+
+    --radius: 0.75rem;
+  }
+
+  /* Dark Theme - Sleek, deep, vibrant accents */
+  .dark {
+    --background: 224 71.4% 4.1%;
+    --foreground: 210 20% 98%;
+
+    --muted: 215 27.9% 16.9%;
+    --muted-foreground: 217.9 10.6% 64.9%;
+
+    --popover: 224 71.4% 4.1%;
+    --popover-foreground: 210 20% 98%;
+
+    --card: 224 71.4% 4.1%;
+    --card-foreground: 210 20% 98%;
+
+    --border: 215 27.9% 16.9%;
+    --input: 215 27.9% 16.9%;
+
+    --primary: 263 70% 50.4%;
+    --primary-foreground: 210 20% 98%;
+
+    --secondary: 215 27.9% 16.9%;
+    --secondary-foreground: 210 20% 98%;
+
+    --accent: 263 70% 50.4%;
+    --accent-foreground: 210 20% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 20% 98%;
+
+    --ring: 263 70% 50.4%;
+
+    --radius: 0.75rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  /* Smooth theme transitions */
+  html {
+    scroll-behavior: smooth;
+  }
+
+  html:not(.disable-transitions),
+  html:not(.disable-transitions) * {
+    transition-property: background-color, border-color, color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+  }
+}
+
+/* Custom scrollbar for dark mode */
+@layer utilities {
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: hsl(var(--muted));
+    border-radius: 4px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.5);
+    border-radius: 4px;
+  }
+
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.7);
+  }
+}
+
+/* Hide confetti canvas background to prevent white flash */
+canvas[style*="pointer-events: none"] {
+  background: transparent !important;
+}
+
+/* Prevent white flash on page load */
+html {
+  background-color: hsl(224 71.4% 4.1%);
+}
+
+html.light,
+html:not(.dark) {
+  background-color: hsl(0 0% 100%);
+}
+
+html.dark {
+  background-color: hsl(224 71.4% 4.1%);
+}

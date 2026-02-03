@@ -4,6 +4,7 @@ import { useQuizConfig } from "@/store/useQuizConfig";
 import type { QuizStore } from "@/types";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { MusicToggle } from "@/components/MusicToggle";
 import { Github } from "lucide-react";
 
 export default function ClientLayout({
@@ -23,7 +24,8 @@ export default function ClientLayout({
       enableSystem
       disableTransitionOnChange
     >
-      <div className="absolute top-4 right-4 z-50">
+      <div className="absolute top-4 right-4 z-50 flex gap-2">
+        <MusicToggle />
         <ThemeToggle />
       </div>
       <a

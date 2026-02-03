@@ -8,6 +8,11 @@ import { motion } from "framer-motion";
 export function MusicToggle() {
   const [isPlaying, setIsPlaying] = useState(false);
 
+  useEffect(() => {
+    // Pre-initialize the API on mount
+    music.init();
+  }, []);
+
   const toggleMusic = () => {
     const newState = music.toggle();
     setIsPlaying(newState);

@@ -61,6 +61,10 @@ class MusicController {
   private isApiReady: boolean = false;
 
   constructor() {
+    // API loading will be triggered on first interaction or explicit init
+  }
+
+  public init() {
     this.loadApi();
   }
 
@@ -68,12 +72,20 @@ class MusicController {
     if (typeof window === "undefined") return;
     
     // Check if script already exists
-    if (!window.YT) {
-      const tag = document.createElement("script");
-      tag.src = "https://www.youtube.com/iframe_api";
-      const firstScriptTag = document.getElementsByTagName("script")[0];
-      firstScriptTag.parentNode?.insertBefore(tag, firstScriptTag);
+    if (window.YT) {
+      if (!this.isApiReady) {
+        this.isApiReady = true;
+        this.initPlayer();
+      }
+      return;
     }
+
+    if (document.querySelector('script[src="https://www.youtube.com/iframe_api"]')) return;
+
+    const tag = document.createElement("script");
+    tag.src = "https://www.youtube.com/iframe_api";
+    // Append to body instead of head to avoid interfering with React-managed tags in head
+    document.body.appendChild(tag);
 
     window.onYouTubeIframeAPIReady = () => {
       this.isApiReady = true;

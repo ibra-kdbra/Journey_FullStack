@@ -16,7 +16,7 @@
   "dependencies": {
     "pinia": "^3.0.1",
     "vue": "^3.2.45",
-    "vue-router": "^4.1.6"
+    "vue-router": "^5.0.1"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.1.4",
@@ -28,10 +28,10 @@
     "@vue/test-utils": "^2.2.6",
     "@vue/tsconfig": "^0.8.0",
     "cypress": "^15.0.0",
-    "eslint": "^9.17.0",
+    "eslint": "^10.0.0",
     "eslint-plugin-cypress": "^5.0.1",
     "eslint-plugin-vue": "^10.0.0",
-    "jsdom": "^27.0.0",
+    "jsdom": "^28.0.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^3.4.2",
     "start-server-and-test": "^2.0.9",

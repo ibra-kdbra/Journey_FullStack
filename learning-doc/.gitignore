@@ -24,3 +24,7 @@ logs
 !.env.example
 
 pnpm-lock.yaml
+
+# Custom Scripts and Logs
+changelog.md
+git-commit.sh

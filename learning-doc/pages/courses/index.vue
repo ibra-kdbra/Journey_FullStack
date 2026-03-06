@@ -198,7 +198,7 @@ const formatName = (name: string) =>
 
                         <!-- Lessons Horizontal Scroll -->
                         <div class="flex overflow-x-auto pb-10 -mx-4 px-4 snap-x snap-mandatory gap-6 hide-scrollbar">
-                            <NuxtLink v-for="(lesson, idx) in lessons" :key="lesson.path" :to="`/courses${lesson.path}`"
+                            <NuxtLink v-for="(lesson, idx) in lessons" :key="lesson.path" :to="lesson.path"
                                 class="group snap-center glass-card relative flex flex-col flex-none w-[300px] sm:w-[350px] !p-8 !rounded-[32px] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl border"
                                 :style="{ borderColor: `rgba(var(--color-border), 0.3)` }">
 

@@ -203,7 +203,7 @@ onMounted(() => {
                     Course Modules
                 </h3>
                 <div class="grid gap-4 sm:grid-cols-2">
-                    <NuxtLink v-for="(sibling, idx) in siblings" :key="sibling.path" :to="`/courses${sibling.path}`"
+                    <NuxtLink v-for="(sibling, idx) in siblings" :key="sibling.path" :to="sibling.path"
                         class="group glass-card p-5 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
                         :style="{ borderColor: `rgba(var(--color-border), 0.4)` }">
                         <div class="flex items-center justify-between mb-2">
@@ -229,7 +229,7 @@ onMounted(() => {
             <nav v-if="prevLesson || nextLesson" class="not-prose mt-16 pt-10 grid gap-4 items-stretch"
                 :class="prevLesson && nextLesson ? 'grid-cols-2' : 'grid-cols-1'"
                 :style="{ borderTop: `1px solid rgba(var(--color-border), 0.4)` }">
-                <NuxtLink v-if="prevLesson" :to="`/courses${prevLesson.path}`"
+                <NuxtLink v-if="prevLesson" :to="prevLesson.path"
                     class="group glass-card !p-5 flex items-center gap-3 !rounded-xl h-full"
                     :class="{ 'col-start-1': !nextLesson }">
                     <ChevronLeft :size="18"
@@ -246,7 +246,7 @@ onMounted(() => {
                     </div>
                 </NuxtLink>
                 <div v-else />
-                <NuxtLink v-if="nextLesson" :to="`/courses${nextLesson.path}`"
+                <NuxtLink v-if="nextLesson" :to="nextLesson.path"
                     class="group glass-card !p-5 flex items-center justify-end gap-3 text-right !rounded-xl h-full"
                     :class="{ 'col-start-2': !prevLesson }">
                     <div class="flex-grow">
@@ -266,7 +266,7 @@ onMounted(() => {
 
             <!-- Comments Section -->
             <section class="not-prose mt-16 pt-12" :style="{ borderTop: `1px solid rgba(var(--color-border), 0.4)` }">
-                <DocsComments :doc-path="page?._path || ''" />
+                <DocsComments :doc-path="page?.path || ''" />
             </section>
         </article>
     </div>

@@ -12,7 +12,7 @@
                 :style="{ background: `rgba(var(--color-accent-rose), 0.08)` }" />
         </div>
 
-        <DocsReadingProgressBar v-if="isDocsPage" />
+        <CourseReadingProgressBar v-if="isCoursesPage" />
         <CommonNavbar />
         <CommonSearchShortcut />
 

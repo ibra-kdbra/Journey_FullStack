@@ -266,7 +266,7 @@ onMounted(() => {
 
             <!-- Comments Section -->
             <section class="not-prose mt-16 pt-12" :style="{ borderTop: `1px solid rgba(var(--color-border), 0.4)` }">
-                <DocsComments :doc-path="page?.path || ''" />
+                <CourseComments :doc-path="page?.path || ''" />
             </section>
         </article>
     </div>

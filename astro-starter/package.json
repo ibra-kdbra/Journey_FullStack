@@ -10,7 +10,7 @@
     },
     "dependencies": {
         "@astrojs/check": "^0.9.4",
-        "@astrojs/react": "^4.2.0",
+        "@astrojs/react": "^5.0.0",
         "@astrojs/sitemap": "^3.2.1",
         "@astrojs/tailwind": "^6.0.0",
         "@hookform/resolvers": "^5.1.1",

@@ -8,29 +8,36 @@ interface Step {
 
 defineProps<{
     title: string;
-    description: string;
-    steps: Step[];
+    description?: string;
+    steps?: Step[];
+    color?: string;
 }>();
 </script>
 
 <template>
     <div class="py-16 md:py-24 overflow-hidden">
         <!-- Header -->
-        <div class="space-y-4 mb-20 text-center relative z-10" v-motion-fade-visible-once>
+        <div v-if="title || description" class="space-y-4 mb-20 text-center relative z-10" v-motion-fade-visible-once>
             <h3
-                class="text-4xl md:text-5xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400">
+                class="text-4xl md:text-5xl font-extrabold tracking-tight bg-clip-text text-transparent"
+                :class="!color ? 'bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400' : ''"
+                :style="{ backgroundImage: color ? `linear-gradient(to right, ${color}, ${color}CC)` : '' }">
                 {{ title }}
             </h3>
-            <p class="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
+            <p v-if="description" class="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
                 {{ description }}
             </p>
         </div>
 
         <!-- Flowchart Container -->
         <div class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Slot for arbitrary content if steps are missing -->
+            <div v-if="!steps || steps.length === 0" class="relative z-10 prose prose-slate dark:prose-invert max-w-none">
+                <slot />
+            </div>
 
             <!-- Central Line (Desktop) / Left Line (Mobile) -->
-            <div
+            <div v-else
                 class="absolute left-8 md:left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-blue-500/20 via-blue-500/50 to-blue-500/20 dark:from-blue-500/10 dark:via-blue-500/30 dark:to-blue-500/10 transform md:-translate-x-1/2 rounded-full">
             </div>
 

@@ -14,7 +14,25 @@ onMounted(() => {
 // Categories & Disciplines
 const disciplines = academyDisciplines;
 
-const selectedDiscipline = ref<string | null>(null);
+const route = useRoute();
+const router = useRouter();
+const selectedDiscipline = ref<string | null>(route.query.category as string || null);
+
+watch(selectedDiscipline, (newVal: string | null) => {
+    if (newVal) {
+        router.push({ query: { ...route.query, category: newVal } });
+    } else {
+        const query = { ...route.query };
+        delete query.category;
+        router.push({ query });
+    }
+});
+
+watch(() => route.query.category, (newVal: any) => {
+    if (selectedDiscipline.value !== newVal) {
+        selectedDiscipline.value = newVal as string || null;
+    }
+});
 
 // Fetch courses (all .md files in content/courses)
 const { data: rawCourses } = await useAsyncData("all-courses", () =>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ArrowLeft, ArrowRight, List, Clock, ChevronLeft, ChevronRight } from "lucide-vue-next";
+import { ArrowLeft, ArrowRight, List, Clock, ChevronLeft, ChevronRight, Lock } from "lucide-vue-next";
 
 const route = useRoute();
 const progressStore = useProgress();
@@ -197,33 +197,7 @@ onMounted(() => {
 
             <ContentRenderer v-else :value="page" />
 
-            <!-- Index view for lesson_0 -->
-            <div v-if="isIndexLesson" class="not-prose mt-12 mb-8 animate-fade-up">
-                <h3 class="text-2xl font-black mb-6" :style="{ color: `rgb(var(--color-text))` }">
-                    Course Modules
-                </h3>
-                <div class="grid gap-4 sm:grid-cols-2">
-                    <NuxtLink v-for="(sibling, idx) in siblings" :key="sibling.path" :to="sibling.path"
-                        class="group glass-card p-5 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-                        :style="{ borderColor: `rgba(var(--color-border), 0.4)` }">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-bold uppercase tracking-wider"
-                                :style="{ color: `rgb(var(--color-accent-blue))` }">
-                                Lesson {{ idx }}
-                            </span>
-                            <ArrowRight :size="14"
-                                class="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300"
-                                :style="{ color: `rgb(var(--color-accent-blue))` }" />
-                        </div>
-                        <h4 class="font-bold mb-1 leading-tight" :style="{ color: `rgb(var(--color-text))` }">
-                            {{ sibling.title }}
-                        </h4>
-                        <p class="text-sm line-clamp-2" :style="{ color: `rgb(var(--color-text-muted))` }">
-                            {{ sibling.description || 'Dive into this lesson module.' }}
-                        </p>
-                    </NuxtLink>
-                </div>
-            </div>
+
 
             <!-- Prev / Next Navigation -->
             <nav v-if="prevLesson || nextLesson" class="not-prose mt-16 pt-10 grid gap-4 items-stretch"

@@ -9,14 +9,20 @@ import {
     User as UserIcon,
     Sparkles,
     Shield,
+    Activity,
 } from "lucide-vue-next";
+import VitalityMetrics from "~/components/custom/VitalityMetrics.vue";
+import { useProgress } from "~/composables/useProgress";
 
 const auth = useAuth();
+const progress = useProgress();
 const loading = ref(true);
 
-onMounted(() => {
+onMounted(async () => {
     if (!auth.isLoggedIn) {
         navigateTo("/auth/sign-in");
+    } else {
+        await progress.fetchUserProgress();
     }
     loading.value = false;
 });
@@ -69,6 +75,9 @@ const formatDate = (dateStr: string) => {
                     </div>
                 </div>
             </div>
+
+            <!-- Vitality Metrics Section -->
+            <VitalityMetrics />
 
             <div class="grid md:grid-cols-2 gap-6">
                 <!-- Account Info Card -->

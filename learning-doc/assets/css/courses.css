@@ -412,13 +412,13 @@ body {
   font-style: italic;
 }
 
-/* Ensure pre>code inherits properly */
+/* Let Shiki control code token colors — do NOT override color here */
 .prose pre code {
   background: transparent !important;
   border: none !important;
   padding: 0 !important;
-  color: inherit !important;
   font-size: inherit !important;
+  /* color is intentionally omitted — Shiki injects per-token colors via style="" */
 }
 
 /* Ordered list numbered markers */

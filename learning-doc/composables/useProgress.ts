@@ -185,6 +185,14 @@ export const useProgress = defineStore("progress", () => {
         return progressMap.value[track]?.last_accessed || null;
     };
 
+    const getUserProgressForCourse = (track: string) => {
+        return progressMap.value[track]?.completed_lessons || [];
+    };
+
+    const getCompletedCountForCourse = (track: string) => {
+        return getUserProgressForCourse(track).length;
+    };
+
     const getCompletionPercentage = (track: string, totalLessons: number) => {
         if (!totalLessons) return 0;
         const completedCount = progressMap.value[track]?.completed_lessons.length || 0;
@@ -198,6 +206,8 @@ export const useProgress = defineStore("progress", () => {
         markLessonViewed,
         getLastAccessed,
         getCompletionPercentage,
+        getUserProgressForCourse,
+        getCompletedCountForCourse,
         updateVitality // Exposed for other activities like comments
     };
 });

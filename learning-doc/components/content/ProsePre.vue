@@ -31,26 +31,62 @@ const lineCount = computed(() => {
 });
 
 const langIcon: Record<string, string> = {
-  rust: 'i-simple-icons-rust',
-  kotlin: 'i-simple-icons-kotlin',
-  javascript: 'i-simple-icons-javascript',
-  js: 'i-simple-icons-javascript',
-  typescript: 'i-simple-icons-typescript',
-  ts: 'i-simple-icons-typescript',
-  jsx: 'i-simple-icons-react',
-  tsx: 'i-simple-icons-react',
-  python: 'i-simple-icons-python',
-  go: 'i-simple-icons-go',
-  bash: 'i-lucide-terminal',
-  sh: 'i-lucide-terminal',
-  toml: 'i-lucide-settings',
-  json: 'i-lucide-braces',
-  yaml: 'i-lucide-layers',
-  css: 'i-simple-icons-css3',
-  html: 'i-simple-icons-html5',
+  rust: 'simple-icons:rust',
+  kotlin: 'simple-icons:kotlin',
+  javascript: 'simple-icons:javascript',
+  js: 'simple-icons:javascript',
+  typescript: 'simple-icons:typescript',
+  ts: 'simple-icons:typescript',
+  jsx: 'simple-icons:react',
+  tsx: 'simple-icons:react',
+  python: 'simple-icons:python',
+  go: 'simple-icons:go',
+  bash: 'lucide:terminal',
+  sh: 'lucide:terminal',
+  toml: 'lucide:settings',
+  json: 'lucide:braces',
+  yaml: 'lucide:layers',
+  css: 'simple-icons:css3',
+  html: 'simple-icons:html5',
+  docker: 'simple-icons:docker',
+  dockerfile: 'simple-icons:docker',
+  redis: 'simple-icons:redis',
+  fastapi: 'simple-icons:fastapi',
+  sql: 'lucide:database',
+  postgresql: 'simple-icons:postgresql',
 };
 
-const icon = computed(() => langIcon[props.language?.toLowerCase() ?? ''] ?? 'i-lucide-code-2');
+const icon = computed(() => langIcon[props.language?.toLowerCase() ?? ''] ?? 'lucide:code-2');
+
+// Meta parsing for features like linting issues
+const parsedMeta = computed(() => {
+  if (!props.meta) return {};
+  const metaObj: Record<string, any> = {};
+  
+  // Basic regex to pull key="value" or key='value' pairs
+  const matches = props.meta.matchAll(/(\w+)=["']([^"']*)["']/g);
+  for (const match of matches) {
+    const [_, key, value] = match;
+    metaObj[key] = value;
+  }
+  return metaObj;
+});
+
+const issues = computed(() => {
+  const issuesStr = parsedMeta.value.issues;
+  if (!issuesStr) return [];
+  try {
+    // Attempt to parse as JSON if it looks like an array
+    if (issuesStr.startsWith('[')) {
+      return JSON.parse(issuesStr.replace(/'/g, '"'));
+    }
+  } catch (e) {
+    console.warn('Failed to parse issues from meta:', e);
+  }
+  return [];
+});
+
+const activeIssueCount = computed(() => issues.value.length);
 </script>
 
 <template>
@@ -59,23 +95,51 @@ const icon = computed(() => langIcon[props.language?.toLowerCase() ?? ''] ?? 'i-
     <div class="code-bar">
       <div class="code-bar-left">
         <Icon :name="icon" class="code-lang-icon" />
-        <span class="code-label">{{ filename ?? language ?? 'code' }}</span>
+        <span class="code-label">{{ filename ?? language ?? 'Source' }}</span>
       </div>
-      <button class="copy-btn" :class="{ success: copied }" @click="copyCode">
-        <Icon :name="copied ? 'i-lucide-check' : 'i-lucide-copy'" />
-        <span>{{ copied ? 'Copied!' : 'Copy' }}</span>
+      <button class="copy-btn group/copy" :class="{ success: copied }" @click="copyCode">
+        <Icon :name="copied ? 'lucide:check' : 'lucide:copy'" class="transition-transform duration-300 group-active/copy:scale-75" />
+        <span class="font-black uppercase tracking-widest text-[10px]">{{ copied ? 'Copied' : 'Copy' }}</span>
       </button>
     </div>
 
     <!-- Body: gutter + shiki output -->
-    <div class="code-body">
+    <div class="code-body relative">
       <!-- Line-number gutter -->
       <div class="line-gutter" aria-hidden="true">
-        <span v-for="n in lineCount" :key="n">{{ n }}</span>
+        <span v-for="n in lineCount" :key="n" :class="{ 'has-issue': issues.some((i: any) => i.line === n) }">
+          {{ n }}
+          <div v-if="issues.some((i: any) => i.line === n)" class="issue-dot" />
+        </span>
       </div>
+
       <!-- Shiki renders <pre><code>…</code></pre> here via the slot -->
       <div class="code-content">
         <slot />
+        
+        <!-- Premium Issue Overlay -->
+        <div v-if="activeIssueCount > 0" class="issue-markers-layer pointer-events-none">
+          <div v-for="(issue, idx) in issues" :key="idx" 
+            class="issue-marker group/issue pointer-events-auto"
+            :style="{ top: `calc(${(issue.line - 1) * 1.75}rem + 1.5rem)` }"
+            :class="issue.type ?? 'info'"
+          >
+            <div class="issue-tooltip">
+              <span class="font-black uppercase tracking-tighter text-[10px] opacity-50 block mb-1">Row {{ issue.line }}</span>
+              {{ issue.message }}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom Status Bar (Optional, for issues) -->
+    <div v-if="activeIssueCount > 0" class="code-footer">
+      <div class="flex items-center gap-3">
+        <div class="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+        <span class="text-[10px] font-black uppercase tracking-widest opacity-60">
+          {{ activeIssueCount }} Static Analysis {{ activeIssueCount === 1 ? 'Notice' : 'Notices' }} Found
+        </span>
       </div>
     </div>
   </div>
@@ -88,18 +152,20 @@ const icon = computed(() => langIcon[props.language?.toLowerCase() ?? ''] ?? 'i-
    ===================================================== */
 
 .code-block-wrap {
-  margin: 1.75rem 0;
-  border-radius: 0.875rem;
+  margin: 2.5rem 0;
+  border-radius: 1.5rem;
   overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.07);
-  background: #0d1117;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  border: 2px solid rgba(var(--color-border), 0.1);
+  background: #0a0c10;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 }
 
 .code-block-wrap:hover {
-  border-color: rgba(96, 165, 250, 0.25);
-  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(96, 165, 250, 0.08);
+  border-color: rgba(var(--color-accent-blue), 0.3);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(var(--color-accent-blue), 0.1);
+  transform: translateY(-2px);
 }
 
 /* ── Top bar ── */
@@ -107,50 +173,53 @@ const icon = computed(() => langIcon[props.language?.toLowerCase() ?? ''] ?? 'i-
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.5rem 1rem;
-  background: rgba(255, 255, 255, 0.03);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  padding: 0.75rem 1.25rem;
+  background: rgba(255, 255, 255, 0.02);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.04);
 }
 
 .code-bar-left {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
 }
 
 .code-lang-icon {
-  width: 0.9rem;
-  height: 0.9rem;
-  color: rgba(148, 163, 184, 0.7);
+  width: 1.1rem;
+  height: 1.1rem;
+  color: rgb(var(--color-accent-blue));
   flex-shrink: 0;
+  filter: drop-shadow(0 0 8px rgba(var(--color-accent-blue), 0.4));
 }
 
 .code-label {
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 0.72rem;
-  color: rgba(148, 163, 184, 0.55);
-  letter-spacing: 0.02em;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: rgba(255, 255, 255, 0.4);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
 }
 
 .copy-btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.25rem 0.6rem;
-  border-radius: 0.4rem;
-  font-size: 0.7rem;
-  font-weight: 500;
-  color: rgba(148, 163, 184, 0.6);
-  background: transparent;
-  border: 1px solid transparent;
+  gap: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 0.75rem;
+  font-family: var(--font-sans);
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: rgba(255, 255, 255, 0.5);
   cursor: pointer;
-  transition: all 0.15s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .copy-btn:hover {
-  color: #e2e8f0;
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.1);
+  color: white;
+  background: rgba(var(--color-accent-blue), 0.15);
+  border-color: rgba(var(--color-accent-blue), 0.3);
+  transform: scale(1.05);
 }
 
 .copy-btn.success {
@@ -168,16 +237,16 @@ const icon = computed(() => langIcon[props.language?.toLowerCase() ?? ''] ?? 'i-
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  padding: 1.25rem 0.75rem 1.25rem 1rem;
-  min-width: 2.75rem;
-  font-family: 'JetBrains Mono', ui-monospace, monospace;
-  font-size: 0.78rem;
-  line-height: 1.625rem;
-  color: rgba(148, 163, 184, 0.2);
+  padding: 1.5rem 1rem 1.5rem 1.25rem;
+  min-width: 3.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.75rem;
+  color: rgba(255, 255, 255, 0.1);
   user-select: none;
   flex-shrink: 0;
-  border-right: 1px solid rgba(255, 255, 255, 0.035);
-  background: rgba(0, 0, 0, 0.15);
+  border-right: 2px solid rgba(255, 255, 255, 0.03);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .line-gutter span {
@@ -197,16 +266,16 @@ const icon = computed(() => langIcon[props.language?.toLowerCase() ?? ''] ?? 'i-
  */
 .code-content pre {
   margin: 0 !important;
-  padding: 1.25rem 1.5rem !important;
+  padding: 1.5rem 2rem !important;
   background: transparent !important;
   border: none !important;
   border-radius: 0 !important;
   box-shadow: none !important;
-  font-family: 'JetBrains Mono', ui-monospace, monospace !important;
-  font-size: 0.825rem !important;
-  line-height: 1.625rem !important;
+  font-family: var(--font-mono) !important;
+  font-size: 0.85rem !important;
+  line-height: 1.75rem !important;
   tab-size: 2;
-  overflow: visible; /* parent handles scroll */
+  overflow: visible;
 }
 
 .code-content pre code {
@@ -221,6 +290,84 @@ const icon = computed(() => langIcon[props.language?.toLowerCase() ?? ''] ?? 'i-
 /* Shiki wraps each line in a <span class="line"> */
 .code-content pre code .line {
   display: block;
-  min-height: 1.625rem;
+  min-height: 1.75rem;
+}
+
+/* ── Issues Styling ── */
+.issue-markers-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+}
+
+.issue-marker {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1.75rem;
+  background: rgba(59, 130, 246, 0.05);
+  border-left: 3px solid rgb(59, 130, 246);
+  cursor: help;
+  transition: all 0.3s ease;
+}
+
+.issue-marker.warning {
+  border-left-color: rgb(245, 158, 11);
+  background: rgba(245, 158, 11, 0.05);
+}
+
+.issue-marker:hover {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.issue-tooltip {
+  position: absolute;
+  left: 3rem;
+  bottom: 100%;
+  width: 280px;
+  padding: 1rem;
+  background: #1a1b26;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.4;
+  color: white;
+  opacity: 0;
+  transform: translateY(10px) scale(0.95);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  pointer-events: none;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  z-index: 50;
+}
+
+.issue-marker:hover .issue-tooltip {
+  opacity: 1;
+  transform: translateY(-8px) scale(1);
+}
+
+.has-issue {
+  color: rgb(var(--color-accent-blue)) !important;
+  font-weight: 900 !important;
+  opacity: 1 !important;
+  position: relative;
+}
+
+.issue-dot {
+  position: absolute;
+  left: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 4px;
+  height: 4px;
+  border-radius: full;
+  background: rgb(var(--color-accent-blue));
+  box-shadow: 0 0 8px rgb(var(--color-accent-blue));
+}
+
+.code-footer {
+  padding: 0.6rem 1.25rem;
+  background: rgba(255, 255, 255, 0.01);
+  border-top: 2px solid rgba(255, 255, 255, 0.02);
 }
 </style>

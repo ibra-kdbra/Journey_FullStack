@@ -32,7 +32,6 @@ export const techIcons: Record<string, string> = {
 
 export const premiumTools = [
     "software-engineering",
-    "nodejs",
     "rust",
 ];
 

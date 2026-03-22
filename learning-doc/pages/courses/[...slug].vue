@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ArrowLeft, ArrowRight, List, Clock, ChevronLeft, ChevronRight, Lock } from "lucide-vue-next";
+import { premiumTools } from "../../utils/academy";
 
 const route = useRoute();
 const progressStore = useProgress();
@@ -7,6 +8,9 @@ const authStore = useAuth();
 const slug = route.params.slug;
 const path = Array.isArray(slug) ? slug.join("/") : slug;
 const contentPath = "/courses/" + path;
+
+const pathParts = contentPath.split("/");
+const toolName = pathParts[3];
 
 const { data: page } = await useAsyncData(`content-${path}`, () => {
     return queryCollection("content").path(contentPath).first();
@@ -27,10 +31,9 @@ const readingTime = computed(() => {
 
 // Prev / Next lesson navigation
 const { data: siblings } = await useAsyncData(`siblings-${path}`, async () => {
-    const pathParts = contentPath.split("/");
-    const parentPath = pathParts.slice(0, -1).join("/");
+    const pPath = pathParts.slice(0, -1).join("/");
     const docs = await queryCollection("content")
-        .where("path", "LIKE", parentPath + "/%")
+        .where("path", "LIKE", pPath + "/%")
         .all();
 
     return docs.sort((a: any, b: any) => {
@@ -52,17 +55,10 @@ const prevLesson = computed(() => {
     return siblings.value[currentIndex.value - 1];
 });
 
-const nextLesson = computed(() => {
-    if (!siblings.value || currentIndex.value < 0 || currentIndex.value >= siblings.value.length - 1) return null;
-    return siblings.value[currentIndex.value + 1];
-});
-
-const isIndexLesson = computed(() => page.value?.path?.endsWith("lesson_0"));
-
 const isPremiumLocked = computed(() => {
     if (!page.value?.path) return false;
-    const isSETtrack = page.value.path.includes("/courses/software-engineering");
-    if (!isSETtrack) return false;
+    const isPremiumTrack = premiumTools.includes(toolName);
+    if (!isPremiumTrack) return false;
 
     // Allow lesson_0 to be viewed by everyone (syllabus)
     if (page.value.path.endsWith("lesson_0")) return false;
@@ -70,6 +66,21 @@ const isPremiumLocked = computed(() => {
     // Check auth
     return !authStore.user?.is_premium;
 });
+
+const nextLesson = computed(() => {
+    if (!siblings.value || currentIndex.value < 0 || currentIndex.value >= siblings.value.length - 1) return null;
+    
+    // Harden: If current is Lesson 0 and track is premium and user is not premium, no Next button.
+    const isPremiumTrack = premiumTools.includes(toolName);
+    if (isPremiumTrack && !authStore.user?.is_premium && page.value?.path?.endsWith("lesson_0")) {
+        return null;
+    }
+
+    return siblings.value[currentIndex.value + 1];
+});
+
+const formatName = (name: string) =>
+    name.replace(/-/g, ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
 // Active TOC tracking
 const activeTocId = ref("");
@@ -174,9 +185,9 @@ onMounted(() => {
 
                         <p class="text-lg max-w-lg mx-auto leading-relaxed"
                             :style="{ color: `rgb(var(--color-text-soft))` }">
-                            The <span class="text-amber-500 font-bold">Software Engineering Masterclass</span> is
+                            The <span class="text-amber-500 font-bold">{{ formatName(toolName) }}</span> curriculum is
                             reserved for our Premium members.
-                            Upgrade your plan to unlock elite system design patterns and distributed architecture
+                            Upgrade your plan to unlock advanced engineering patterns and professional architecture
                             modules.
                         </p>
 

@@ -11,23 +11,30 @@ export const academyDisciplines = [
 ];
 
 export const techIcons: Record<string, string> = {
-    rust: "simple-icons:rust",
-    golang: "simple-icons:go",
+    rust: "logos:rust",
+    golang: "logos:go",
     dsa: "lucide:brain",
-    reactjs: "simple-icons:react",
-    kotlin: "simple-icons:kotlin",
+    reactjs: "logos:react",
+    kotlin: "logos:kotlin-icon",
     turkish: "circle-flags:tr",
     korean: "circle-flags:kr",
     "software-engineering": "lucide:layers",
-    nodejs: "simple-icons:node-dot-js",
-    nestjs: "simple-icons:nestjs",
-    docker: "simple-icons:docker",
-    redis: "simple-icons:redis",
-    fastapi: "simple-icons:fastapi",
-    gin: "simple-icons:go",
-    raspberry: "simple-icons:raspberrypi",
-    supabase: "simple-icons:supabase",
+    nodejs: "logos:nodejs-icon",
+    nestjs: "logos:nestjs",
+    docker: "logos:docker-icon",
+    redis: "logos:redis",
+    fastapi: "logos:fastapi-icon",
+    gin: "logos:go",
+    raspberry: "logos:raspberry-pi",
+    supabase: "logos:supabase-icon",
+    clang: "logos:c",
 };
+
+export const premiumTools = [
+    "software-engineering",
+    "nodejs",
+    "rust",
+];
 
 export const techColors: Record<string, string> = {
     rust: "234, 88, 12",

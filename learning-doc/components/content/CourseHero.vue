@@ -10,7 +10,7 @@ defineProps<{
 </script>
 
 <template>
-    <div class="relative py-24 px-6 md:px-12 rounded-[3rem] overflow-hidden mb-16 shadow-2xl transition-all hover:shadow-blue-500/10" v-motion-fade-visible-once>
+    <div class="relative py-24 px-6 md:px-12 rounded-[3rem] overflow-hidden mb-16 shadow-2xl transition-all duration-500 hover:shadow-blue-500/30 hover:-translate-y-1" v-motion-fade-visible-once>
         <!-- Background Orbs -->
         <div class="absolute -top-24 -right-24 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse"></div>
         <div class="absolute -bottom-24 -left-24 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl animate-pulse" style="animation-delay: 2s;"></div>
@@ -27,8 +27,8 @@ defineProps<{
                 </span>
             </div>
             
-            <h1 class="text-6xl md:text-8xl font-black tracking-tighter mb-8 leading-tight">
-                <span class="bg-clip-text text-transparent bg-gradient-to-r from-slate-950 via-blue-800 to-slate-900 dark:from-white dark:via-blue-300 dark:to-slate-400"
+            <h1 class="text-6xl md:text-8xl font-black tracking-tighter mb-8 leading-[1.1]">
+                <span class="bg-clip-text text-transparent inline-block pb-8 pt-2 bg-gradient-to-r from-slate-950 via-blue-800 to-slate-900 dark:from-white dark:via-blue-300 dark:to-slate-400"
                     :style="{ backgroundImage: accent ? `linear-gradient(to right, ${accent}, ${accent}CC)` : '' }">
                     {{ title }}
                 </span>

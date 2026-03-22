@@ -173,6 +173,13 @@ body {
   .text-balance {
     text-wrap: balance;
   }
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @layer components {
@@ -410,6 +417,22 @@ body {
 .prose em {
   color: rgb(var(--color-text-soft));
   font-style: italic;
+}
+
+/*
+ * CRITICAL: Tailwind Preflight resets <pre> { white-space: normal }
+ * which destroys code formatting. This global fix ensures all
+ * code blocks preserve whitespace and let Shiki handle colors.
+ */
+pre {
+  white-space: pre !important;
+  word-wrap: normal !important;
+  overflow-wrap: normal !important;
+}
+
+pre code {
+  white-space: pre !important;
+  word-wrap: normal !important;
 }
 
 /* Let Shiki control code token colors — do NOT override color here */

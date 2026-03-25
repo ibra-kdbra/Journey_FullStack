@@ -19,7 +19,7 @@ defineProps<{
         <!-- Header -->
         <div v-if="title || description" class="space-y-4 mb-20 text-center relative z-10" v-motion-fade-visible-once>
             <h3
-                class="text-4xl md:text-5xl font-extrabold tracking-tight bg-clip-text text-transparent"
+                class="text-4xl md:text-5xl font-extrabold tracking-tight bg-clip-text text-transparent inline-block pb-4 pt-2"
                 :class="!color ? 'bg-gradient-to-r from-blue-600 to-indigo-600 dark:from-blue-400 dark:to-indigo-400' : ''"
                 :style="{ backgroundImage: color ? `linear-gradient(to right, ${color}, ${color}CC)` : '' }">
                 {{ title }}

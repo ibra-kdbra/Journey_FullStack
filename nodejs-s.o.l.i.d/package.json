@@ -32,7 +32,7 @@
     "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.0",
     "@types/node": "^25.0.2",
-    "@types/nodemailer": "^7.0.0",
+    "@types/nodemailer": "^8.0.0",
     "@types/pdfmake": "^0.3.0",
     "nodemon": "^3.1.9",
     "rimraf": "^6.0.1",

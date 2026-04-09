@@ -27,7 +27,7 @@
     "winston": "^3.18.3"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.4.8",
+    "@biomejs/biome": "2.4.10",
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
     "@types/bun": "latest",
@@ -41,6 +41,6 @@
     "lint-staged": "^16.2.6",
     "ts-jest": "^29.4.5",
     "tsx": "^4.20.6",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.2"
   }
 }

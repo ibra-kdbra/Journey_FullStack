@@ -1,6 +1,8 @@
 <script setup lang="ts">
+import { ref, computed, onMounted, watch } from 'vue';
+import { useRoute, useRouter } from 'vue-router';
 import { BookOpen, ArrowRight, Layers, Search, Filter, ChevronLeft, Globe, Monitor, Server, Database, Cpu, PencilRuler, Smartphone } from "lucide-vue-next";
-import { academyDisciplines, techIcons, techColors } from "../../utils/academy";
+import { academyDisciplines, techIcons, techColors, premiumTools } from "../../utils/academy";
 
 const authStore = useAuth();
 const progressStore = useProgress();
@@ -14,7 +16,25 @@ onMounted(() => {
 // Categories & Disciplines
 const disciplines = academyDisciplines;
 
-const selectedDiscipline = ref<string | null>(null);
+const route = useRoute();
+const router = useRouter();
+const selectedDiscipline = ref<string | null>(route.query.category as string || null);
+
+watch(selectedDiscipline, (newVal: string | null) => {
+    if (newVal) {
+        router.push({ query: { ...route.query, category: newVal } });
+    } else {
+        const query = { ...route.query };
+        delete query.category;
+        router.push({ query });
+    }
+});
+
+watch(() => route.query.category, (newVal: any) => {
+    if (selectedDiscipline.value !== newVal) {
+        selectedDiscipline.value = newVal as string || null;
+    }
+});
 
 // Fetch courses (all .md files in content/courses)
 const { data: rawCourses } = await useAsyncData("all-courses", () =>
@@ -122,50 +142,58 @@ const formatName = (name: string) =>
             <transition name="list" mode="out-in">
                 <!-- Discipline Grid -->
                 <div v-if="!selectedDiscipline" key="discipline-grid"
-                    class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 animate-fade-up">
+                    class="grid md:grid-cols-2 lg:grid-cols-3 gap-10 animate-fade-up">
                     <button v-for="d in disciplines" :key="d.id" @click="selectedDiscipline = d.id"
-                        class="group text-left glass-card !p-8 !rounded-[40px] border transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_50px_rgba(0,0,0,0.1)] relative overflow-hidden"
-                        :style="{ borderColor: `rgba(var(--color-border), 0.3)` }">
+                        class="group text-left glass-card !p-10 !rounded-[48px] border-2 transition-all duration-700 hover:-translate-y-3 relative overflow-hidden"
+                        :style="{ 
+                            borderColor: `rgba(var(--color-border), 0.2)`,
+                            '--hover-glow': `rgba(${d.color}, 0.15)` 
+                        }"
+                        :class="'hover:shadow-[0_15px_45px_-5px_var(--hover-glow)]'">
 
-                        <!-- Hover Highlight -->
-                        <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10"
-                            :style="{ background: `radial-gradient(circle at top right, rgba(${d.color}, 0.08), transparent)` }" />
+                        <!-- Premium Highlight Effect -->
+                        <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 -z-10"
+                            :style="{ background: `radial-gradient(120% 120% at 0% 0%, rgba(${d.color}, 0.12) 0%, transparent 50%)` }" />
+                        
+                        <div class="absolute -bottom-20 -right-20 w-64 h-64 blur-[100px] opacity-0 group-hover:opacity-20 transition-opacity duration-1000 -z-10"
+                            :style="{ background: `rgb(${d.color})` }" />
 
-                        <div class="flex items-start justify-between mb-8">
-                            <div class="w-14 h-14 rounded-2xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:rotate-3 shadow-lg"
+                        <div class="flex items-start justify-between mb-10">
+                            <div class="w-16 h-16 rounded-3xl flex items-center justify-center transition-all duration-700 group-hover:scale-110 group-hover:rotate-6 shadow-2xl relative"
                                 :style="{
-                                    background: `rgba(${d.color}, 0.1)`,
-                                    border: `1px solid rgba(${d.color}, 0.2)`,
+                                    background: `rgba(${d.color}, 0.15)`,
+                                    border: `2px solid rgba(${d.color}, 0.3)`,
                                     color: `rgb(${d.color})`
                                 }">
-                                <component :is="d.icon" :size="28" />
+                                <component :is="d.icon" :size="32" />
                             </div>
                             <div
-                                class="flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-all duration-300 translate-x-4 group-hover:translate-x-0">
-                                <span class="text-xs font-black uppercase tracking-widest"
-                                    :style="{ color: `rgb(${d.color})` }">Explore</span>
-                                <ArrowRight :size="14" :style="{ color: `rgb(${d.color})` }" />
+                                class="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-4 group-hover:translate-x-0">
+                                <span class="text-xs font-black uppercase tracking-[0.2em]"
+                                    :style="{ color: `rgb(${d.color})` }">Go Deep</span>
+                                <ArrowRight :size="16" :style="{ color: `rgb(${d.color})` }" />
                             </div>
                         </div>
 
-                        <h3 class="text-2xl font-black mb-3 leading-tight" :style="{ color: `rgb(var(--color-text))` }">
+                        <h3 class="text-3xl font-black mb-4 tracking-tighter leading-none" :style="{ color: `rgb(var(--color-text))` }">
                             {{ d.name }}
                         </h3>
-                        <p class="text-sm leading-relaxed" :style="{ color: `rgb(var(--color-text-soft))` }">
+                        <p class="text-base font-medium leading-relaxed opacity-70 mb-8" :style="{ color: `rgb(var(--color-text-soft))` }">
                             {{ d.desc }}
                         </p>
 
-                        <div class="mt-8 pt-6 flex items-center gap-3"
-                            :style="{ borderTop: `1px solid rgba(var(--color-border), 0.3)` }">
-                            <div class="flex gap-2">
-                                <div v-for="tool in Object.keys(academyData[d.id] || {}).slice(0, 3)" :key="tool"
-                                    class="w-7 h-7 rounded-lg bg-surface border-2 flex items-center justify-center p-1"
-                                    :style="{ borderColor: `rgb(var(--color-background))` }">
-                                    <Icon :name="techIcons[tool] || 'lucide:code-2'" class="w-full h-full opacity-70" />
+                        <div class="pt-8 flex items-center justify-between border-t-2"
+                            :style="{ borderColor: `rgba(var(--color-border), 0.1)` }">
+                            <!-- Tool Scroller (Invisible) -->
+                            <div class="flex items-center gap-2 overflow-x-auto hide-scrollbar -mx-2 px-2 py-1 flex-1">
+                                <div v-for="tool in Object.keys(academyData[d.id] || {})" :key="tool"
+                                    class="w-8 h-8 sm:w-9 sm:h-9 rounded-xl glass-card border flex-shrink-0 flex items-center justify-center p-1.5 transition-transform duration-500 hover:z-10 hover:-translate-y-1"
+                                    :style="{ borderColor: `rgba(var(--color-border), 0.1)` }">
+                                    <Icon :name="techIcons[tool] || 'lucide:code-2'" class="w-full h-full opacity-80" />
                                 </div>
                             </div>
-                            <span class="text-xs font-bold" :style="{ color: `rgb(var(--color-text-muted))` }">
-                                {{ Object.keys(academyData[d.id] || {}).length }} Specialized Tracks
+                            <span class="text-xs font-black uppercase tracking-widest opacity-60" :style="{ color: `rgb(var(--color-text))` }">
+                                {{ Object.keys(academyData[d.id] || {}).length }} Tracks
                             </span>
                         </div>
                     </button>
@@ -197,51 +225,53 @@ const formatName = (name: string) =>
                         </div>
 
                         <!-- Lessons Horizontal Scroll -->
-                        <div class="flex overflow-x-auto pb-10 -mx-4 px-4 snap-x snap-mandatory gap-6 hide-scrollbar">
-                            <NuxtLink v-for="(lesson, idx) in lessons" :key="lesson.path" :to="lesson.path"
-                                class="group snap-center glass-card relative flex flex-col flex-none w-[300px] sm:w-[350px] !p-8 !rounded-[32px] transition-all duration-500 hover:-translate-y-2 hover:shadow-2xl border"
-                                :style="{ borderColor: `rgba(var(--color-border), 0.3)` }">
+                        <div class="flex overflow-x-auto pb-12 -mx-4 px-4 snap-x snap-mandatory gap-8 hide-scrollbar">
+                            <NuxtLink v-for="(lesson, idx) in (premiumTools.includes(tool) && !authStore.user?.is_premium ? lessons.slice(0, 1) : lessons)" :key="lesson.path" :to="lesson.path"
+                                class="group snap-center glass-card relative flex flex-col flex-none w-[320px] sm:w-[380px] !p-10 !rounded-[40px] transition-all duration-700 hover:-translate-y-3 hover:shadow-[0_30px_60px_rgba(0,0,0,0.15)] border-2"
+                                :style="{ borderColor: `rgba(var(--color-border), 0.2)` }">
 
-                                <div class="flex items-center justify-between mb-8">
-                                    <span class="text-xs font-black uppercase tracking-widest px-3 py-1 rounded-full"
-                                        :style="{
-                                            background: `rgba(${techColors[tool] || '59, 130, 246'}, 0.08)`,
-                                            color: `rgb(${techColors[tool] || '59, 130, 246'})`
-                                        }">
-                                        Module {{ lesson.lessonNum }}
-                                    </span>
-                                    <div v-if="tool === 'software-engineering' && lesson.lessonNum > 0"
-                                        class="text-[10px] bg-amber-500 text-black px-2 py-0.5 rounded-full font-black uppercase tracking-tighter">
-                                        Premium
+                                <div class="flex items-center justify-between mb-10">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-2 h-2 rounded-full animate-pulse" :style="{ background: `rgb(${techColors[tool] || '59, 130, 246'})` }" />
+                                        <span class="text-xs font-black uppercase tracking-[0.2em] opacity-60">
+                                            Module {{ lesson.lessonNum }}
+                                        </span>
+                                    </div>
+                                    <div v-if="premiumTools.includes(tool)"
+                                        class="text-[10px] bg-gradient-to-br from-amber-400 to-orange-500 text-black px-3 py-1 rounded-full font-black uppercase tracking-widest shadow-lg">
+                                        Premium Track
                                     </div>
                                 </div>
 
-                                <h4 class="text-xl font-black mb-4 leading-tight group-hover:text-transparent group-hover:bg-clip-text transition-all duration-300"
+                                <h4 class="text-2xl font-black mb-6 leading-[1.1] transition-all duration-500 group-hover:tracking-tight"
                                     :style="{
-                                        color: `rgb(var(--color-text))`,
-                                        backgroundImage: `linear-gradient(to right, rgb(${techColors[tool] || '59, 130, 246'}), rgb(var(--color-text-soft)))`
+                                        color: `rgb(var(--color-text))`
                                     }">
                                     {{ lesson.title }}
                                 </h4>
 
-                                <p class="text-sm leading-relaxed line-clamp-3 mb-8"
+                                <p class="text-base font-medium leading-relaxed opacity-60 line-clamp-3 mb-10"
                                     :style="{ color: `rgb(var(--color-text-soft))` }">
-                                    {{ lesson.description || `Deep dive into advanced implementation patterns and
-                                    technical architecture.` }}
+                                    {{ lesson.description || `Master professional architectural patterns and real-world engineering modules.` }}
                                 </p>
 
-                                <div class="mt-auto flex items-center justify-between pt-6 border-t"
-                                    :style="{ borderColor: `rgba(var(--color-border), 0.2)` }">
-                                    <span class="text-sm font-bold"
-                                        :style="{ color: `rgb(var(--color-text-muted))` }">Start Training</span>
-                                    <div class="w-10 h-10 rounded-full flex items-center justify-center transition-all duration-300 group-hover:translate-x-1"
+                                <div class="mt-auto flex items-center justify-between pt-8 border-t-2"
+                                    :style="{ borderColor: `rgba(var(--color-border), 0.1)` }">
+                                    <span class="text-sm font-black uppercase tracking-widest transition-all duration-500 group-hover:translate-x-1"
+                                        :style="{ color: `rgb(${techColors[tool] || '59, 130, 246'})` }">
+                                        Begin Training
+                                    </span>
+                                    <div class="w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-500 group-hover:scale-110 group-hover:rotate-12 shadow-inner"
                                         :style="{
                                             background: `rgba(${techColors[tool] || '59, 130, 246'}, 0.1)`,
                                             color: `rgb(${techColors[tool] || '59, 130, 246'})`
                                         }">
-                                        <ArrowRight :size="18" />
+                                        <ArrowRight :size="20" />
                                     </div>
                                 </div>
+
+                                <!-- Ambient Background Element -->
+                                <div class="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
                             </NuxtLink>
                         </div>
                     </div>

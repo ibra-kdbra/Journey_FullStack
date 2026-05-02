@@ -11,8 +11,7 @@ const handleError = () => clearError({ redirect: '/' })
 <template>
     <div class="error-container">
         <div class="bear-link-wrapper">
-            <a class="bear-link" href="https://codeberg.org/ibra-kdbra/Live_Wallpapers" target="_blank"
-                rel="noreferrer noopener">
+            <a class="bear-link" href="https://github.com/ibra-kdbra" target="_blank" rel="noreferrer noopener">
                 <svg class="w-9" viewBox="0 0 969 955" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <circle cx="161.191" cy="320.191" r="133.191" stroke="currentColor" stroke-width="20"></circle>
                     <circle cx="806.809" cy="320.191" r="133.191" stroke="currentColor" stroke-width="20"></circle>

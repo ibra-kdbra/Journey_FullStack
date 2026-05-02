@@ -14,96 +14,98 @@ import {
     Zap,
     Code2,
     Layers,
+    Cpu,
+    Monitor,
 } from "lucide-vue-next";
 import { ref } from "vue";
 
 const technologies = [
     {
-        name: "Rust",
-        iconName: "simple-icons:rust",
-        href: "/courses/systems/rust/lesson_0",
-        icon: Braces,
+        name: "Low-Level",
+        iconName: "lucide:cpu",
+        href: "/courses?category=systems",
+        icon: Cpu,
         bg: "rgba(234, 88, 12, 0.9)",
         glow: "rgba(234, 88, 12, 0.25)",
-        description: "Systems programming with memory safety",
+        description: "Systems programming and memory safety",
     },
     {
-        name: "Go",
-        iconName: "simple-icons:go",
-        href: "/courses/backend/golang/lesson_0",
+        name: "Backend",
+        iconName: "lucide:server",
+        href: "/courses?category=backend",
         icon: Server,
         bg: "rgba(6, 182, 212, 0.9)",
         glow: "rgba(6, 182, 212, 0.25)",
-        description: "Simple, fast, and reliable backend development",
+        description: "High-level distributed systems and APIs",
     },
     {
-        name: "DSA",
-        iconName: "lucide:brain",
-        href: "/courses/general/dsa/lesson_0",
+        name: "Engineering",
+        iconName: "lucide:binary",
+        href: "/courses?category=general",
         icon: Binary,
         bg: "rgba(147, 51, 234, 0.9)",
         glow: "rgba(147, 51, 234, 0.25)",
-        description: "Computer science fundamentals",
+        description: "Algorithm mastery and core principles",
     },
     {
-        name: "ReactJS",
-        iconName: "simple-icons:react",
-        href: "/courses/frontend/reactjs/lesson_0",
-        icon: Layers,
+        name: "Frontend",
+        iconName: "lucide:monitor",
+        href: "/courses?category=frontend",
+        icon: Monitor,
         bg: "rgba(34, 211, 238, 0.9)",
         glow: "rgba(34, 211, 238, 0.25)",
-        description: "Build dynamic, reactive user interfaces",
+        description: "Modern web architecture and UI patterns",
     },
     {
-        name: "Kotlin",
-        iconName: "simple-icons:kotlin",
-        href: "/courses/mobile/kotlin/lesson_0",
+        name: "Mobile",
+        iconName: "lucide:smartphone",
+        href: "/courses?category=mobile",
         icon: Smartphone,
         bg: "rgba(168, 85, 247, 0.9)",
         glow: "rgba(168, 85, 247, 0.25)",
-        description: "Concise, safe, and interoperable programming",
+        description: "Native ecosystems and mobile systems",
     },
 ];
 
 const learningPaths = [
     {
-        title: "Systems Architecture",
+        title: "Systems Engineer",
         description:
-            "Design robust, safe system software with Rust. Perfect for performance-critical infrastructure.",
-        iconName: "simple-icons:rust",
-        link: "/courses/systems/rust/lesson_0",
+            "Master memory management, concurrency, and low-level optimizations. Build the foundation of software.",
+        iconName: "lucide:cpu",
+        link: "/courses?category=systems",
         color: "234, 88, 12",
     },
     {
-        title: "Distributed Backend",
+        title: "Backend Architect",
         description:
-            "Architect scalable backends and cloud services with Go's simplicity and high concurrency.",
-        iconName: "simple-icons:go",
-        link: "/courses/backend/golang/lesson_0",
+            "Design highly scalable distributed systems, microservices, and high-performance communication layers.",
+        iconName: "lucide:server",
+        link: "/courses?category=backend",
         color: "6, 182, 212",
     },
     {
-        title: "Core Engineering",
+        title: "Software Architect",
         description:
-            "Master software engineering principles, technical patterns, and algorithmic thinking.",
+            "Master design patterns, SOLID principles, and clean architecture to build maintainable enterprise systems.",
         iconName: "lucide:layers",
-        link: "/courses/general/software-engineering/lesson_0",
+        link: "/courses?category=general",
         color: "251, 191, 36",
     },
     {
-        title: "Frontend Architecture",
+        title: "Frontend Engineer",
         description:
-            "Scale large-scale React applications with modern design systems and state management.",
-        iconName: "simple-icons:react",
-        link: "/courses/frontend/reactjs/lesson_0",
+            "Build sophisticated web applications with focus on performance, accessibility, and modern UI patterns.",
+        iconName: "lucide:monitor",
+        link: "/courses?category=frontend",
         color: "34, 211, 238",
     },
     {
-        title: "Native Systems",
+        title: "Mobile Architect",
         description:
-            "Develop safe, performance-oriented mobile and cross-platform systems with Kotlin.",
-        iconName: "simple-icons:kotlin",
-        link: "/courses/backend/kotlin/lesson_0",
+            "Create high-performance native experiences and master cross-platform architectural ecosystems.",
+        iconName: "lucide:smartphone",
+        link: "/courses?category=mobile",
         color: "168, 85, 247",
     },
 ];
@@ -141,14 +143,18 @@ const tips = [
     },
 ];
 
-const activeTab = ref("rust");
-
-const tabMap: Record<string, { label: string, icon: string }> = {
-    rust: { label: "Rust", icon: "simple-icons:rust" },
-    golang: { label: "Go", icon: "simple-icons:go" },
-    reactjs: { label: "ReactJS", icon: "simple-icons:react" },
-    kotlin: { label: "Kotlin", icon: "simple-icons:kotlin" },
+// You can dynamically add tools here! 
+const tabMap: Record<string, { label: string, icon: string, link: string }> = {
+    rust: { label: "Rust", icon: "simple-icons:rust", link: "/courses/systems/rust/lesson_0" },
+    golang: { label: "Go", icon: "simple-icons:go", link: "/courses/backend/golang/lesson_0" },
+    reactjs: { label: "ReactJS", icon: "simple-icons:react", link: "/courses/frontend/reactjs/lesson_0" },
+    kotlin: { label: "Kotlin", icon: "simple-icons:kotlin", link: "/courses/mobile/kotlin/lesson_0" },
+    nodejs: { label: "Node.js", icon: "simple-icons:nodedotjs", link: "/courses/backend/nodejs/lesson_0" },
+    docker: { label: "Docker", icon: "simple-icons:docker", link: "/courses/systems/docker/lesson_0" },
 };
+// Use Object.keys(tabMap) instead of a hardcoded array so it's dynamic
+const ecosystemTools = Object.keys(tabMap).slice(0, 4); // Take top four tools for rendering
+const activeTab = ref(ecosystemTools[0]);
 </script>
 
 <template>
@@ -171,15 +177,15 @@ const tabMap: Record<string, { label: string, icon: string }> = {
                     </div>
 
                     <h1 class="mb-6 text-5xl md:text-7xl font-black tracking-tight leading-[1.05]">
-                        <span :style="{ color: `rgb(var(--color-text))` }">Master Modern</span>
+                        <span :style="{ color: `rgb(var(--color-text))` }">Master Engineering</span>
                         <br />
-                        <span class="gradient-text">Development</span>
+                        <span class="gradient-text">Paradigms</span>
                     </h1>
 
                     <p class="mb-12 text-lg md:text-xl leading-relaxed max-w-2xl"
                         :style="{ color: `rgb(var(--color-text-soft))` }">
-                        Focus on five powerful technologies that will define the future of
-                        software engineering. High-performance, memory-safe, and scalable.
+                        Master the core disciplines of software engineering. From low-level memory safety
+                        to distributed backend architectures and sophisticated frontend systems.
                     </p>
 
                     <div class="flex flex-wrap gap-3">
@@ -266,20 +272,24 @@ const tabMap: Record<string, { label: string, icon: string }> = {
                             recommendations to stay on track.
                         </p>
 
-                        <div class="space-y-3">
+                        <div class="grid sm:grid-cols-2 gap-4">
                             <div v-for="(tip, index) in tips" :key="index"
-                                class="glass-card flex gap-4 !p-5 animate-fade-up" :class="`delay-${index + 1}`">
-                                <div class="flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center" :style="{
-                                    background: `rgba(var(--color-accent-emerald), 0.1)`,
-                                    color: `rgb(var(--color-accent-emerald))`
-                                }">
-                                    <component :is="tip.icon" :size="20" />
+                                class="group glass-card flex flex-col gap-4 !p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl animate-fade-up"
+                                :class="`delay-${index + 1}`"
+                                :style="{ borderColor: `rgba(var(--color-accent-emerald), 0.15)` }">
+                                <div class="w-12 h-12 rounded-2xl flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:rotate-3"
+                                    :style="{
+                                        background: `rgba(var(--color-accent-emerald), 0.1)`,
+                                        color: `rgb(var(--color-accent-emerald))`
+                                    }">
+                                    <component :is="tip.icon" :size="24" />
                                 </div>
-                                <div class="space-y-1 min-w-0">
-                                    <h4 class="font-bold text-sm" :style="{ color: `rgb(var(--color-text))` }">
+                                <div class="space-y-2">
+                                    <h4 class="font-black text-base tracking-tight"
+                                        :style="{ color: `rgb(var(--color-text))` }">
                                         {{ tip.title }}
                                     </h4>
-                                    <p class="text-sm leading-relaxed"
+                                    <p class="text-sm leading-relaxed opacity-80"
                                         :style="{ color: `rgb(var(--color-text-soft))` }">
                                         {{ tip.description }}
                                     </p>
@@ -317,7 +327,7 @@ const tabMap: Record<string, { label: string, icon: string }> = {
                 </div>
 
                 <div class="flex flex-wrap justify-center gap-2 mb-12">
-                    <button v-for="t in ['rust', 'golang', 'reactjs', 'kotlin']" :key="t" @click="activeTab = t"
+                    <button v-for="t in ecosystemTools" :key="t" @click="activeTab = t"
                         class="px-6 py-2.5 rounded-full text-sm font-bold transition-all duration-300 flex items-center gap-2"
                         :style="activeTab === t
                             ? {
@@ -346,7 +356,7 @@ const tabMap: Record<string, { label: string, icon: string }> = {
                             Master ownership, concurrency, and memory safety in
                             {{ tabMap[activeTab]?.label || activeTab }}.
                         </p>
-                        <NuxtLink :to="`/courses/courses/${activeTab}/lesson_0`"
+                        <NuxtLink :to="tabMap[activeTab]?.link"
                             class="inline-flex items-center gap-1.5 text-sm font-bold transition-all duration-200"
                             :style="{ color: `rgb(var(--color-accent-blue))` }">
                             Learn more

@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ArrowLeft, ArrowRight, List, Clock, ChevronLeft, ChevronRight } from "lucide-vue-next";
+import { ArrowLeft, ArrowRight, List, Clock, ChevronLeft, ChevronRight, Lock } from "lucide-vue-next";
+import { premiumTools } from "../../utils/academy";
 
 const route = useRoute();
 const progressStore = useProgress();
@@ -7,6 +8,9 @@ const authStore = useAuth();
 const slug = route.params.slug;
 const path = Array.isArray(slug) ? slug.join("/") : slug;
 const contentPath = "/courses/" + path;
+
+const pathParts = contentPath.split("/");
+const toolName = pathParts[3];
 
 const { data: page } = await useAsyncData(`content-${path}`, () => {
     return queryCollection("content").path(contentPath).first();
@@ -27,10 +31,9 @@ const readingTime = computed(() => {
 
 // Prev / Next lesson navigation
 const { data: siblings } = await useAsyncData(`siblings-${path}`, async () => {
-    const pathParts = contentPath.split("/");
-    const parentPath = pathParts.slice(0, -1).join("/");
+    const pPath = pathParts.slice(0, -1).join("/");
     const docs = await queryCollection("content")
-        .where("path", "LIKE", parentPath + "/%")
+        .where("path", "LIKE", pPath + "/%")
         .all();
 
     return docs.sort((a: any, b: any) => {
@@ -52,17 +55,10 @@ const prevLesson = computed(() => {
     return siblings.value[currentIndex.value - 1];
 });
 
-const nextLesson = computed(() => {
-    if (!siblings.value || currentIndex.value < 0 || currentIndex.value >= siblings.value.length - 1) return null;
-    return siblings.value[currentIndex.value + 1];
-});
-
-const isIndexLesson = computed(() => page.value?.path?.endsWith("lesson_0"));
-
 const isPremiumLocked = computed(() => {
     if (!page.value?.path) return false;
-    const isSETtrack = page.value.path.includes("/courses/software-engineering");
-    if (!isSETtrack) return false;
+    const isPremiumTrack = premiumTools.includes(toolName);
+    if (!isPremiumTrack) return false;
 
     // Allow lesson_0 to be viewed by everyone (syllabus)
     if (page.value.path.endsWith("lesson_0")) return false;
@@ -70,6 +66,21 @@ const isPremiumLocked = computed(() => {
     // Check auth
     return !authStore.user?.is_premium;
 });
+
+const nextLesson = computed(() => {
+    if (!siblings.value || currentIndex.value < 0 || currentIndex.value >= siblings.value.length - 1) return null;
+    
+    // Harden: If current is Lesson 0 and track is premium and user is not premium, no Next button.
+    const isPremiumTrack = premiumTools.includes(toolName);
+    if (isPremiumTrack && !authStore.user?.is_premium && page.value?.path?.endsWith("lesson_0")) {
+        return null;
+    }
+
+    return siblings.value[currentIndex.value + 1];
+});
+
+const formatName = (name: string) =>
+    name.replace(/-/g, ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
 // Active TOC tracking
 const activeTocId = ref("");
@@ -174,9 +185,9 @@ onMounted(() => {
 
                         <p class="text-lg max-w-lg mx-auto leading-relaxed"
                             :style="{ color: `rgb(var(--color-text-soft))` }">
-                            The <span class="text-amber-500 font-bold">Software Engineering Masterclass</span> is
+                            The <span class="text-amber-500 font-bold">{{ formatName(toolName) }}</span> curriculum is
                             reserved for our Premium members.
-                            Upgrade your plan to unlock elite system design patterns and distributed architecture
+                            Upgrade your plan to unlock advanced engineering patterns and professional architecture
                             modules.
                         </p>
 
@@ -197,33 +208,7 @@ onMounted(() => {
 
             <ContentRenderer v-else :value="page" />
 
-            <!-- Index view for lesson_0 -->
-            <div v-if="isIndexLesson" class="not-prose mt-12 mb-8 animate-fade-up">
-                <h3 class="text-2xl font-black mb-6" :style="{ color: `rgb(var(--color-text))` }">
-                    Course Modules
-                </h3>
-                <div class="grid gap-4 sm:grid-cols-2">
-                    <NuxtLink v-for="(sibling, idx) in siblings" :key="sibling.path" :to="sibling.path"
-                        class="group glass-card p-5 rounded-xl transition-all duration-300 hover:-translate-y-1 hover:shadow-lg"
-                        :style="{ borderColor: `rgba(var(--color-border), 0.4)` }">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-bold uppercase tracking-wider"
-                                :style="{ color: `rgb(var(--color-accent-blue))` }">
-                                Lesson {{ idx }}
-                            </span>
-                            <ArrowRight :size="14"
-                                class="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300"
-                                :style="{ color: `rgb(var(--color-accent-blue))` }" />
-                        </div>
-                        <h4 class="font-bold mb-1 leading-tight" :style="{ color: `rgb(var(--color-text))` }">
-                            {{ sibling.title }}
-                        </h4>
-                        <p class="text-sm line-clamp-2" :style="{ color: `rgb(var(--color-text-muted))` }">
-                            {{ sibling.description || 'Dive into this lesson module.' }}
-                        </p>
-                    </NuxtLink>
-                </div>
-            </div>
+
 
             <!-- Prev / Next Navigation -->
             <nav v-if="prevLesson || nextLesson" class="not-prose mt-16 pt-10 grid gap-4 items-stretch"

@@ -35,5 +35,18 @@ export default defineNuxtConfig({
     routeRules: {
       '/courses/**': { isr: true }
     }
+  },
+  content: {
+    build: {
+      markdown: {
+        highlight: {
+          theme: {
+            default: 'github-dark',
+            sepia: 'monokai'
+          },
+          langs: ['rust', 'kotlin', 'javascript', 'typescript', 'jsx', 'tsx', 'bash', 'json', 'yaml', 'toml', 'html', 'css', 'c', 'cpp', 'go', 'python', 'sql']
+        }
+      }
+    }
   }
 });

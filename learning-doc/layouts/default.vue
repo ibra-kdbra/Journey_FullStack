@@ -26,7 +26,7 @@
 
 <script setup lang="ts">
 const route = useRoute();
-const isDocsPage = computed(() => route.path.startsWith("/courses"));
+const isCoursesPage = computed(() => route.path.startsWith("/courses"));
 </script>
 
 <style>

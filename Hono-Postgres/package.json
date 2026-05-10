@@ -29,7 +29,7 @@
   "devDependencies": {
     "@biomejs/biome": "2.4.15",
     "@commitlint/cli": "^21.0.0",
-    "@commitlint/config-conventional": "^20.0.0",
+    "@commitlint/config-conventional": "^21.0.0",
     "@types/bun": "latest",
     "@types/es6-shim": "^0.31.46",
     "@types/jest": "^30.0.0",

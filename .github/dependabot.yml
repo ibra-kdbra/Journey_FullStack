@@ -54,7 +54,7 @@ updates:
     directory: "/vue3-clean-architecture"
     schedule:
       interval: "weekly"
-  
+
   - package-ecosystem: "npm" # For sveltekit
     directory: "/sveltekit"
     schedule:
@@ -64,12 +64,12 @@ updates:
     directory: "/rn_clean_architecture"
     schedule:
       interval: "weekly"
-  
+
   - package-ecosystem: "npm" # For solidjs_UI
     directory: "/solid-flask-web-app/ui"
     schedule:
       interval: "weekly"
- 
+
   - package-ecosystem: "npm" # For Hono-Postgres
     directory: "/Hono-Postgres"
     schedule:
@@ -77,11 +77,6 @@ updates:
 
   - package-ecosystem: "npm" # For learning-doc
     directory: "/learning-doc"
-    schedule:
-      interval: "weekly"
-
-  - package-ecosystem: "npm" # For vercel-cleaner
-    directory: "/vercel-cleaner"
     schedule:
       interval: "weekly"
 

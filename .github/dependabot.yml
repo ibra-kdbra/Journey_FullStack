@@ -74,3 +74,23 @@ updates:
     directory: "/Hono-Postgres"
     schedule:
       interval: "weekly"
+
+  - package-ecosystem: "npm" # For learning-doc
+    directory: "/learning-doc"
+    schedule:
+      interval: "weekly"
+
+  - package-ecosystem: "npm" # For vercel-cleaner
+    directory: "/vercel-cleaner"
+    schedule:
+      interval: "weekly"
+
+  - package-ecosystem: "poetry" # For RAG-streamlit backend
+    directory: "/RAG-streamlit/backend"
+    schedule:
+      interval: "weekly"
+
+  - package-ecosystem: "maven" # For task-manager
+    directory: "/task-manager"
+    schedule:
+      interval: "weekly"

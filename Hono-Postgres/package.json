@@ -2,19 +2,19 @@
   "name": "hono-app",
   "type": "module",
   "scripts": {
-    "start": "node dist/index.js",
+    "start": "bun dist/index.js",
     "dev": "NODE_ENV=development bun run --hot src/app/development.ts",
-    "test": "jest",
+    "test": "bun test",
     "prepare": "husky",
     "lint": "biome lint --write",
     "format": "biome format --write",
-    "db:push": "drizzle-kit generate && drizzle-kit push",
-    "db:generate": "drizzle-kit generate"
+    "db:push": "bunx drizzle-kit generate && bunx drizzle-kit push",
+    "db:generate": "bunx drizzle-kit generate"
   },
   "lint-staged": {
     "*.ts": [
-      "npm run lint",
-      "npm run format"
+      "bun run lint",
+      "bun run format"
     ]
   },
   "dependencies": {

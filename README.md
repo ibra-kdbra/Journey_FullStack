@@ -39,7 +39,7 @@ Detailed guidelines, code examples, and patterns are documented in [ARCHITECTURE
 | [`API_s.o.l.i.d_TS`](API_s.o.l.i.d_TS/) | Node.js, TypeORM, Tsyringe | Car registration API demonstrating business rules. |
 | [`Hono-Postgres`](Hono-Postgres/) | Hono, Bun, Drizzle | Ultra-fast API with Hono and Postgres. |
 | [`solid-flask-web-app`](solid-flask-web-app/) | Python, Flask, Docker | Full-stack Flask app with production-ready deployments. |
-| [`task-manager`](task-manager/) | Spring Boot, Keycloak | Secure Java API with OAuth2/JWT and PostgreSQL. |
+| [`hospital-management`](hospital-management/) | Java, Spring Boot, Eureka | Sophisticated Hospital Management Microservices following Clean Architecture. |
 | [`RAG-streamlit`](RAG-streamlit/) | Python, Streamlit, Poetry | RAG-based AI application with backend/frontend separation. |
 
 ### 🛠️ Utilities

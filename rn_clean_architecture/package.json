@@ -41,7 +41,7 @@
     "eslint": "10.5.0",
     "jest": "^30.2.0",
     "metro-react-native-babel-preset": "0.77.0",
-    "prettier": "3.8.4",
+    "prettier": "3.9.4",
     "react-test-renderer": "19.2.7",
     "typescript": "6.0.3"
   },

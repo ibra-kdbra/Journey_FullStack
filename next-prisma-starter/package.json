@@ -23,7 +23,7 @@
 		"autoprefixer": "10.5.0",
 		"eslint": "10.5.0",
 		"next": "16.2.9",
-		"postcss": "8.5.15",
+		"postcss": "8.5.16",
 		"eslint-config-next": "16.2.9",
 		"react": "19.2.7",
 		"react-dom": "19.2.7",

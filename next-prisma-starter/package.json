@@ -29,7 +29,7 @@
 		"react-dom": "19.2.7",
 		"react-redux": "^9.2.0",
 		"tailwindcss": "4.3.2",
-		"typescript": "6.0.3"
+		"typescript": "7.0.2"
 	},
 	"devDependencies": {
 		"prettier": "^3.0.3",

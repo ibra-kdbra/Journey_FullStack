@@ -42,7 +42,7 @@
     "jest": "^30.2.0",
     "metro-react-native-babel-preset": "0.77.0",
     "prettier": "3.9.5",
-    "react-test-renderer": "19.2.7",
+    "react-test-renderer": "19.2.8",
     "typescript": "7.0.2"
   },
   "engines": {

@@ -1,66 +1,50 @@
 <script setup lang="ts">
-import { Sparkles, Github, MessageCircle } from "lucide-vue-next";
+import { BookOpen, Github, MessageCircle } from "lucide-vue-next";
 
 const year = new Date().getFullYear();
 </script>
 
 <template>
-    <footer class="mt-auto relative overflow-hidden"
-        :style="{
-            background: `rgb(var(--color-bg-soft))`,
-            borderTop: `1px solid rgba(var(--color-border), 0.4)`
-        }">
-        <!-- Subtle gradient glow at top -->
-        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-px"
-            :style="{ background: `linear-gradient(to right, transparent, rgba(var(--color-accent-blue), 0.4), transparent)` }" />
-
-        <div class="container py-16">
-            <div class="grid grid-cols-1 gap-12 md:grid-cols-4">
+    <footer class="mt-auto bg-[rgb(var(--color-bg-soft))] border-t border-[rgb(var(--color-border))]">
+        <div class="container py-14">
+            <div class="grid grid-cols-1 gap-10 md:grid-cols-4">
                 <!-- Brand -->
-                <div class="space-y-4 md:col-span-1">
-                    <NuxtLink to="/" class="group inline-flex items-center gap-2.5">
-                        <div class="flex items-center justify-center w-7 h-7 rounded-md"
-                            :style="{ background: `var(--gradient-accent)` }">
-                            <Sparkles :size="14" class="text-white" />
+                <div class="space-y-3 md:col-span-1">
+                    <NuxtLink to="/" class="inline-flex items-center gap-2.5">
+                        <div class="flex items-center justify-center w-7 h-7 rounded-md bg-[rgb(var(--color-accent-blue))] text-white">
+                            <BookOpen :size="15" />
                         </div>
-                        <span class="text-lg font-extrabold tracking-tight"
-                            :style="{ color: `rgb(var(--color-text))` }">
-                            Emi
+                        <span class="text-lg font-black tracking-tight text-[rgb(var(--color-text))]">
+                            Journey Doc
                         </span>
                     </NuxtLink>
-                    <p class="text-sm leading-relaxed max-w-xs"
-                        :style="{ color: `rgb(var(--color-text-muted))` }">
-                        Practical insights & detailed tutorials on modern technologies like
-                        Go, Rust, and Next.js.
+                    <p class="text-xs leading-relaxed text-[rgb(var(--color-text-soft))] max-w-xs">
+                        High-density software engineering curricula covering Systems, Distributed Backends, Frontend Architecture, and CS Fundamentals.
                     </p>
                 </div>
 
                 <!-- Resources -->
                 <div>
-                    <h3 class="mb-4 text-xs font-bold uppercase tracking-[0.15em]"
-                        :style="{ color: `rgb(var(--color-text-soft))` }">
+                    <h3 class="mb-3 text-xs font-bold text-[rgb(var(--color-text))] uppercase tracking-wider">
                         Resources
                     </h3>
-                    <ul class="space-y-2.5">
+                    <ul class="space-y-2">
                         <li>
                             <NuxtLink to="/courses"
-                                class="text-sm transition-all duration-200 hover:translate-x-0.5 inline-block"
-                                :style="{ color: `rgb(var(--color-text-muted))` }">
+                                class="text-xs text-[rgb(var(--color-text-soft))] hover:text-[rgb(var(--color-accent-blue))] transition-colors">
                                 All Courses
                             </NuxtLink>
                         </li>
                         <li>
-                            <NuxtLink to="/courses/courses/rust/lesson_0"
-                                class="text-sm transition-all duration-200 hover:translate-x-0.5 inline-block"
-                                :style="{ color: `rgb(var(--color-text-muted))` }">
-                                Rust Course
+                            <NuxtLink to="/courses/systems/rust/lesson_0"
+                                class="text-xs text-[rgb(var(--color-text-soft))] hover:text-[rgb(var(--color-accent-blue))] transition-colors">
+                                Rust Architecture
                             </NuxtLink>
                         </li>
                         <li>
-                            <NuxtLink to="/courses/courses/golang/lesson_0"
-                                class="text-sm transition-all duration-200 hover:translate-x-0.5 inline-block"
-                                :style="{ color: `rgb(var(--color-text-muted))` }">
-                                Go Course
+                            <NuxtLink to="/courses/systems/clang/lesson_0"
+                                class="text-xs text-[rgb(var(--color-text-soft))] hover:text-[rgb(var(--color-accent-blue))] transition-colors">
+                                C Systems Architect
                             </NuxtLink>
                         </li>
                     </ul>
@@ -68,24 +52,21 @@ const year = new Date().getFullYear();
 
                 <!-- Community -->
                 <div>
-                    <h3 class="mb-4 text-xs font-bold uppercase tracking-[0.15em]"
-                        :style="{ color: `rgb(var(--color-text-soft))` }">
+                    <h3 class="mb-3 text-xs font-bold text-[rgb(var(--color-text))] uppercase tracking-wider">
                         Community
                     </h3>
-                    <ul class="space-y-2.5">
+                    <ul class="space-y-2">
                         <li>
-                            <a href="#"
-                                class="inline-flex items-center gap-2 text-sm transition-all duration-200 hover:translate-x-0.5"
-                                :style="{ color: `rgb(var(--color-text-muted))` }">
-                                <Github :size="14" />
+                            <a href="https://github.com" target="_blank" rel="noopener"
+                                class="inline-flex items-center gap-1.5 text-xs text-[rgb(var(--color-text-soft))] hover:text-[rgb(var(--color-accent-blue))] transition-colors">
+                                <Github :size="13" />
                                 GitHub
                             </a>
                         </li>
                         <li>
                             <a href="#"
-                                class="inline-flex items-center gap-2 text-sm transition-all duration-200 hover:translate-x-0.5"
-                                :style="{ color: `rgb(var(--color-text-muted))` }">
-                                <MessageCircle :size="14" />
+                                class="inline-flex items-center gap-1.5 text-xs text-[rgb(var(--color-text-soft))] hover:text-[rgb(var(--color-accent-blue))] transition-colors">
+                                <MessageCircle :size="13" />
                                 Discord
                             </a>
                         </li>
@@ -94,22 +75,19 @@ const year = new Date().getFullYear();
 
                 <!-- Legal -->
                 <div>
-                    <h3 class="mb-4 text-xs font-bold uppercase tracking-[0.15em]"
-                        :style="{ color: `rgb(var(--color-text-soft))` }">
+                    <h3 class="mb-3 text-xs font-bold text-[rgb(var(--color-text))] uppercase tracking-wider">
                         Legal
                     </h3>
-                    <ul class="space-y-2.5">
+                    <ul class="space-y-2">
                         <li>
                             <NuxtLink to="/privacy"
-                                class="text-sm transition-all duration-200 hover:translate-x-0.5 inline-block"
-                                :style="{ color: `rgb(var(--color-text-muted))` }">
+                                class="text-xs text-[rgb(var(--color-text-soft))] hover:text-[rgb(var(--color-accent-blue))] transition-colors">
                                 Privacy Policy
                             </NuxtLink>
                         </li>
                         <li>
                             <NuxtLink to="/terms"
-                                class="text-sm transition-all duration-200 hover:translate-x-0.5 inline-block"
-                                :style="{ color: `rgb(var(--color-text-muted))` }">
+                                class="text-xs text-[rgb(var(--color-text-soft))] hover:text-[rgb(var(--color-accent-blue))] transition-colors">
                                 Terms of Service
                             </NuxtLink>
                         </li>
@@ -118,14 +96,9 @@ const year = new Date().getFullYear();
             </div>
 
             <!-- Bottom Bar -->
-            <div class="mt-14 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4"
-                :style="{ borderTop: `1px solid rgba(var(--color-border), 0.3)` }">
-                <p class="text-xs" :style="{ color: `rgb(var(--color-text-muted))` }">
-                    &copy; {{ year }} Emi. All rights reserved.
-                </p>
-                <p class="text-xs" :style="{ color: `rgb(var(--color-text-muted))` }">
-                    Built with Nuxt &amp; Vue.js
-                </p>
+            <div class="mt-12 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-[rgb(var(--color-border))] text-xs text-[rgb(var(--color-text-soft))]">
+                <p>&copy; {{ year }} Journey Doc. All rights reserved.</p>
+                <p>Built with Nuxt 4 &amp; Vue 3</p>
             </div>
         </div>
     </footer>

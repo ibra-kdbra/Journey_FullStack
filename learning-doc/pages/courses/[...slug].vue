@@ -1,52 +1,62 @@
 <script setup lang="ts">
-import { ArrowLeft, ArrowRight, List, Clock, ChevronLeft, ChevronRight, Lock } from "lucide-vue-next";
-import { premiumTools } from "../../utils/academy";
+import { ArrowLeft, List, Clock, ChevronLeft, ChevronRight, Lock } from "lucide-vue-next";
 
 const route = useRoute();
 const progressStore = useProgress();
 const authStore = useAuth();
 const slug = route.params.slug;
 const path = Array.isArray(slug) ? slug.join("/") : slug;
-const contentPath = "/courses/" + path;
+const pb = usePocketBase();
+const { data: lesson } = await useAsyncData(`lesson-${path}`, async () => {
+    const parts = path.split("/");
+    const courseSlug = parts[1];
+    const lessonSlug = parts[2];
 
-const pathParts = contentPath.split("/");
-const toolName = pathParts[3];
-
-const { data: page } = await useAsyncData(`content-${path}`, () => {
-    return queryCollection("content").path(contentPath).first();
+    try {
+        const record = await pb.collection('lessons').getFirstListItem(
+            `course.slug="${courseSlug}" && slug="${lessonSlug}"`,
+            { expand: 'course' }
+        );
+        
+        const parsed = await $fetch('/api/content/parse', {
+            method: 'POST',
+            body: { content: record.content }
+        });
+        
+        return { ...record, body: parsed.body };
+    } catch (e) {
+        return null;
+    }
 });
 
-if (!page.value) {
-    throw createError({ statusCode: 404, statusMessage: "Page not found" });
+if (!lesson.value) {
+    throw createError({ statusCode: 404, statusMessage: "Lesson not found" });
 }
 
-// Reading time estimation
+const toolName = lesson.value.expand?.course?.slug;
+const toc = computed(() => lesson.value?.body?.toc?.links || []);
+
 const readingTime = computed(() => {
-    if (!page.value?.body) return 0;
-    // rough estimate: 200 words per minute
-    const text = JSON.stringify(page.value.body);
-    const words = text.split(/\s+/).length;
+    if (!lesson.value?.content) return 0;
+    const words = lesson.value.content.split(/\s+/).length;
     return Math.max(1, Math.round(words / 200));
 });
 
-// Prev / Next lesson navigation
 const { data: siblings } = await useAsyncData(`siblings-${path}`, async () => {
-    const pPath = pathParts.slice(0, -1).join("/");
-    const docs = await queryCollection("content")
-        .where("path", "LIKE", pPath + "/%")
-        .all();
+    const courseId = lesson.value?.course;
+    if (!courseId) return [];
 
-    return docs.sort((a: any, b: any) => {
-        const aNum = parseInt(a.path?.match(/lesson_(\d+)/)?.[1] || "0");
-        const bNum = parseInt(b.path?.match(/lesson_(\d+)/)?.[1] || "0");
-        return aNum - bNum;
+    const records = await pb.collection('lessons').getFullList({
+        filter: `course="${courseId}"`,
+        sort: 'lesson_number'
     });
+    return records;
 });
 
 const currentIndex = computed(() => {
-    if (!siblings.value || !page.value) return -1;
+    if (!siblings.value || !lesson.value) return -1;
     return siblings.value.findIndex(
-        (s: any) => s.path === page.value!.path
+        (s: any) => s.id === lesson.value!.id
     );
 });
 
@@ -56,23 +66,18 @@ const prevLesson = computed(() => {
 });
 
 const isPremiumLocked = computed(() => {
-    if (!page.value?.path) return false;
-    const isPremiumTrack = premiumTools.includes(toolName);
-    if (!isPremiumTrack) return false;
+    if (!lesson.value) return false;
+    const isPremiumCourse = lesson.value.expand?.course?.is_premium;
+    if (!isPremiumCourse || lesson.value.is_free) return false;
 
-    // Allow lesson_0 to be viewed by everyone (syllabus)
-    if (page.value.path.endsWith("lesson_0")) return false;
-
-    // Check auth
     return !authStore.user?.is_premium;
 });
 
 const nextLesson = computed(() => {
     if (!siblings.value || currentIndex.value < 0 || currentIndex.value >= siblings.value.length - 1) return null;
     
-    // Harden: If current is Lesson 0 and track is premium and user is not premium, no Next button.
-    const isPremiumTrack = premiumTools.includes(toolName);
-    if (isPremiumTrack && !authStore.user?.is_premium && page.value?.path?.endsWith("lesson_0")) {
+    const isPremiumCourse = lesson.value?.expand?.course?.is_premium;
+    if (isPremiumCourse && !authStore.user?.is_premium && lesson.value?.is_free) {
         return null;
     }
 
@@ -82,17 +87,14 @@ const nextLesson = computed(() => {
 const formatName = (name: string) =>
     name.replace(/-/g, ' ').split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 
-// Active TOC tracking
 const activeTocId = ref("");
 
 onMounted(() => {
-    // Record progress
     if (authStore.isLoggedIn) {
-        const pathParts = contentPath.split("/");
-        // New structure: /courses/[discipline]/[tool]/[lesson]
-        const toolName = pathParts[3];
+        const pathParts = path.split("/");
+        const toolName = pathParts[1];
         if (toolName) {
-            progressStore.markLessonViewed(toolName, contentPath);
+            progressStore.markLessonViewed(toolName, path);
         }
     }
 
@@ -118,36 +120,28 @@ onMounted(() => {
         <!-- Sidebar / TOC -->
         <aside class="md:w-60 flex-shrink-0 space-y-6">
             <div class="sticky top-24">
-                <div class="flex items-center gap-2 mb-5" :style="{ color: `rgb(var(--color-text-muted))` }">
+                <div class="flex items-center gap-2 mb-4 text-[rgb(var(--color-text-soft))]">
                     <List :size="14" />
-                    <h4 class="text-xs font-bold uppercase tracking-widest">
+                    <h4 class="text-xs font-bold uppercase tracking-wider">
                         On this page
                     </h4>
                 </div>
                 <ul class="space-y-1">
-                    <li v-for="link in page.body?.toc?.links" :key="link.id">
+                    <li v-for="link in toc" :key="link.id">
                         <a :href="`#${link.id}`"
-                            class="block px-3 py-1.5 rounded-lg text-sm transition-all duration-200 border-l-2" :style="{
-                                color: activeTocId === link.id
-                                    ? `rgb(var(--color-accent-blue))`
-                                    : `rgb(var(--color-text-muted))`,
-                                borderColor: activeTocId === link.id
-                                    ? `rgb(var(--color-accent-blue))`
-                                    : 'transparent',
-                                background: activeTocId === link.id
-                                    ? `rgba(var(--color-accent-blue), 0.06)`
-                                    : 'transparent',
-                                fontWeight: activeTocId === link.id ? '600' : '400',
-                            }">
+                            class="block px-3 py-1.5 rounded-md text-xs transition-colors border-l-2" :class="[
+                                activeTocId === link.id
+                                    ? 'text-[rgb(var(--color-accent-blue))] border-[rgb(var(--color-accent-blue))] font-semibold bg-[rgb(var(--color-bg-soft))]'
+                                    : 'text-[rgb(var(--color-text-soft))] border-transparent hover:text-[rgb(var(--color-text))]'
+                            ]">
                             {{ link.text }}
                         </a>
                     </li>
                 </ul>
 
-                <div class="mt-10 pt-6" :style="{ borderTop: `1px solid rgba(var(--color-border), 0.4)` }">
+                <div class="mt-8 pt-4 border-t border-[rgb(var(--color-border))]">
                     <NuxtLink to="/courses"
-                        class="inline-flex items-center gap-1.5 text-sm font-semibold transition-all duration-200 hover:-translate-x-0.5"
-                        :style="{ color: `rgb(var(--color-accent-blue))` }">
+                        class="inline-flex items-center gap-1.5 text-xs font-semibold text-[rgb(var(--color-accent-blue))] hover:underline">
                         <ArrowLeft :size="14" />
                         Back to courses
                     </NuxtLink>
@@ -158,101 +152,71 @@ onMounted(() => {
         <!-- Content Area -->
         <article class="flex-grow max-w-none prose prose-headings:scroll-mt-24">
             <!-- Reading time badge -->
-            <div class="not-prose flex items-center gap-4 mb-6 text-sm"
-                :style="{ color: `rgb(var(--color-text-muted))` }">
-                <div class="inline-flex items-center gap-1.5">
+            <div class="not-prose flex items-center gap-4 mb-6 text-xs text-[rgb(var(--color-text-soft))]">
+                <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-[rgb(var(--color-bg-soft))] border border-[rgb(var(--color-border))]">
                     <Clock :size="14" />
                     <span>{{ readingTime }} min read</span>
                 </div>
             </div>
 
-            <div v-if="isPremiumLocked" class="not-prose my-12 animate-fade-in">
-                <div
-                    class="glass-card p-12 text-center space-y-8 !rounded-3xl relative overflow-hidden group border-amber-500/30">
-                    <!-- Background Glow -->
-                    <div
-                        class="absolute -top-24 -right-24 w-62 h-62 bg-amber-500/10 blur-[100px] rounded-full pointer-events-none" />
+            <div v-if="isPremiumLocked" class="not-prose my-10">
+                <div class="surface-card p-10 text-center space-y-6">
+                    <div class="w-16 h-16 bg-amber-500/10 rounded-xl flex items-center justify-center mx-auto border border-amber-500/20 text-amber-600">
+                        <Lock :size="32" />
+                    </div>
 
-                    <div class="relative z-10 space-y-6">
-                        <div
-                            class="w-20 h-20 bg-amber-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-amber-500/20 shadow-xl shadow-amber-500/5">
-                            <Lock :size="40" class="text-amber-500" />
-                        </div>
+                    <h2 class="text-2xl font-black tracking-tight text-[rgb(var(--color-text))]">
+                        Premium Content Locked
+                    </h2>
 
-                        <h2 class="text-3xl font-black tracking-tight" :style="{ color: `rgb(var(--color-text))` }">
-                            Premium Content Locked
-                        </h2>
+                    <p class="text-sm max-w-md mx-auto leading-relaxed text-[rgb(var(--color-text-soft))]">
+                        The <span class="text-amber-600 font-bold">{{ formatName(toolName) }}</span> curriculum is reserved for Premium members. Upgrade your plan to access advanced modules.
+                    </p>
 
-                        <p class="text-lg max-w-lg mx-auto leading-relaxed"
-                            :style="{ color: `rgb(var(--color-text-soft))` }">
-                            The <span class="text-amber-500 font-bold">{{ formatName(toolName) }}</span> curriculum is
-                            reserved for our Premium members.
-                            Upgrade your plan to unlock advanced engineering patterns and professional architecture
-                            modules.
-                        </p>
-
-                        <div class="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-                            <NuxtLink to="/membership"
-                                class="px-8 py-4 bg-amber-500 hover:bg-amber-600 text-black font-black rounded-2xl transition-all duration-300 shadow-lg shadow-amber-500/20 hover:scale-105">
-                                Upgrade to Premium
-                            </NuxtLink>
-                            <NuxtLink to="/courses"
-                                class="px-8 py-4 bg-white/5 hover:bg-white/10 font-bold rounded-2xl transition-all duration-300 border border-white/10"
-                                :style="{ color: `rgb(var(--color-text))` }">
-                                Explore Free Courses
-                            </NuxtLink>
-                        </div>
+                    <div class="flex flex-col sm:flex-row gap-3 justify-center pt-2">
+                        <NuxtLink to="/membership" class="btn-primary !bg-amber-600 hover:!bg-amber-700">
+                            Upgrade to Premium
+                        </NuxtLink>
+                        <NuxtLink to="/courses" class="btn-secondary">
+                            Explore Free Courses
+                        </NuxtLink>
                     </div>
                 </div>
             </div>
 
-            <ContentRenderer v-else :value="page" />
-
-
+            <ContentRenderer v-else :value="lesson" />
 
             <!-- Prev / Next Navigation -->
-            <nav v-if="prevLesson || nextLesson" class="not-prose mt-16 pt-10 grid gap-4 items-stretch"
-                :class="prevLesson && nextLesson ? 'grid-cols-2' : 'grid-cols-1'"
-                :style="{ borderTop: `1px solid rgba(var(--color-border), 0.4)` }">
-                <NuxtLink v-if="prevLesson" :to="prevLesson.path"
-                    class="group glass-card !p-5 flex items-center gap-3 !rounded-xl h-full"
+            <nav v-if="prevLesson || nextLesson" class="not-prose mt-14 pt-8 grid gap-4 items-stretch border-t border-[rgb(var(--color-border))]"
+                :class="prevLesson && nextLesson ? 'grid-cols-2' : 'grid-cols-1'">
+                <NuxtLink v-if="prevLesson" :to="`/courses/${lesson.expand.course.discipline}/${lesson.expand.course.slug}/${prevLesson.slug}`"
+                    class="surface-card p-5 flex items-center gap-3 group"
                     :class="{ 'col-start-1': !nextLesson }">
-                    <ChevronLeft :size="18"
-                        class="flex-shrink-0 transition-transform duration-200 group-hover:-translate-x-1"
-                        :style="{ color: `rgb(var(--color-text-muted))` }" />
+                    <ChevronLeft :size="18" class="flex-shrink-0 text-[rgb(var(--color-text-muted))] transition-transform group-hover:-translate-x-1" />
                     <div class="flex-grow">
-                        <div class="text-xs font-semibold uppercase tracking-wider mb-1"
-                            :style="{ color: `rgb(var(--color-text-muted))` }">
-                            Previous
+                        <div class="text-[10px] font-bold uppercase tracking-wider text-[rgb(var(--color-text-muted))] mb-1">
+                            Previous Module
                         </div>
-                        <div class="text-sm font-bold break-words" :style="{ color: `rgb(var(--color-text))` }">
+                        <div class="text-xs sm:text-sm font-bold text-[rgb(var(--color-text))] line-clamp-1">
                             {{ prevLesson.title }}
                         </div>
                     </div>
                 </NuxtLink>
                 <div v-else />
-                <NuxtLink v-if="nextLesson" :to="nextLesson.path"
-                    class="group glass-card !p-5 flex items-center justify-end gap-3 text-right !rounded-xl h-full"
+                <NuxtLink v-if="nextLesson" :to="`/courses/${lesson.expand.course.discipline}/${lesson.expand.course.slug}/${nextLesson.slug}`"
+                    class="surface-card p-5 flex items-center justify-end gap-3 text-right group"
                     :class="{ 'col-start-2': !prevLesson }">
                     <div class="flex-grow">
-                        <div class="text-xs font-semibold uppercase tracking-wider mb-1"
-                            :style="{ color: `rgb(var(--color-text-muted))` }">
-                            Next
+                        <div class="text-[10px] font-bold uppercase tracking-wider text-[rgb(var(--color-text-muted))] mb-1">
+                            Next Module
                         </div>
-                        <div class="text-sm font-bold break-words" :style="{ color: `rgb(var(--color-text))` }">
+                        <div class="text-xs sm:text-sm font-bold text-[rgb(var(--color-text))] line-clamp-1">
                             {{ nextLesson.title }}
                         </div>
                     </div>
-                    <ChevronRight :size="18"
-                        class="flex-shrink-0 transition-transform duration-200 group-hover:translate-x-1"
-                        :style="{ color: `rgb(var(--color-text-muted))` }" />
+                    <ChevronRight :size="18" class="flex-shrink-0 text-[rgb(var(--color-text-muted))] transition-transform group-hover:translate-x-1" />
                 </NuxtLink>
             </nav>
-
-            <!-- Comments Section -->
-            <section class="not-prose mt-16 pt-12" :style="{ borderTop: `1px solid rgba(var(--color-border), 0.4)` }">
-                <CourseComments :doc-path="page?.path || ''" />
-            </section>
         </article>
     </div>
 </template>

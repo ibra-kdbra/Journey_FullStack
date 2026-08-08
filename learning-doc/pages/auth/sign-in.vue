@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useAuth } from "~/composables/useAuth";
-import { Sparkles, ArrowRight } from "lucide-vue-next";
+import { BookOpen, ArrowRight } from "lucide-vue-next";
 
 const auth = useAuth();
 const email = ref("");
@@ -24,79 +24,54 @@ const handleLogin = async () => {
 </script>
 
 <template>
-    <div class="flex-grow flex items-center justify-center py-12 px-4 relative">
-        <!-- Background decoration -->
-        <div class="absolute inset-0 gradient-bg -z-10" />
-        <div class="absolute top-1/4 left-1/4 w-64 h-64 blob -z-10"
-            :style="{ background: `rgba(var(--color-accent-blue), 0.1)` }" />
-        <div class="absolute bottom-1/4 right-1/4 w-48 h-48 blob -z-10" style="animation-delay: -4s;"
-            :style="{ background: `rgba(var(--color-accent-violet), 0.08)` }" />
-
-        <div class="max-w-md w-full space-y-8 glass-card !p-8 animate-fade-up">
-            <div class="text-center">
-                <div class="inline-flex items-center justify-center w-12 h-12 rounded-2xl mb-4"
-                    :style="{ background: `var(--gradient-accent)` }">
-                    <Sparkles :size="22" class="text-white" />
+    <div class="flex-grow flex items-center justify-center py-16 px-4">
+        <div class="max-w-md w-full space-y-6 surface-card p-8">
+            <div class="text-center space-y-2">
+                <div class="inline-flex items-center justify-center w-10 h-10 rounded-md bg-[rgb(var(--color-accent-blue))] text-white mb-2">
+                    <BookOpen :size="20" />
                 </div>
-                <h2 class="text-2xl font-extrabold" :style="{ color: `rgb(var(--color-text))` }">
-                    Sign In
+                <h2 class="text-2xl font-bold text-[rgb(var(--color-text))]">
+                    Sign In to Journey Doc
                 </h2>
-                <p class="mt-2 text-sm" :style="{ color: `rgb(var(--color-text-muted))` }">
-                    Welcome back to Emi
+                <p class="text-xs text-[rgb(var(--color-text-soft))]">
+                    Access your courses and track your engineering progress
                 </p>
             </div>
 
-            <form @submit.prevent="handleLogin" class="mt-6 space-y-5">
-                <div v-if="error" class="p-3 rounded-xl text-sm font-medium" :style="{
-                    background: `rgba(var(--color-accent-rose), 0.08)`,
-                    color: `rgb(var(--color-accent-rose))`,
-                    border: `1px solid rgba(var(--color-accent-rose), 0.15)`
-                }">
+            <form @submit.prevent="handleLogin" class="space-y-4">
+                <div v-if="error" class="p-3 rounded-md text-xs font-semibold bg-rose-500/10 text-rose-600 border border-rose-500/20">
                     {{ error }}
                 </div>
 
-                <div class="space-y-4">
+                <div class="space-y-3">
                     <div>
-                        <label for="email" class="block text-xs font-semibold uppercase tracking-wider ml-1 mb-2"
-                            :style="{ color: `rgb(var(--color-text-soft))` }">
+                        <label for="email" class="block text-xs font-bold uppercase tracking-wider text-[rgb(var(--color-text-soft))] mb-1">
                             Email address
                         </label>
                         <input v-model="email" id="email" type="email" required
-                            class="appearance-none block w-full px-4 py-3 rounded-xl text-sm transition-all duration-200 outline-none"
-                            :style="{
-                                background: `rgba(var(--color-surface), 0.8)`,
-                                border: `1px solid rgba(var(--color-border), 0.5)`,
-                                color: `rgb(var(--color-text))`,
-                            }" placeholder="you@example.com" />
+                            class="block w-full px-3.5 py-2.5 rounded-md text-sm bg-[rgb(var(--color-bg-soft))] border border-[rgb(var(--color-border))] text-[rgb(var(--color-text))] focus:border-[rgb(var(--color-accent-blue))] focus:outline-none"
+                            placeholder="you@example.com" />
                     </div>
                     <div>
-                        <label for="password" class="block text-xs font-semibold uppercase tracking-wider ml-1 mb-2"
-                            :style="{ color: `rgb(var(--color-text-soft))` }">
+                        <label for="password" class="block text-xs font-bold uppercase tracking-wider text-[rgb(var(--color-text-soft))] mb-1">
                             Password
                         </label>
                         <input v-model="password" id="password" type="password" required
-                            class="appearance-none block w-full px-4 py-3 rounded-xl text-sm transition-all duration-200 outline-none"
-                            :style="{
-                                background: `rgba(var(--color-surface), 0.8)`,
-                                border: `1px solid rgba(var(--color-border), 0.5)`,
-                                color: `rgb(var(--color-text))`,
-                            }" placeholder="••••••••" />
+                            class="block w-full px-3.5 py-2.5 rounded-md text-sm bg-[rgb(var(--color-bg-soft))] border border-[rgb(var(--color-border))] text-[rgb(var(--color-text))] focus:border-[rgb(var(--color-accent-blue))] focus:outline-none"
+                            placeholder="••••••••" />
                     </div>
                 </div>
 
-                <button type="submit" :disabled="loading"
-                    class="btn-primary w-full !py-3 !rounded-xl disabled:opacity-50 disabled:cursor-not-allowed">
-                    <span v-if="loading"
-                        class="animate-spin inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full" />
+                <button type="submit" :disabled="loading" class="btn-primary w-full !py-2.5 !rounded-md disabled:opacity-50">
+                    <span v-if="loading" class="animate-spin inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full" />
                     {{ loading ? "Signing in..." : "Sign In" }}
                     <ArrowRight v-if="!loading" :size="16" />
                 </button>
             </form>
 
-            <div class="text-center text-sm">
-                <span :style="{ color: `rgb(var(--color-text-muted))` }">Don't have an account? </span>
-                <NuxtLink to="/auth/sign-up" class="font-bold transition-all duration-200"
-                    :style="{ color: `rgb(var(--color-accent-blue))` }">
+            <div class="text-center text-xs text-[rgb(var(--color-text-soft))]">
+                Don't have an account?
+                <NuxtLink to="/auth/sign-up" class="font-bold text-[rgb(var(--color-accent-blue))] hover:underline">
                     Sign up
                 </NuxtLink>
             </div>

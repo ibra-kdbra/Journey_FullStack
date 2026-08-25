@@ -1,0 +1,76 @@
+name: Hygiene
+
+# Structural truth check. No installs, no builds — this must stay fast enough to
+# run on every push without anyone resenting it.
+#
+# It exists because this repository spent months with a permanently-failing
+# workflow (a fully commented-out deploy.yml, which GitHub treats as invalid and
+# fails instantly). Documentation and CI config drifted from reality unnoticed.
+# See docs/ENGINEERING.md#postmortem-how-the-repository-went-red.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: hygiene-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  manifest:
+    name: Manifest, docs and workflow validity
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: Validate repository structure
+        run: node .github/scripts/check-manifest.mjs
+
+      - name: Validate workflow and Dependabot YAML
+        run: |
+          python3 - <<'PY'
+          import sys, pathlib, yaml
+
+          failures = []
+          for path in sorted(pathlib.Path('.github/workflows').glob('*.y*ml')):
+              try:
+                  doc = yaml.safe_load(path.read_text())
+              except yaml.YAMLError as exc:
+                  failures.append(f'{path}: invalid YAML — {exc}')
+                  continue
+              if not isinstance(doc, dict):
+                  failures.append(f'{path}: does not parse to a mapping (is it all comments?)')
+                  continue
+              # PyYAML parses the bare key `on` as the boolean True.
+              if 'on' not in doc and True not in doc:
+                  failures.append(f'{path}: no `on:` triggers — GitHub fails such runs instantly')
+              if 'jobs' not in doc:
+                  failures.append(f'{path}: no `jobs:` block')
+
+          dependabot = pathlib.Path('.github/dependabot.yml')
+          if dependabot.exists():
+              try:
+                  doc = yaml.safe_load(dependabot.read_text())
+                  if doc.get('version') != 2:
+                      failures.append('dependabot.yml: version must be 2')
+                  if not doc.get('updates'):
+                      failures.append('dependabot.yml: no updates configured')
+              except yaml.YAMLError as exc:
+                  failures.append(f'dependabot.yml: invalid YAML — {exc}')
+
+          if failures:
+              print('FAILURES:')
+              for f in failures:
+                  print(f'  x {f}')
+              sys.exit(1)
+          print('All workflow and Dependabot YAML is valid.')
+          PY

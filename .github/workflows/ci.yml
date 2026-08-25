@@ -1,0 +1,162 @@
+name: CI
+
+# Per-project verification for a repository of seventeen independent toolchains.
+#
+# Nothing here is hardcoded: .github/projects.json declares which projects exist,
+# what toolchain each needs, and which checks are known to pass. A check is only
+# ever enabled in the manifest after it has been observed passing — that is what
+# keeps this workflow green and therefore meaningful.
+#
+# See docs/ENGINEERING.md#how-ci-works.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      run_all:
+        description: 'Check every enabled project, ignoring the diff'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  discover:
+    name: Detect affected projects
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.detect.outputs.matrix }}
+      count: ${{ steps.detect.outputs.count }}
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '22'
+
+      - name: Detect
+        id: detect
+        run: |
+          set -euo pipefail
+
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            base="${{ github.event.pull_request.base.sha }}"
+            head="${{ github.event.pull_request.head.sha }}"
+            changed=$(git diff --name-only "$base" "$head")
+          elif [ "${{ inputs.run_all }}" = "true" ]; then
+            # Force every enabled project by pretending CI config changed.
+            changed=".github/projects.json"
+          elif [ "${{ github.event_name }}" = "push" ] && [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
+            changed=$(git diff --name-only "${{ github.event.before }}" "${{ github.sha }}")
+          else
+            changed=$(git diff --name-only "${{ github.sha }}~1" "${{ github.sha }}" || echo ".github/projects.json")
+          fi
+
+          matrix=$(printf '%s\n' "$changed" | node .github/scripts/changed-projects.mjs)
+          count=$(node -e "process.stdout.write(String(JSON.parse(process.argv[1]).length))" "$matrix")
+
+          echo "matrix=$matrix" >> "$GITHUB_OUTPUT"
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+
+          {
+            echo "### Affected projects: $count"
+            echo ''
+            node -e "
+              const m = JSON.parse(process.argv[1]);
+              if (!m.length) { console.log('_No project files changed — nothing to build._'); process.exit(0); }
+              console.log('| Project | Node | install | build | lint | test |');
+              console.log('|:--|:--|:--|:--|:--|:--|');
+              const tick = (v) => v ? 'yes' : '—';
+              for (const p of m) {
+                console.log(\`| \\\`\${p.path}\\\` | \${p.node} | \${tick(p.install)} | \${tick(p.build)} | \${tick(p.lint)} | \${tick(p.test)} |\`);
+              }
+            " "$matrix"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  project:
+    name: ${{ matrix.project.name }}
+    needs: discover
+    if: needs.discover.outputs.count != '0'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        project: ${{ fromJSON(needs.discover.outputs.matrix) }}
+    defaults:
+      run:
+        working-directory: ${{ matrix.project.path }}
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-node@v5
+        if: matrix.project.packageManager != 'bun'
+        with:
+          node-version: ${{ matrix.project.node }}
+
+      - uses: oven-sh/setup-bun@v2
+        if: matrix.project.packageManager == 'bun'
+
+      - name: Apply project environment
+        if: toJSON(matrix.project.env) != '{}'
+        run: |
+          node -e "
+            const env = ${{ toJSON(matrix.project.env) }};
+            const fs = require('fs');
+            for (const [k, v] of Object.entries(env)) fs.appendFileSync(process.env.GITHUB_ENV, k + '=' + v + '\n');
+          "
+        working-directory: .
+
+      - name: Install
+        if: matrix.project.install
+        run: |
+          if [ "${{ matrix.project.packageManager }}" = "bun" ]; then
+            bun install --frozen-lockfile
+          else
+            # No lockfiles are committed yet, so `npm ci` is not available.
+            # See docs/ENGINEERING.md#known-open-work.
+            npm install --no-audit --no-fund --legacy-peer-deps
+          fi
+
+      - name: Lint
+        if: matrix.project.lint
+        run: npm run lint
+
+      - name: Build
+        if: matrix.project.build
+        run: npm run build
+
+      - name: Test
+        if: matrix.project.test
+        run: npm test
+
+  result:
+    name: CI result
+    needs: [discover, project]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report
+        run: |
+          if [ "${{ needs.discover.result }}" != "success" ]; then
+            echo "Project detection failed."
+            exit 1
+          fi
+          if [ "${{ needs.discover.outputs.count }}" = "0" ]; then
+            echo "No project files changed — nothing to verify."
+            exit 0
+          fi
+          if [ "${{ needs.project.result }}" != "success" ]; then
+            echo "At least one project check failed."
+            exit 1
+          fi
+          echo "All affected projects passed."

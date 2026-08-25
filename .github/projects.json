@@ -1,0 +1,190 @@
+{
+  "$comment": [
+    "Single source of truth for what lives in this monorepo and what CI may run.",
+    "",
+    "Rules:",
+    "  * Every top-level project directory MUST have exactly one entry here.",
+    "  * A check is only ever set to `true` after it has been observed passing.",
+    "    Flipping a flag optimistically is how a repository ends up with red",
+    "    badges nobody reads.",
+    "  * Every `false` carries a `notes` string explaining the blocker.",
+    "",
+    "Consumed by .github/workflows/ci.yml and validated by",
+    ".github/scripts/check-manifest.mjs. See docs/ENGINEERING.md."
+  ],
+  "projects": [
+    {
+      "path": "react-s.o.l.i.d",
+      "ecosystem": "node",
+      "packageManager": "npm",
+      "node": "22",
+      "track": "solid",
+      "checks": { "install": true, "build": true, "lint": false, "test": false },
+      "notes": "No lint or test script defined."
+    },
+    {
+      "path": "vue.js-s.o.l.i.d",
+      "ecosystem": "node",
+      "packageManager": "npm",
+      "node": "22",
+      "track": "solid",
+      "checks": { "install": true, "build": true, "lint": false, "test": false },
+      "notes": "Has a lint script; not yet verified clean, so it stays off."
+    },
+    {
+      "path": "vue3-clean-architecture",
+      "ecosystem": "node",
+      "packageManager": "npm",
+      "node": "22",
+      "track": "clean-architecture",
+      "env": { "CYPRESS_INSTALL_BINARY": "0" },
+      "checks": { "install": true, "build": true, "lint": false, "test": false },
+      "notes": "build runs vue-tsc type-check plus vite. Cypress binary download is skipped; e2e is not part of CI."
+    },
+    {
+      "path": "nuxt-clean-architecture",
+      "ecosystem": "node",
+      "packageManager": "npm",
+      "node": "22",
+      "track": "clean-architecture",
+      "checks": { "install": true, "build": true, "lint": false, "test": false },
+      "notes": "Declares pnpm@9.15.5 but installs cleanly with npm; unify on one package manager in a follow-up."
+    },
+    {
+      "path": "angular-s.o.l.i.d-advanced",
+      "ecosystem": "node",
+      "packageManager": "npm",
+      "node": "24",
+      "track": "solid",
+      "checks": { "install": true, "build": true, "lint": false, "test": false },
+      "notes": "Angular CLI 22 requires Node >= 22.22.3, so this project pins Node 24. Install verified; build could not be verified on the repair sandbox (Node 22.22.2)."
+    },
+    {
+      "path": "astro-starter",
+      "ecosystem": "node",
+      "packageManager": "npm",
+      "node": "22",
+      "track": "tooling",
+      "checks": { "install": true, "build": true, "lint": false, "test": false },
+      "notes": "Tailwind v4 via @tailwindcss/vite; the v3 theme is loaded through @config in src/layouts/global.css."
+    },
+    {
+      "path": "sveltekit",
+      "ecosystem": "node",
+      "packageManager": "npm",
+      "node": "22",
+      "track": "edge-runtime",
+      "checks": { "install": true, "build": false, "lint": false, "test": false },
+      "notes": "BLOCKED: arctic@3 no longer exports `Google` from the package root. src/lib/server/oauth.ts needs migrating to the current provider API before build can be enabled."
+    },
+    {
+      "path": "next-prisma-starter",
+      "ecosystem": "node",
+      "packageManager": "npm",
+      "node": "22",
+      "track": "clean-architecture",
+      "checks": { "install": true, "build": true, "lint": false, "test": false },
+      "notes": "prebuild runs `prisma generate`. Prisma is held at ^6 — see docs/ENGINEERING.md#known-open-work."
+    },
+    {
+      "path": "rn_clean_architecture",
+      "ecosystem": "node",
+      "packageManager": "npm",
+      "node": "22",
+      "track": "clean-architecture",
+      "checks": { "install": true, "build": false, "lint": false, "test": false },
+      "notes": "React Native has no `build` script; producing an artifact needs the Android/iOS toolchains, which CI does not provision."
+    },
+    {
+      "path": "solid-flask-web-app/ui",
+      "ecosystem": "node",
+      "packageManager": "npm",
+      "node": "22",
+      "track": "tooling",
+      "env": { "CYPRESS_INSTALL_BINARY": "0" },
+      "checks": { "install": true, "build": true, "lint": false, "test": false },
+      "notes": "Frontend of the Flask app. The Python API alongside it is not yet covered by CI."
+    },
+    {
+      "path": "learning-doc",
+      "ecosystem": "node",
+      "packageManager": "npm",
+      "node": "22",
+      "track": "tooling",
+      "checks": { "install": true, "build": true, "lint": false, "test": false },
+      "notes": "The Engineering Atlas. Nuxt 4 + Nuxt Content."
+    },
+    {
+      "path": "nodejs-s.o.l.i.d",
+      "ecosystem": "node",
+      "packageManager": "npm",
+      "node": "22",
+      "track": "solid",
+      "checks": { "install": true, "build": true, "lint": false, "test": false },
+      "notes": "build runs tsc. A `typecheck` script is also available."
+    },
+    {
+      "path": "nestjs-s.o.l.i.d",
+      "ecosystem": "node",
+      "packageManager": "npm",
+      "node": "22",
+      "track": "clean-architecture",
+      "checks": { "install": true, "build": true, "lint": false, "test": false },
+      "notes": "prebuild runs `prisma generate`. TypeScript held at ^6 and Prisma at ^6 — see docs/ENGINEERING.md#known-open-work."
+    },
+    {
+      "path": "API_s.o.l.i.d_TS",
+      "ecosystem": "node",
+      "packageManager": "npm",
+      "node": "22",
+      "track": "solid",
+      "checks": { "install": true, "build": false, "lint": false, "test": false },
+      "notes": "No build script; the project runs from source via ts-node."
+    },
+    {
+      "path": "Hono-Postgres",
+      "ecosystem": "node",
+      "packageManager": "bun",
+      "node": "22",
+      "track": "edge-runtime",
+      "checks": { "install": true, "build": false, "lint": false, "test": false },
+      "notes": "No build script; Bun runs TypeScript directly."
+    },
+    {
+      "path": "vercel-cleaner",
+      "ecosystem": "node",
+      "packageManager": "npm",
+      "node": "22",
+      "track": "tooling",
+      "checks": { "install": true, "build": false, "lint": false, "test": false },
+      "notes": "Single-file operational script; no build step."
+    },
+    {
+      "path": "RAG-streamlit",
+      "ecosystem": "python",
+      "packageManager": "poetry",
+      "python": "3.11",
+      "track": "ai-rag",
+      "checks": { "install": false, "build": false, "lint": false, "test": false },
+      "notes": "Three Poetry projects (backend, frontend, pipelines). Dependabot tracks them; CI coverage is not wired up yet."
+    },
+    {
+      "path": "solid-flask-web-app",
+      "ecosystem": "python",
+      "packageManager": "pip",
+      "python": "3.11",
+      "track": "solid",
+      "checks": { "install": false, "build": false, "lint": false, "test": false },
+      "notes": "Flask API. Its `ui` subdirectory is covered separately as a node project."
+    },
+    {
+      "path": "hospital-management",
+      "ecosystem": "java",
+      "packageManager": "maven",
+      "java": "21",
+      "track": "microservices",
+      "checks": { "install": false, "build": false, "lint": false, "test": false },
+      "notes": "No aggregator POM. discovery-server, api-gateway and patient-service have POMs; billing-service, clinical-service and scheduling-service ship sources without one."
+    }
+  ]
+}

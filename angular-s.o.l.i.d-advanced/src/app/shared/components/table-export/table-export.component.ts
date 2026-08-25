@@ -3,6 +3,7 @@ import {MatTableDataSource} from "@angular/material/table";
 import {utils, WorkBook, WorkSheet, writeFileXLSX} from "xlsx";
 
 @Component({
+  standalone: false,
   selector: 'app-table-export',
   templateUrl: './table-export.component.html'
 })

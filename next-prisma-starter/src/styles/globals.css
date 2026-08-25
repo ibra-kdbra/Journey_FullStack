@@ -1,3 +1,13 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/*
+ * Tailwind v4 is CSS-first: the two custom gradients that used to live in
+ * tailwind.config.ts are declared here as utilities instead.
+ */
+@utility bg-gradient-radial {
+	background-image: radial-gradient(var(--tw-gradient-stops));
+}
+
+@utility bg-gradient-conic {
+	background-image: conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops));
+}

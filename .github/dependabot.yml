@@ -1,91 +1,291 @@
-# To get started with Dependabot version updates, you'll need to specify which
-# package ecosystems to update and where the package manifests are located.
-# Please see the documentation for all configuration options:
-# https://docs.github.com/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
-
+# Dependabot configuration for the Journey_FullStack monorepo.
+#
+# Design notes:
+#   * Every `directory` below MUST exist and MUST contain a manifest for its
+#     ecosystem. A stale directory makes the update job for that entry fail
+#     forever (this is what `/task-manager` used to do).
+#   * Updates are GROUPED. Before grouping this repo produced one PR per
+#     dependency per project per week, which is where the ~1200 PR backlog came
+#     from. Grouping collapses that into one PR per project per week for
+#     minor/patch, and keeps majors separate so they get a real review.
+#   * Python projects use `pip` — that is the ecosystem that understands
+#     Poetry's pyproject.toml/poetry.lock. There is no `poetry` ecosystem.
+#
+# Keep this file in sync with .github/projects.json; ci.yml enforces it.
 version: 2
+
 updates:
-  - package-ecosystem: "npm" # See documentation for possible values
-    directory: "/angular-s.o.l.i.d-advanced"
+  # ----------------------------------------------------------------- tooling
+  - package-ecosystem: "github-actions"
+    directory: "/"
     schedule:
       interval: "weekly"
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "ci"
+    groups:
+      actions:
+        patterns: ["*"]
 
-  - package-ecosystem: "npm" # For API_s.o.l.i.d_TS
-    directory: "/API_s.o.l.i.d_TS"
-    schedule:
-      interval: "weekly"
-
-  - package-ecosystem: "npm" # For astro-starter
-    directory: "/astro-starter"
-    schedule:
-      interval: "weekly"
-
-  - package-ecosystem: "npm" # For nestjs-s.o.l.i.d
-    directory: "/nestjs-s.o.l.i.d"
-    schedule:
-      interval: "weekly"
-
-  - package-ecosystem: "npm" # For next-prisma-starter
-    directory: "/next-prisma-starter"
-    schedule:
-      interval: "weekly"
-
-  - package-ecosystem: "npm" # For nodejs-s.o.l.i.d
-    directory: "/nodejs-s.o.l.i.d"
-    schedule:
-      interval: "weekly"
-
-  - package-ecosystem: "npm" # For nuxt-clean-architecture
-    directory: "/nuxt-clean-architecture"
-    schedule:
-      interval: "weekly"
-
-  - package-ecosystem: "npm" # For react-s.o.l.i.d
+  # ------------------------------------------------------------ frontend: js
+  - package-ecosystem: "npm"
     directory: "/react-s.o.l.i.d"
-    schedule:
-      interval: "weekly"
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 5
+    commit-message: { prefix: "deps(react-solid)" }
+    groups:
+      react-solid-minor:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
 
-  - package-ecosystem: "npm" # For vue.js-s.o.l.i.d
+  - package-ecosystem: "npm"
     directory: "/vue.js-s.o.l.i.d"
-    schedule:
-      interval: "weekly"
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 5
+    commit-message: { prefix: "deps(vue-solid)" }
+    groups:
+      vue-solid-minor:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
 
-  - package-ecosystem: "npm" # For vue3-clean-architecture
+  - package-ecosystem: "npm"
     directory: "/vue3-clean-architecture"
-    schedule:
-      interval: "weekly"
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 5
+    commit-message: { prefix: "deps(vue3-clean)" }
+    groups:
+      vue3-clean-minor:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
 
-  - package-ecosystem: "npm" # For sveltekit
+  - package-ecosystem: "npm"
+    directory: "/nuxt-clean-architecture"
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 5
+    commit-message: { prefix: "deps(nuxt-clean)" }
+    groups:
+      nuxt-clean-minor:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "npm"
+    directory: "/angular-s.o.l.i.d-advanced"
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 5
+    commit-message: { prefix: "deps(angular-solid)" }
+    groups:
+      angular-platform:
+        patterns: ["@angular/*", "@angular-devkit/*", "zone.js", "rxjs"]
+      angular-solid-minor:
+        patterns: ["*"]
+        exclude-patterns: ["@angular/*", "@angular-devkit/*"]
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "npm"
+    directory: "/astro-starter"
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 5
+    commit-message: { prefix: "deps(astro)" }
+    groups:
+      astro-minor:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "npm"
     directory: "/sveltekit"
-    schedule:
-      interval: "weekly"
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 5
+    commit-message: { prefix: "deps(sveltekit)" }
+    groups:
+      sveltekit-minor:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
 
-  - package-ecosystem: "npm" # For rn_clean_architecture
+  - package-ecosystem: "npm"
+    directory: "/next-prisma-starter"
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 5
+    commit-message: { prefix: "deps(next-prisma)" }
+    groups:
+      next-platform:
+        patterns: ["next", "eslint-config-next", "@next/*", "react", "react-dom"]
+      next-prisma-minor:
+        patterns: ["*"]
+        exclude-patterns: ["next", "eslint-config-next", "@next/*"]
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "npm"
     directory: "/rn_clean_architecture"
-    schedule:
-      interval: "weekly"
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 5
+    commit-message: { prefix: "deps(rn-clean)" }
+    groups:
+      react-native-platform:
+        patterns: ["react-native", "@react-native/*", "@react-native-community/*"]
+      rn-clean-minor:
+        patterns: ["*"]
+        exclude-patterns: ["react-native", "@react-native/*"]
+        update-types: ["minor", "patch"]
 
-  - package-ecosystem: "npm" # For solidjs_UI
+  - package-ecosystem: "npm"
     directory: "/solid-flask-web-app/ui"
-    schedule:
-      interval: "weekly"
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 5
+    commit-message: { prefix: "deps(flask-ui)" }
+    groups:
+      flask-ui-minor:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
 
-  - package-ecosystem: "npm" # For Hono-Postgres
-    directory: "/Hono-Postgres"
-    schedule:
-      interval: "weekly"
-
-  - package-ecosystem: "npm" # For learning-doc
+  - package-ecosystem: "npm"
     directory: "/learning-doc"
-    schedule:
-      interval: "weekly"
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 5
+    commit-message: { prefix: "deps(atlas)" }
+    groups:
+      nuxt-platform:
+        patterns: ["nuxt", "@nuxt/*", "@nuxtjs/*", "nitropack", "vue"]
+      atlas-minor:
+        patterns: ["*"]
+        exclude-patterns: ["nuxt", "@nuxt/*", "@nuxtjs/*"]
+        update-types: ["minor", "patch"]
 
-  - package-ecosystem: "poetry" # For RAG-streamlit backend
+  # ------------------------------------------------------------- backend: js
+  - package-ecosystem: "npm"
+    directory: "/nodejs-s.o.l.i.d"
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 5
+    commit-message: { prefix: "deps(node-solid)" }
+    groups:
+      node-solid-minor:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "npm"
+    directory: "/nestjs-s.o.l.i.d"
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 5
+    commit-message: { prefix: "deps(nest-solid)" }
+    groups:
+      nest-platform:
+        patterns: ["@nestjs/*"]
+      nest-solid-minor:
+        patterns: ["*"]
+        exclude-patterns: ["@nestjs/*"]
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "npm"
+    directory: "/API_s.o.l.i.d_TS"
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 5
+    commit-message: { prefix: "deps(api-solid)" }
+    groups:
+      api-solid-minor:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "npm"
+    directory: "/Hono-Postgres"
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 5
+    commit-message: { prefix: "deps(hono)" }
+    groups:
+      hono-minor:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "npm"
+    directory: "/vercel-cleaner"
+    schedule: { interval: "monthly" }
+    open-pull-requests-limit: 2
+    commit-message: { prefix: "deps(vercel-cleaner)" }
+    groups:
+      vercel-cleaner-minor:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  # --------------------------------------------------------------- python
+  # `pip` is the ecosystem that reads Poetry's pyproject.toml + poetry.lock.
+  - package-ecosystem: "pip"
     directory: "/RAG-streamlit/backend"
-    schedule:
-      interval: "weekly"
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 5
+    commit-message: { prefix: "deps(rag-backend)" }
+    groups:
+      rag-backend-minor:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
 
-  - package-ecosystem: "maven" # For task-manager
-    directory: "/task-manager"
-    schedule:
-      interval: "weekly"
+  - package-ecosystem: "pip"
+    directory: "/RAG-streamlit/frontend"
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 5
+    commit-message: { prefix: "deps(rag-frontend)" }
+    groups:
+      rag-frontend-minor:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "pip"
+    directory: "/RAG-streamlit/pipelines"
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 5
+    commit-message: { prefix: "deps(rag-pipelines)" }
+    groups:
+      rag-pipelines-minor:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  # ------------------------------------------------------------------ java
+  # hospital-management has no aggregator POM, so each service is its own entry.
+  # billing-service / clinical-service / scheduling-service ship sources but no
+  # pom.xml yet — add entries here once their POMs land.
+  - package-ecosystem: "maven"
+    directory: "/hospital-management/discovery-server"
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 3
+    commit-message: { prefix: "deps(discovery-server)" }
+    groups:
+      spring:
+        patterns: ["org.springframework*:*", "org.springframework.cloud:*"]
+      discovery-server-minor:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "maven"
+    directory: "/hospital-management/api-gateway"
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 3
+    commit-message: { prefix: "deps(api-gateway)" }
+    groups:
+      spring:
+        patterns: ["org.springframework*:*", "org.springframework.cloud:*"]
+      api-gateway-minor:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "maven"
+    directory: "/hospital-management/patient-service"
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 3
+    commit-message: { prefix: "deps(patient-service)" }
+    groups:
+      spring:
+        patterns: ["org.springframework*:*", "org.springframework.cloud:*"]
+      patient-service-minor:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  # ---------------------------------------------------------------- docker
+  - package-ecosystem: "docker"
+    directories:
+      - "/solid-flask-web-app/ui"
+      - "/RAG-streamlit/backend"
+      - "/RAG-streamlit/frontend"
+      - "/learning-doc/pocketbase-docker"
+    schedule: { interval: "monthly" }
+    open-pull-requests-limit: 3
+    commit-message: { prefix: "deps(docker)" }
+    groups:
+      base-images:
+        patterns: ["*"]

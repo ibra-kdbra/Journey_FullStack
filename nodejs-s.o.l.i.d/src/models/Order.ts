@@ -1,9 +1,15 @@
-import { DataTypes, Model } from "sequelize";
+import { DataTypes, Model, Optional } from "sequelize";
 import sequelize from '../helpers/db';
 import OrderAttributes from "../interfaces/types/OrderAttributes";
 import { User } from "./User";
 
-class Order extends Model<OrderAttributes> implements OrderAttributes {
+/**
+ * Sequelize fills `id` (autoIncrement) and the timestamps, so they are optional
+ * at creation time even though they are always present on a persisted row.
+ */
+type OrderCreationAttributes = Optional<OrderAttributes, "id" | "createdAt" | "updatedAt">;
+
+class Order extends Model<OrderAttributes, OrderCreationAttributes> implements OrderAttributes {
     declare id: number;
     declare userId: number;
     declare product: string;

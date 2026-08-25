@@ -4,6 +4,7 @@ import {MatTable} from "@angular/material/table";
 import {TableComponent} from "./shared/components/table/table.component";
 
 @Component({
+  standalone: false,
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']

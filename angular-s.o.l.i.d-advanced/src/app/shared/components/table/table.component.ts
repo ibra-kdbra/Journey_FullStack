@@ -4,6 +4,7 @@ import {MatSort} from "@angular/material/sort";
 import {MatPaginator} from "@angular/material/paginator";
 
 @Component({
+  standalone: false,
   selector: 'app-table',
   templateUrl: './table.component.html'})
 export class TableComponent implements OnInit, AfterViewInit{

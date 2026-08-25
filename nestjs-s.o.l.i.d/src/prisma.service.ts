@@ -8,9 +8,13 @@ export class PrismaService extends PrismaClient implements OnModuleInit {
     console.log('DB Connected!');
   }
 
+  /**
+   * Prisma removed the client-level `beforeExit` hook, so shutdown is driven by
+   * the Node process event instead.
+   */
   async enableShutdownHooks(app: INestApplication) {
-    this.$on('beforeExit', async () => {
-      await app.close();
+    process.on('beforeExit', () => {
+      void app.close();
     });
   }
 }

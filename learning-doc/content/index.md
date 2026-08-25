@@ -1,24 +1,45 @@
-# Welcome to Nuxt Content Starter
+---
+title: Journey FullStack
+description: Eighteen applications, five ecosystems, one set of architectural ideas.
+---
 
-This is the main page displaying Markdown located at [content/index.md](https://github.com/nuxt/starter/blob/content/content/index.md).
+# Journey FullStack
 
-Move to [about](/about) page.
+A **polyrepo living in one repository**: eighteen independent applications across
+five ecosystems, with no shared build and no workspace file. That independence is
+deliberate — it is what makes the comparison possible.
 
-## Manage your Contents
+The same handful of ideas — dependency inversion, layer separation, testable
+boundaries — are worked through in React, Vue, Nuxt, Angular, Svelte, Astro,
+React Native, NestJS, Express, Hono, Flask, and Spring Boot. Where they land
+differently, the difference is the lesson.
 
-Create new pages or modify the existing ones in `content/` directory.
+## Two ways in
 
-## Query & Render Pages
+**[The Engineering Atlas](/atlas)** — one entry per project, each answering the
+same five questions: what problem shape it is for, what its layer map actually
+looks like, which idea it demonstrates most clearly, what it deliberately does
+not do, and how to run it.
 
-You can find an example of querying contents and rendering them in a [catch-all page](https://github.com/nuxt/starter/blob/content/app/pages/%5B...slug%5D.vue)
+**[Courses](/courses)** — long-form material on Rust, Go, Redis, FastAPI, Docker,
+Flutter, Gin, Supabase, Raspberry Pi, Next.js, and Korean.
 
-## Integrate Vue Component
+## Where to start
 
-::alert{color="green"}
-The current [alert](https://github.com/nuxt/starter/blob/content/app/components/Alert.vue) and the [counter](https://github.com/nuxt/starter/blob/content/app/components/Counter.vue) below are `Vue` components integrated into the Markdown.
-::
+| If you want… | Read |
+|:---|:---|
+| The clearest worked refactor toward Clean Architecture | [`nuxt-clean-architecture`](/atlas/nuxt-clean-architecture) |
+| The most literal layer map | [`rn_clean_architecture`](/atlas/rn-clean-architecture) |
+| SOLID with no framework helping you | [`nodejs-s.o.l.i.d`](/atlas/nodejs-solid) |
+| SOLID where the framework does help | [`nestjs-s.o.l.i.d`](/atlas/nestjs-solid) |
+| A domain with real business rules | [`API_s.o.l.i.d_TS`](/atlas/api-solid-ts) |
+| Service decomposition across deployables | [`hospital-management`](/atlas/hospital-management) |
+| A counter-example — knowing when not to abstract | [`vercel-cleaner`](/atlas/vercel-cleaner) |
 
-::counter
-::
+## On honesty
 
-Checkout out the [documentation](https://content.nuxt.com/docs/getting-started) to learn more.
+Entries describe what the code *is*, not what its directory name promises. Where a
+project is unfinished, the entry says so — [`sveltekit`](/atlas/sveltekit) does not
+currently build, and its entry leads with that rather than burying it. Where a
+directory oversold itself the entry corrects downward, and where one undersold
+itself it corrects upward. Documentation a reader cannot trust is worse than none.

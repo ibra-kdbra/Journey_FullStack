@@ -2,6 +2,7 @@ import {AfterViewInit, Component, Input, ViewChild} from '@angular/core';
 import {MatPaginator} from "@angular/material/paginator";
 
 @Component({
+  standalone: false,
   selector: 'app-paginator',
   templateUrl: './paginator.component.html'
 })

@@ -5,6 +5,7 @@ import {FormBuilder, FormGroup} from "@angular/forms";
 import {IItemForm} from "./table-filter.interface";
 
 @Component({
+  standalone: false,
   selector: 'app-table-filter',
   templateUrl: './table-filter.component.html',
 })

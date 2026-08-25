@@ -15,7 +15,7 @@ export const all = async (req: Request, res: Response) => {
 
 export const find = async (req: Request, res: Response) => {
     try {
-        const user = await User.findByPk(req.params.id)
+        const user = await User.findByPk(Number(req.params.id))
         res.json(user)
     } catch (error) {
         res.status(500).json(error)
@@ -54,7 +54,7 @@ export const exportFile = async (req: Request, res: Response) => {
 // Task #6 get User Orders
 export const userOrders = async (req: Request, res: Response) => {
     try {
-        const user = await User.findByPk(req.params.userId, {
+        const user = await User.findByPk(Number(req.params.userId), {
             include: Order,
         });
 

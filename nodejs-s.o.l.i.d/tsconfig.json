@@ -1,15 +1,18 @@
 {
   "compilerOptions": {
-    "sourceMap": true,
+    "target": "esnext",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "lib": ["esnext"],
+    "rootDir": "./src",
     "outDir": "dist",
+    "sourceMap": true,
     "strict": true,
-    "lib": [
-      "esnext"
-    ],
     "esModuleInterop": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "target": "esnext",
-    "moduleResolution": "Node",
-  }
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*"],
+  "exclude": ["node_modules", "dist"]
 }

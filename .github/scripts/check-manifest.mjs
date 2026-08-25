@@ -148,7 +148,10 @@ if (existsSync(atlasDir)) {
     if (match) documented.add(match[1].trim().replace(/^["']|["']$/g, ''));
   }
   for (const p of projects) {
-    if (!documented.has(p.path)) {
+    // A nested project (e.g. solid-flask-web-app/ui) is considered documented
+    // when its parent has an Atlas entry covering it.
+    const coveredByParent = p.path.includes('/') && documented.has(p.path.split('/')[0]);
+    if (!documented.has(p.path) && !coveredByParent) {
       warn(`"${p.path}" has no Atlas entry in learning-doc/content/atlas/.`);
     }
   }

@@ -1,57 +1,79 @@
-# Learning-Doc: Modular Engineering Academy
+# Engineering Atlas
 
-A professional, full-stack learning platform built with Nuxt 4, Nuxt Content, and Tailwind CSS. This project serves as a comprehensive documentation and course management system with a discipline-centric architecture.
+The documentation platform for this monorepo, built with Nuxt 4 and Nuxt Content.
+It renders two things:
 
-## 🚀 Key Features
+- **The Atlas** (`content/atlas/`) — one entry per project in the repository,
+  each answering the same five questions so entries stay comparable across
+  frameworks that share no vocabulary.
+- **Courses** (`content/courses/`) — long-form material on Rust, Go, Redis,
+  FastAPI, Docker, Flutter, Gin, Supabase, Raspberry Pi, Next.js, and Korean.
 
-- **Discipline-Centric Navigation**: Content organized by professional engineering fields (Frontend, Backend, Mobile, Systems, etc.).
-- **Nuxt Content v3**: Powerful file-based CMS with custom Prose component overrides.
-- **Interactive UI**: Custom-built Roadmap cards, Progress bars, and interactive code elements.
-- **Modular Architecture**: Clean separation of concerns between components, services, and composables.
-- **Local Development Backend**: Integrated PocketBase via Docker for authentication and progress tracking.
+## Why it is shaped this way
 
-## 🛠️ Project Structure
+The Atlas is bound to `.github/projects.json` at the repository root: each entry
+carries a `project:` field, and `check-manifest.mjs` fails CI when the Atlas and
+the manifest disagree. Documentation drift is a build failure rather than a slow
+lie. See [ADR-0003](../docs/decisions/0003-atlas-replaces-course-site.md).
 
-- `components/`: Modular UI system (Common, Custom, Content, and UI Primitives).
-- `pages/`: Discipline-aware routing and LMS interfaces.
-- `composables/`: Reusable logic for Auth, Theme, and Progression.
-- `services/`: Backend API integration (PocketBase, Comments, Translations).
-- `assets/`: Global styling and design tokens.
-- `utils/`: Core business logic and academy configuration constants.
-- `pocketbase-docker/`: Local backend infrastructure.
+## Structure
 
-## 🛠️ Setup & Development
-
-### 1. Install Dependencies
-
-```bash
-pnpm install
+```
+content/
+  atlas/            one entry per project — the schema in content.config.ts is enforced
+  courses/          long-form course material
+components/
+  ui/  common/  content/  course/  docs/  custom/
+composables/        useAuth  useTheme  useProgress  useExam  useComments
+services/           pocketbase.ts, comments/ — the only files that know the backend
+utils/
+  atlas.ts          the project registry this site renders
+  academy.ts        course disciplines and technology tokens
+assets/css/
+  courses.css       the design tokens; DESIGN.md at the repo root documents them
+pages/
+  atlas/            index and entry routes
+  courses/  docs/  auth/
+server/api/
+pocketbase-docker/  local backend
+src_legacy/         a previous Next.js implementation, kept for reference, not routed
 ```
 
-### 2. Local Backend (PocketBase)
+`composables/` → `services/` is the boundary that matters: components call
+composables, composables call services, and `services/pocketbase.ts` is the only
+file that names PocketBase.
 
-Start the local backend services using Docker:
-
-```bash
-cd pocketbase-docker
-docker-compose up -d
-```
-
-### 3. Run Development Server
+## Setup
 
 ```bash
-pnpm dev
+npm install
+
+# Local backend (auth + progress tracking)
+cd pocketbase-docker && docker compose up -d && cd ..
+
+npm run dev        # http://localhost:3000
+npm run build
+npm run preview
 ```
 
-### 4. Build for Production
+## Adding an Atlas entry
 
-```bash
-pnpm build
-```
+1. Add the project to `.github/projects.json` at the repository root.
+2. Add it to `atlasProjects` in [`utils/atlas.ts`](utils/atlas.ts), including an
+   explicit `slug`.
+3. Create `content/atlas/<slug>.md` with the required frontmatter — `project`,
+   `track`, `stack`, `status`, `compare`. The schema in
+   [`content.config.ts`](content.config.ts) is enforced at build time.
+4. Add a row to the root [`README.md`](../README.md) index.
+5. Run `node ../.github/scripts/check-manifest.mjs`.
 
-## 📜 Documentation
+The [`atlas-curator`](../.claude/agents/atlas-curator.md) agent exists to do this
+correctly, including the rule that every claim must be verified against the actual
+directory before it is written.
 
-Detailed changelogs and implementation plans are stored in the `.gemini/antigravity/brain/` directory for historical tracking.
+## UI changes
 
-- [Changelog (Uncommitted)](changelog.md)
-- [Verification Results](walkthrough.md) (Generated per task)
+Every colour resolves through a CSS custom property in
+[`assets/css/courses.css`](assets/css/courses.css). Literal hex values in
+components are a review blocker. The contract is [`DESIGN.md`](../DESIGN.md);
+the checklist is [`ui-finish-gate`](../.claude/agents/ui-finish-gate.md).

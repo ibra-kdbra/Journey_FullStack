@@ -15,6 +15,7 @@ import {
     Monitor,
 } from "lucide-vue-next";
 import { ref } from "vue";
+import { atlasTracks, atlasProjects, projectsByTrack } from "~/utils/atlas";
 
 const technologies = [
     {
@@ -139,27 +140,103 @@ const activeTab = ref(ecosystemTools[0]);
         <section class="py-20 sm:py-28 border-b border-[rgb(var(--color-border))]">
             <div class="container max-w-6xl mx-auto px-4">
                 <div class="max-w-3xl">
-                    <div class="inline-flex items-center gap-2 rounded-md px-3 py-1 text-xs font-semibold mb-6 bg-[rgb(var(--color-bg-soft))] text-[rgb(var(--color-accent-blue))] border border-[rgb(var(--color-border))]">
-                        <BookOpen :size="14" />
-                        Interactive Developer Curricula
+                    <div class="inline-flex items-center gap-2 rounded-md px-3 py-1 text-xs font-semibold mb-6 bg-[rgb(var(--color-bg-soft))] text-[rgb(var(--color-accent-violet))] border border-[rgb(var(--color-border))]">
+                        <Layers :size="14" aria-hidden="true" />
+                        {{ atlasProjects.length }} applications · {{ atlasTracks.length }} tracks · 5 ecosystems
                     </div>
 
                     <h1 class="mb-6 text-4xl sm:text-6xl font-black tracking-tight leading-[1.1] text-[rgb(var(--color-text))]">
-                        Master Core Software <br />
-                        <span class="text-[rgb(var(--color-accent-blue))]">Engineering Disciplines</span>
+                        One set of ideas,<br />
+                        <span class="text-[rgb(var(--color-accent-violet))]">twelve framework cultures</span>
                     </h1>
 
                     <p class="mb-10 text-base sm:text-lg leading-relaxed max-w-2xl text-[rgb(var(--color-text-soft))]">
-                        High-density documentation and interactive courses designed for developers aiming to master bare-metal systems, distributed backends, and modern frontend engines.
+                        A polyrepo living in one repository. Dependency inversion, layer
+                        separation, and testable boundaries — worked through in React, Vue,
+                        Nuxt, Angular, Svelte, Astro, React Native, NestJS, Express, Hono,
+                        Flask, and Spring Boot. Where they land differently, the difference
+                        is the lesson.
                     </p>
 
-                    <div class="flex flex-wrap gap-2.5">
-                        <NuxtLink v-for="tech in technologies" :key="tech.name" :to="tech.href" class="tech-badge">
-                            <Icon :name="tech.iconName" class="w-4 h-4" :style="{ color: tech.color }" />
-                            {{ tech.name }}
+                    <div class="flex flex-wrap items-center gap-3">
+                        <NuxtLink to="/atlas" class="btn-primary inline-flex items-center gap-2">
+                            Open the Atlas
+                            <ArrowRight :size="16" aria-hidden="true" />
+                        </NuxtLink>
+                        <NuxtLink
+                            to="/courses"
+                            class="inline-flex items-center gap-2 rounded-lg border border-[rgb(var(--color-border))] bg-[rgb(var(--color-bg-card))] px-4 py-2.5 text-sm font-semibold text-[rgb(var(--color-text))] transition-colors hover:border-[rgb(var(--color-accent-blue))]"
+                        >
+                            <BookOpen :size="16" aria-hidden="true" />
+                            Browse courses
                         </NuxtLink>
                     </div>
                 </div>
+            </div>
+        </section>
+
+        <!-- ═══ ATLAS TRACKS ═══ -->
+        <section class="py-20 border-b border-[rgb(var(--color-border))]" aria-labelledby="atlas-tracks">
+            <div class="container max-w-6xl mx-auto px-4">
+                <div class="mb-12 flex flex-wrap items-end justify-between gap-4">
+                    <div>
+                        <h2 id="atlas-tracks" class="text-3xl font-black tracking-tight mb-3 text-[rgb(var(--color-text))]">
+                            The Engineering Atlas
+                        </h2>
+                        <p class="text-base text-[rgb(var(--color-text-soft))] max-w-xl">
+                            Every project in this repository, grouped by the question it
+                            exists to answer.
+                        </p>
+                    </div>
+                    <NuxtLink
+                        to="/atlas"
+                        class="inline-flex items-center gap-1.5 text-sm font-semibold text-[rgb(var(--color-accent-blue))] hover:underline"
+                    >
+                        All {{ atlasProjects.length }} projects
+                        <ArrowRight :size="14" aria-hidden="true" />
+                    </NuxtLink>
+                </div>
+
+                <ul class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 list-none p-0">
+                    <li v-for="track in atlasTracks" :key="track.id">
+                        <NuxtLink
+                            :to="`/atlas#track-${track.id}`"
+                            class="surface-card group flex h-full flex-col p-6"
+                        >
+                            <div class="mb-4 flex items-center justify-between">
+                                <span
+                                    class="flex h-11 w-11 items-center justify-center rounded-lg"
+                                    :style="{ backgroundColor: `rgb(${track.color} / 0.12)` }"
+                                    aria-hidden="true"
+                                >
+                                    <component :is="track.icon" :size="20" :style="{ color: `rgb(${track.color})` }" />
+                                </span>
+                                <span class="text-xs font-semibold text-[rgb(var(--color-text-muted))]">
+                                    {{ projectsByTrack(track.id).length }}
+                                    {{ projectsByTrack(track.id).length === 1 ? "project" : "projects" }}
+                                </span>
+                            </div>
+
+                            <h3 class="mb-2 text-lg font-bold text-[rgb(var(--color-text))]">
+                                {{ track.name }}
+                            </h3>
+                            <p class="mb-4 text-sm leading-relaxed text-[rgb(var(--color-text-soft))]">
+                                {{ track.question }}
+                            </p>
+
+                            <span
+                                class="mt-auto flex items-center gap-1 border-t border-[rgb(var(--color-border))] pt-3 text-xs font-semibold text-[rgb(var(--color-accent-blue))]"
+                            >
+                                Explore track
+                                <ArrowRight
+                                    :size="12"
+                                    class="transition-transform duration-200 group-hover:translate-x-0.5"
+                                    aria-hidden="true"
+                                />
+                            </span>
+                        </NuxtLink>
+                    </li>
+                </ul>
             </div>
         </section>
 
@@ -168,10 +245,11 @@ const activeTab = ref(ecosystemTools[0]);
             <div class="container max-w-6xl mx-auto px-4">
                 <div class="mb-12">
                     <h2 class="text-3xl font-black tracking-tight mb-3 text-[rgb(var(--color-text))]">
-                        Curriculum Paths
+                        Course Paths
                     </h2>
                     <p class="text-base text-[rgb(var(--color-text-soft))] max-w-xl">
-                        Structured tracks covering low-level memory physics, distributed APIs, algorithms, and frontend architecture.
+                        Long-form material, separate from the Atlas: low-level systems,
+                        distributed APIs, algorithms, and frontend architecture.
                     </p>
                 </div>
 

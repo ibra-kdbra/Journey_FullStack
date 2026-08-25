@@ -10,9 +10,10 @@
     "seed:up": "npx sequelize-cli db:seed:all",
     "seed:down": "npx sequelize-cli --config config/config.js db:seed:undo:all",
     "clean": "rimraf dist/",
-    "build": "yarn clean && npx tsc",
-    "start": "yarn build && nodemon dist/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "npm run clean && tsc",
+    "start": "npm run build && nodemon dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "bcrypt": "^6.0.0",

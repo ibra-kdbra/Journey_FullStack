@@ -35,7 +35,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",
     "prettier": "^3.0.3",
-    "prisma": "^6.0.0",
+    "prisma": "^7.9.1",
     "ts-node": "^10.9.1"
   }
 }

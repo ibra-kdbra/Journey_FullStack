@@ -45,6 +45,11 @@ onMounted(() => {
 
                 <!-- Desktop Nav -->
                 <div class="hidden md:flex items-center gap-1">
+                    <NuxtLink to="/atlas"
+                        class="px-3 py-2 text-sm font-semibold rounded-md transition-colors hover:bg-[rgb(var(--color-bg-soft))]"
+                        :style="{ color: `rgb(var(--color-text-soft))` }" active-class="!text-[rgb(var(--color-accent-blue))] !font-bold">
+                        Atlas
+                    </NuxtLink>
                     <NuxtLink to="/courses"
                         class="px-3 py-2 text-sm font-semibold rounded-md transition-colors hover:bg-[rgb(var(--color-bg-soft))]"
                         :style="{ color: `rgb(var(--color-text-soft))` }" active-class="!text-[rgb(var(--color-accent-blue))] !font-bold">
@@ -107,6 +112,11 @@ onMounted(() => {
             leave-active-class="transition-all duration-150 ease-in" leave-from-class="opacity-100 translate-y-0"
             leave-to-class="opacity-0 -translate-y-1">
             <div v-if="isMenuOpen" class="md:hidden bg-[rgb(var(--color-bg-card))] p-5 space-y-3 border-t border-[rgb(var(--color-border))]">
+                <NuxtLink to="/atlas"
+                    class="block px-4 py-2.5 rounded-lg text-base font-semibold transition-colors hover:bg-[rgb(var(--color-bg-soft))]"
+                    :style="{ color: `rgb(var(--color-text))` }" @click="isMenuOpen = false">
+                    Atlas
+                </NuxtLink>
                 <NuxtLink to="/courses"
                     class="block px-4 py-2.5 rounded-lg text-base font-semibold transition-colors hover:bg-[rgb(var(--color-bg-soft))]"
                     :style="{ color: `rgb(var(--color-text))` }" @click="isMenuOpen = false">

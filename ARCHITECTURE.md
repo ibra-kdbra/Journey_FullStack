@@ -1,6 +1,19 @@
 # Architecture Guidelines & SOLID Principles
 
-This document outlines the architectural patterns, SOLID principles, and clean code standards used across all projects in this repository.
+The **reference** for the patterns this repository demonstrates: what each
+principle means, what violating and conforming code look like, and which project
+shows it most clearly.
+
+Three companion documents cover the rest:
+
+| Document | Answers |
+|:---|:---|
+| [`docs/ENGINEERING.md`](docs/ENGINEERING.md) | How work happens here — the project contract, CI, dependency policy, known open work |
+| [`learning-doc/content/atlas/`](learning-doc/content/atlas/) | What each individual project actually contains |
+| [`DESIGN.md`](DESIGN.md) | The design-system contract for UI work |
+
+Every path referenced below points at real code. If one does not, that is a bug —
+open an issue.
 
 ## Table of Contents
 - [SOLID Principles](#solid-principles)

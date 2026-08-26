@@ -38,6 +38,9 @@ const toMatrixEntry = (p) => ({
   ecosystem: p.ecosystem,
   packageManager: p.packageManager ?? 'npm',
   node: p.node ?? '22',
+  python: p.python ?? '3.12',
+  // What the job summary shows for this project's toolchain.
+  runtime: p.ecosystem === 'python' ? `py${p.python ?? '3.12'}` : `node${p.node ?? '22'}`,
   install: Boolean(p.checks?.install),
   build: Boolean(p.checks?.build),
   lint: Boolean(p.checks?.lint),
@@ -45,7 +48,11 @@ const toMatrixEntry = (p) => ({
   env: p.env ?? {},
 });
 
-const eligible = projects.filter((p) => p.ecosystem === 'node' && hasEnabledCheck(p));
+// Any ecosystem the workflow knows how to run. This filter previously admitted
+// only `node`, which is why Python and Maven projects produced a passing run with
+// an empty matrix — a green tick that had verified nothing.
+const RUNNABLE = new Set(['node', 'python']);
+const eligible = projects.filter((p) => RUNNABLE.has(p.ecosystem) && hasEnabledCheck(p));
 
 // A change to CI plumbing can affect any project, so re-check them all.
 const CI_PATHS = ['.github/projects.json', '.github/workflows/', '.github/scripts/'];

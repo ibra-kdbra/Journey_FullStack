@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.hospital</groupId>
+	<artifactId>hospital-management</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+	<name>hospital-management</name>
+	<description>Aggregator for the hospital management services</description>
+
+	<!--
+	  Aggregation only, deliberately not inheritance. The three Spring services
+	  keep spring-boot-starter-parent as their parent; this POM exists so the
+	  system has one build command and one module list that tooling can read.
+	-->
+	<modules>
+		<module>discovery-server</module>
+		<module>api-gateway</module>
+		<module>patient-service</module>
+		<module>billing-service</module>
+		<module>clinical-service</module>
+		<module>scheduling-service</module>
+	</modules>
+</project>

@@ -126,7 +126,7 @@
         "lint": false,
         "test": false
       },
-      "notes": "prebuild runs `prisma generate`. Prisma is held at ^6 \u2014 see docs/ENGINEERING.md#known-open-work."
+      "notes": "prebuild runs `prisma generate`, which needs no database. Prisma is on 7 with the pg driver adapter (ADR 0004); schema push and a live query were verified against a local Postgres 16."
     },
     {
       "path": "rn_clean_architecture",
@@ -199,7 +199,7 @@
         "lint": false,
         "test": false
       },
-      "notes": "prebuild runs `prisma generate`. TypeScript held at ^6 and Prisma at ^6 \u2014 see docs/ENGINEERING.md#known-open-work."
+      "notes": "prebuild runs `prisma generate`, which needs no database. Prisma is on 7 with the better-sqlite3 driver adapter (ADR 0004). TypeScript is held at ^6 \u2014 the Nest CLI needs the programmatic compiler API that TS 7.0 removed."
     },
     {
       "path": "API_s.o.l.i.d_TS",
@@ -227,7 +227,7 @@
         "lint": false,
         "test": false
       },
-      "notes": "No build script; Bun runs TypeScript directly."
+      "notes": "No build script; Bun runs TypeScript directly. Dependabot tracks it under the `bun` ecosystem so bun.lock is maintained alongside package.json \u2014 the `npm` ecosystem updated only the latter and broke `--frozen-lockfile`."
     },
     {
       "path": "vercel-cleaner",
@@ -255,7 +255,49 @@
         "lint": false,
         "test": false
       },
-      "notes": "Three Poetry projects (backend, frontend, pipelines). Dependabot tracks them; CI coverage is not wired up yet."
+      "notes": "Umbrella entry. The three Poetry projects beneath it \u2014 backend, frontend and pipelines \u2014 carry their own manifest entries and CI checks."
+    },
+    {
+      "path": "RAG-streamlit/frontend",
+      "ecosystem": "python",
+      "packageManager": "poetry",
+      "python": "3.12",
+      "track": "ai-rag",
+      "checks": {
+        "install": true,
+        "build": false,
+        "lint": false,
+        "test": true
+      },
+      "notes": "Streamlit UI. install runs `poetry check --lock` then `poetry install`; 6 tests pass. No build step and no linter configured."
+    },
+    {
+      "path": "RAG-streamlit/pipelines",
+      "ecosystem": "python",
+      "packageManager": "poetry",
+      "python": "3.12",
+      "track": "ai-rag",
+      "checks": {
+        "install": true,
+        "build": false,
+        "lint": false,
+        "test": false
+      },
+      "notes": "Ingestion pipeline. install verified (~3.5 min; the torch/transformers tree is ~5.7 GB). test stays off: test_milvus_connector_collection_creation needs a live Milvus server, and test_markdown_processor fails with KeyError: 'title'. Both predate CI coverage."
+    },
+    {
+      "path": "RAG-streamlit/backend",
+      "ecosystem": "python",
+      "packageManager": "poetry",
+      "python": "3.12",
+      "track": "ai-rag",
+      "checks": {
+        "install": true,
+        "build": false,
+        "lint": false,
+        "test": false
+      },
+      "notes": "FastAPI service. install verified (~3 min). test stays off because tests/test_app.py and tests/test_models.py are both empty files \u2014 pytest collects nothing and exits 5."
     },
     {
       "path": "solid-flask-web-app",
@@ -269,21 +311,39 @@
         "lint": false,
         "test": false
       },
-      "notes": "Flask API. Its `ui` subdirectory is covered separately as a node project."
+      "notes": "Flask API. Its own manifest entry is solid-flask-web-app/api; the frontend is covered separately as solid-flask-web-app/ui."
+    },
+    {
+      "path": "solid-flask-web-app/api",
+      "ecosystem": "python",
+      "packageManager": "pip",
+      "python": "3.13",
+      "track": "clean-architecture",
+      "systemPackages": [
+        "default-libmysqlclient-dev",
+        "pkg-config"
+      ],
+      "checks": {
+        "install": true,
+        "build": false,
+        "lint": true,
+        "test": true
+      },
+      "notes": "Flask API, pip + setuptools rather than Poetry. Python 3.13 to match Dockerfile.api. mysqlclient builds from source, so it needs MySQL client headers \u2014 declared in systemPackages. install, ruff and 75 tests all observed passing before these flags were set. No build step; the service runs from source."
     },
     {
       "path": "hospital-management",
-      "ecosystem": "java",
+      "ecosystem": "maven",
       "packageManager": "maven",
-      "java": "21",
+      "java": "17",
       "track": "microservices",
       "checks": {
         "install": false,
-        "build": false,
+        "build": true,
         "lint": false,
-        "test": false
+        "test": true
       },
-      "notes": "No aggregator POM. discovery-server, api-gateway and patient-service have POMs; billing-service, clinical-service and scheduling-service ship sources without one."
+      "notes": "Six Spring/Java modules behind an aggregator pom.xml. build runs `mvn -B -DskipTests package`, test runs `mvn -B verify` (4 tests, all in patient-service). billing/clinical/scheduling are domain-only modules \u2014 entity, repository port and use case, Lombok and the JDK only \u2014 so their POMs are plain Java libraries rather than Spring Boot applications."
     }
   ]
 }

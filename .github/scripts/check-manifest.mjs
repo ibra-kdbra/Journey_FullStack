@@ -180,6 +180,7 @@ if (existsSync(dependabotPath)) {
 
   const ECOSYSTEM_MANIFEST = {
     npm: ['package.json'],
+    bun: ['bun.lock'],
     pip: ['pyproject.toml', 'requirements.txt'],
     maven: ['pom.xml'],
     docker: ['Dockerfile'],

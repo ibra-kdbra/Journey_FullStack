@@ -339,7 +339,6 @@ updates:
       - "/solid-flask-web-app/ui"
       - "/RAG-streamlit/backend"
       - "/RAG-streamlit/frontend"
-      - "/learning-doc/pocketbase-docker"
     schedule: { interval: "monthly" }
     open-pull-requests-limit: 3
     commit-message: { prefix: "deps(docker)" }

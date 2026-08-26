@@ -20,12 +20,6 @@ export default defineNuxtConfig({
     },
   },
 
-  runtimeConfig: {
-    public: {
-      pocketbaseUrl: process.env.NUXT_PUBLIC_POCKETBASE_URL || "http://127.0.0.1:8090",
-    },
-  },
-
   devtools: { enabled: true },
   compatibilityDate: "2024-04-03",
   experimental: {

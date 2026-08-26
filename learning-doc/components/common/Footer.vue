@@ -36,15 +36,15 @@ const year = new Date().getFullYear();
                             </NuxtLink>
                         </li>
                         <li>
-                            <NuxtLink to="/courses/systems/rust/lesson_0"
+                            <NuxtLink to="/courses/rust/lesson_0"
                                 class="text-xs text-[rgb(var(--color-text-soft))] hover:text-[rgb(var(--color-accent-blue))] transition-colors">
-                                Rust Architecture
+                                Rust
                             </NuxtLink>
                         </li>
                         <li>
-                            <NuxtLink to="/courses/systems/clang/lesson_0"
+                            <NuxtLink to="/courses/golang/lesson_0"
                                 class="text-xs text-[rgb(var(--color-text-soft))] hover:text-[rgb(var(--color-accent-blue))] transition-colors">
-                                C Systems Architect
+                                Go
                             </NuxtLink>
                         </li>
                     </ul>

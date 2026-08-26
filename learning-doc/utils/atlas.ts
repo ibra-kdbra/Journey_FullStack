@@ -304,9 +304,9 @@ export const atlasProjects: AtlasProject[] = [
         slug: "learning-doc",
         name: "Engineering Atlas",
         track: "tooling",
-        stack: ["Nuxt 4", "Nuxt Content", "Tailwind", "PocketBase"],
+        stack: ["Nuxt 4", "Nuxt Content", "Tailwind"],
         summary:
-            "This site: the documentation platform that renders the Atlas and the course material, backed by a local PocketBase instance.",
+            "This site: the documentation platform that renders the Atlas and the course material, entirely from the content tree in git.",
         compare: ["astro-starter", "nuxt-clean-architecture"],
         status: "reference",
     },

@@ -46,6 +46,7 @@ const toMatrixEntry = (p) => ({
   lint: Boolean(p.checks?.lint),
   test: Boolean(p.checks?.test),
   env: p.env ?? {},
+  systemPackages: p.systemPackages ?? [],
 });
 
 // Any ecosystem the workflow knows how to run. This filter previously admitted

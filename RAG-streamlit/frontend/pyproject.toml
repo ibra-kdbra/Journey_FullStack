@@ -8,13 +8,13 @@ package-mode = false
 
 [tool.poetry.dependencies]
 python = ">=3.12,<3.13"
-streamlit = "^1.44.0"
-python-dotenv = "^1.0.0"
-aiohttp = "^3.9.3"
+streamlit = "^1.62.0"
+python-dotenv = "^1.2.3"
+aiohttp = "^3.14.3"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.0"
-pytest-mock = "^3.11.0"
+pytest-mock = "^3.15.1"
 pytest-cov = "^4.1.0"  # Optional, for coverage reporting
 
 [build-system]

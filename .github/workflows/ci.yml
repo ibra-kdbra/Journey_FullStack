@@ -73,11 +73,11 @@ jobs:
             node -e "
               const m = JSON.parse(process.argv[1]);
               if (!m.length) { console.log('_No project files changed — nothing to build._'); process.exit(0); }
-              console.log('| Project | Node | install | build | lint | test |');
+              console.log('| Project | Runtime | install | build | lint | test |');
               console.log('|:--|:--|:--|:--|:--|:--|');
               const tick = (v) => v ? 'yes' : '—';
               for (const p of m) {
-                console.log(\`| \\\`\${p.path}\\\` | \${p.node} | \${tick(p.install)} | \${tick(p.build)} | \${tick(p.lint)} | \${tick(p.test)} |\`);
+                console.log(\`| \\\`\${p.path}\\\` | \${p.runtime} | \${tick(p.install)} | \${tick(p.build)} | \${tick(p.lint)} | \${tick(p.test)} |\`);
               }
             " "$matrix"
           } >> "$GITHUB_STEP_SUMMARY"
@@ -99,12 +99,38 @@ jobs:
       - uses: actions/checkout@v5
 
       - uses: actions/setup-node@v5
-        if: matrix.project.packageManager != 'bun'
+        if: matrix.project.ecosystem == 'node' && matrix.project.packageManager != 'bun'
         with:
           node-version: ${{ matrix.project.node }}
 
       - uses: oven-sh/setup-bun@v2
         if: matrix.project.packageManager == 'bun'
+
+      - uses: actions/setup-python@v5
+        if: matrix.project.ecosystem == 'python'
+        with:
+          python-version: ${{ matrix.project.python }}
+
+      - uses: actions/setup-java@v4
+        if: matrix.project.ecosystem == 'maven'
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.project.java }}
+          cache: maven
+
+      - name: Install Poetry
+        if: matrix.project.ecosystem == 'python' && matrix.project.packageManager == 'poetry'
+        run: pipx install poetry
+        working-directory: .
+
+      # Declared per project in the manifest rather than hardcoded here — the
+      # Flask API needs MySQL client headers to build mysqlclient from source.
+      - name: Install system packages
+        if: join(matrix.project.systemPackages, ' ') != ''
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ${{ join(matrix.project.systemPackages, ' ') }}
+        working-directory: .
 
       - name: Apply project environment
         if: toJSON(matrix.project.env) != '{}'
@@ -119,7 +145,19 @@ jobs:
       - name: Install
         if: matrix.project.install
         run: |
-          if [ "${{ matrix.project.packageManager }}" = "bun" ]; then
+          if [ "${{ matrix.project.ecosystem }}" = "python" ]; then
+            if [ "${{ matrix.project.packageManager }}" = "pip" ]; then
+              python -m pip install --upgrade pip
+              pip install -r requirements.txt
+              [ -f requirements_dev.txt ] && pip install -r requirements_dev.txt
+            else
+              # `check --lock` fails when pyproject.toml has moved on without
+              # poetry.lock — the drift a manifest-only dependency bump creates,
+              # and the same class of break that hid in Hono-Postgres.
+              poetry check --lock
+              poetry install
+            fi
+          elif [ "${{ matrix.project.packageManager }}" = "bun" ]; then
             bun install --frozen-lockfile
           else
             # No lockfiles are committed yet, so `npm ci` is not available.
@@ -129,15 +167,40 @@ jobs:
 
       - name: Lint
         if: matrix.project.lint
-        run: npm run lint
+        run: |
+          if [ "${{ matrix.project.ecosystem }}" = "python" ]; then
+            # Only the pip-managed Flask API sets lint: true, and ruff is on PATH
+            # from its requirements_dev.txt. The Poetry projects carry
+            # black/pylint/mypy but none has been observed clean, so none enables
+            # lint; the PR that turns one on adds the `poetry run` form it verified.
+            ruff check .
+          else
+            npm run lint
+          fi
 
       - name: Build
         if: matrix.project.build
-        run: npm run build
+        run: |
+          if [ "${{ matrix.project.ecosystem }}" = "maven" ]; then
+            mvn -B -DskipTests package
+          else
+            npm run build
+          fi
 
       - name: Test
         if: matrix.project.test
-        run: npm test
+        run: |
+          if [ "${{ matrix.project.ecosystem }}" = "maven" ]; then
+            mvn -B verify
+          elif [ "${{ matrix.project.ecosystem }}" = "python" ]; then
+            if [ "${{ matrix.project.packageManager }}" = "pip" ]; then
+              pytest
+            else
+              poetry run pytest
+            fi
+          else
+            npm test
+          fi
 
   result:
     name: CI result

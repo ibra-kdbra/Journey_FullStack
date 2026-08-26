@@ -128,6 +128,29 @@ for months. See the [postmortem](#postmortem-how-the-repository-went-red).
 Touch nothing but docs and no project job runs. Touch one project and one job
 runs. This is what makes per-project CI affordable across seventeen toolchains.
 
+### Ecosystems `ci.yml` can run
+
+| Ecosystem | Install | Test |
+|:---|:---|:---|
+| `node` (npm) | `npm install --legacy-peer-deps` | `npm test` |
+| `node` (bun) | `bun install --frozen-lockfile` | `npm test` |
+| `python` (poetry) | `poetry check --lock` then `poetry install` | `poetry run pytest` |
+| `python` (pip) | `pip install -r requirements.txt` (+ `requirements_dev.txt`) | `pytest` |
+
+`poetry check --lock` runs first because it fails when `pyproject.toml` has moved
+on without `poetry.lock` — the drift a manifest-only dependency bump creates.
+
+A project needing OS packages declares them in the manifest as
+`systemPackages`, rather than the workflow growing a special case per project.
+`solid-flask-web-app/api` uses this for the MySQL client headers `mysqlclient`
+needs to build from source.
+
+A project whose ecosystem is not in that table is skipped by
+`changed-projects.mjs` and produces **no jobs at all**. That is not the same as
+passing, and it is worth stating plainly: until this was fixed, every Python and
+Maven project reported a green tick having run nothing. `maven` is still in that
+position — see [#1292](https://github.com/ibra-kdbra/Journey_FullStack/issues/1292).
+
 ### `dependabot` — grouped, never auto-merged
 
 Configuration lives in [`.github/dependabot.yml`](../.github/dependabot.yml).
@@ -260,4 +283,3 @@ Tracked here rather than hidden behind a disabled flag.
 | `hospital-management` | `billing-service`, `clinical-service`, and `scheduling-service` contain sources but no `pom.xml`, so they cannot build or be tracked by Dependabot. | Excluded from the manifest until their POMs land. |
 | All Node projects | No lockfiles are committed, so installs are not reproducible and CI cannot use `npm ci`. | Deliberate for now; committing them is a per-project decision worth an ADR. |
 | `typescript` | Held at `^6` in `nestjs-s.o.l.i.d`, `vue3-clean-architecture` and `angular-s.o.l.i.d-advanced`. Nest CLI and `vue-tsc` need the programmatic compiler API that TS 7.0 removed; Angular 22's `compiler-cli` declares a `>=6.0 <6.1` peer range. | Clears when TS 7.1 restores the API and Angular widens its peer range. |
-| `prisma` | Held at `^6` in `nestjs-s.o.l.i.d` and `next-prisma-starter`. Prisma 7 removed the datasource `url` from `schema.prisma`; the connection string moves to `prisma.config.ts` and the client needs a driver adapter. That is a runtime migration, not a version bump. | Clears when the adapter migration is done deliberately, with an ADR. |

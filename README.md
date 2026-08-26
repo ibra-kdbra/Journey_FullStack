@@ -76,7 +76,7 @@ see [`.github/projects.json`](.github/projects.json).
 | [`react-s.o.l.i.d`](react-s.o.l.i.d/) | React 19, TanStack Query | Each principle as a paired demo — the violating version beside the conforming one | reference |
 | [`angular-s.o.l.i.d-advanced`](angular-s.o.l.i.d-advanced/) | Angular 22, RxJS | Where DI is free, Interface Segregation becomes the expensive principle | reference |
 | [`vue.js-s.o.l.i.d`](vue.js-s.o.l.i.d/) | Vue, Vite | The smallest treatment here — the right first read | reference |
-| [`solid-flask-web-app`](solid-flask-web-app/) | Python, Flask, Docker, Nginx | What SOLID costs without a compiler; three compose topologies; [`ui/`](solid-flask-web-app/ui/) is a separate Vite frontend | reference |
+| [`solid-flask-web-app`](solid-flask-web-app/) | Python, Flask, Docker, Nginx | What SOLID costs without a compiler; three compose topologies; [`api/`](solid-flask-web-app/api/) is the Flask service (75 tests) and [`ui/`](solid-flask-web-app/ui/) a separate Vite frontend | reference |
 
 ### Edge & modern runtimes
 
@@ -95,7 +95,7 @@ see [`.github/projects.json`](.github/projects.json).
 
 | Project | Stack | Demonstrates | Status |
 |:---|:---|:---|:---|
-| [`RAG-streamlit`](RAG-streamlit/) | Python, Streamlit, Poetry | Three separate Poetry projects, so the ingestion pipeline is testable without a model | reference |
+| [`RAG-streamlit`](RAG-streamlit/) | Python, Streamlit, Poetry | Three separate Poetry projects — [`backend`](RAG-streamlit/backend/), [`frontend`](RAG-streamlit/frontend/), [`pipelines`](RAG-streamlit/pipelines/) — so the ingestion pipeline is testable without a model | reference |
 
 ### Tooling & delivery
 

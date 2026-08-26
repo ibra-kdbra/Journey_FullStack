@@ -27,7 +27,7 @@ not a check. See docs/ENGINEERING.md#working-on-a-change.
 
 <!-- Tick only what applies. -->
 
-- [ ] Architecture: no inward-pointing dependency added (`architecture-reviewer`)
-- [ ] UI: tokens only, both themes, visible focus (`ui-finish-gate`, `DESIGN.md`)
-- [ ] Docs: README, Atlas entry, and manifest agree (`atlas-curator`)
+- [ ] Architecture: no inward-pointing dependency added ([`ARCHITECTURE.md`](../ARCHITECTURE.md#reviewing-a-change))
+- [ ] UI: tokens only, both themes, visible focus ([`DESIGN.md`](../DESIGN.md#9-review-checklist))
+- [ ] Docs: README, Atlas entry, and manifest agree (`check-manifest.mjs` enforces this)
 - [ ] Decision recorded in `docs/decisions/` if this changes a convention

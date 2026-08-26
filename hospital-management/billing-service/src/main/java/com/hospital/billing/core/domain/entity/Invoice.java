@@ -23,7 +23,3 @@ public class Invoice {
     private LocalDateTime createdAt;
     private LocalDateTime paidAt;
 }
-
-enum InvoiceStatus {
-    PENDING, PAID, CANCELLED, REFUNDED
-}

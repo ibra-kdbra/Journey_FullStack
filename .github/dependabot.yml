@@ -53,6 +53,11 @@ updates:
     schedule: { interval: "weekly" }
     open-pull-requests-limit: 5
     commit-message: { prefix: "deps(vue3-clean)" }
+    # typescript majors are held: see docs/ENGINEERING.md#known-open-work and
+    # issue #1296. Without this, Dependabot reopens the same red PR every week.
+    ignore:
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
     groups:
       vue3-clean-minor:
         patterns: ["*"]
@@ -73,6 +78,11 @@ updates:
     schedule: { interval: "weekly" }
     open-pull-requests-limit: 5
     commit-message: { prefix: "deps(angular-solid)" }
+    # typescript majors are held: see docs/ENGINEERING.md#known-open-work and
+    # issue #1296. Without this, Dependabot reopens the same red PR every week.
+    ignore:
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
     groups:
       angular-platform:
         patterns: ["@angular/*", "@angular-devkit/*", "zone.js", "rxjs"]
@@ -166,6 +176,11 @@ updates:
     schedule: { interval: "weekly" }
     open-pull-requests-limit: 5
     commit-message: { prefix: "deps(nest-solid)" }
+    # typescript majors are held: see docs/ENGINEERING.md#known-open-work and
+    # issue #1296. Without this, Dependabot reopens the same red PR every week.
+    ignore:
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
     groups:
       nest-platform:
         patterns: ["@nestjs/*"]
@@ -184,7 +199,9 @@ updates:
         patterns: ["*"]
         update-types: ["minor", "patch"]
 
-  - package-ecosystem: "npm"
+  # Bun, not npm: the npm ecosystem updates package.json but never writes
+  # bun.lock, so `bun install --frozen-lockfile` in CI rejected every update.
+  - package-ecosystem: "bun"
     directory: "/Hono-Postgres"
     schedule: { interval: "weekly" }
     open-pull-requests-limit: 5
@@ -206,6 +223,16 @@ updates:
 
   # --------------------------------------------------------------- python
   # `pip` is the ecosystem that reads Poetry's pyproject.toml + poetry.lock.
+  - package-ecosystem: "pip"
+    directory: "/solid-flask-web-app/api"
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 5
+    commit-message: { prefix: "deps(flask-api)" }
+    groups:
+      flask-api-minor:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
   - package-ecosystem: "pip"
     directory: "/RAG-streamlit/backend"
     schedule: { interval: "weekly" }
@@ -240,6 +267,36 @@ updates:
   # hospital-management has no aggregator POM, so each service is its own entry.
   # billing-service / clinical-service / scheduling-service ship sources but no
   # pom.xml yet — add entries here once their POMs land.
+  - package-ecosystem: "maven"
+    directory: "/hospital-management/billing-service"
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 5
+    commit-message: { prefix: "deps(billing-service)" }
+    groups:
+      billing-service-minor:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "maven"
+    directory: "/hospital-management/clinical-service"
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 5
+    commit-message: { prefix: "deps(clinical-service)" }
+    groups:
+      clinical-service-minor:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "maven"
+    directory: "/hospital-management/scheduling-service"
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 5
+    commit-message: { prefix: "deps(scheduling-service)" }
+    groups:
+      scheduling-service-minor:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
   - package-ecosystem: "maven"
     directory: "/hospital-management/discovery-server"
     schedule: { interval: "weekly" }

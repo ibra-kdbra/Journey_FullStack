@@ -111,6 +111,13 @@ jobs:
         with:
           python-version: ${{ matrix.project.python }}
 
+      - uses: actions/setup-java@v4
+        if: matrix.project.ecosystem == 'maven'
+        with:
+          distribution: temurin
+          java-version: ${{ matrix.project.java }}
+          cache: maven
+
       - name: Install Poetry
         if: matrix.project.ecosystem == 'python' && matrix.project.packageManager == 'poetry'
         run: pipx install poetry
@@ -173,12 +180,19 @@ jobs:
 
       - name: Build
         if: matrix.project.build
-        run: npm run build
+        run: |
+          if [ "${{ matrix.project.ecosystem }}" = "maven" ]; then
+            mvn -B -DskipTests package
+          else
+            npm run build
+          fi
 
       - name: Test
         if: matrix.project.test
         run: |
-          if [ "${{ matrix.project.ecosystem }}" = "python" ]; then
+          if [ "${{ matrix.project.ecosystem }}" = "maven" ]; then
+            mvn -B verify
+          elif [ "${{ matrix.project.ecosystem }}" = "python" ]; then
             if [ "${{ matrix.project.packageManager }}" = "pip" ]; then
               pytest
             else

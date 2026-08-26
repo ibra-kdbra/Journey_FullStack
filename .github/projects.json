@@ -108,11 +108,24 @@
       "track": "edge-runtime",
       "checks": {
         "install": true,
-        "build": false,
+        "build": true,
         "lint": false,
         "test": false
       },
-      "notes": "BLOCKED: arctic@3 no longer exports `Google` from the package root. src/lib/server/oauth.ts needs migrating to the current provider API before build can be enabled."
+      "notes": "SvelteKit with Lucia-style sessions and Google OAuth via arctic. $env/static/private inlines secrets at build time, so the build needs every name in .env.example present - the values in env are placeholders, not credentials, and the artefact is discarded. lint stays off: `npm run lint` exits 1 on Prettier style issues in 115 files. e2e needs a real database and browsers.",
+      "env": {
+        "PUBLIC_BASE_URL": "http://localhost:5173",
+        "DATABASE_URL": "file:sveltekit_local.db",
+        "GOOGLE_CLIENT_ID": "ci-not-a-real-credential",
+        "GOOGLE_CLIENT_SECRET": "ci-not-a-real-credential",
+        "R2_ACCOUNT_ID": "ci-not-a-real-credential",
+        "R2_ACCESS_KEY_ID": "ci-not-a-real-credential",
+        "R2_SECRET_ACCESS_KEY": "ci-not-a-real-credential",
+        "PUBLIC_R2_BUCKET_NAME": "ci-not-a-real-bucket",
+        "PUBLIC_R2_BUCKET_URL": "http://localhost:9000",
+        "RESEND_API_KEY": "ci-not-a-real-credential",
+        "EMAIL_SENDER": "ci@example.invalid"
+      }
     },
     {
       "path": "next-prisma-starter",

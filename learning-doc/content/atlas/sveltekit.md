@@ -4,7 +4,7 @@ description: Auth, teams and object storage against edge-hosted SQLite — the m
 project: sveltekit
 track: edge-runtime
 stack: [Svelte 5, Drizzle, Turso, Cloudflare R2]
-status: in-progress
+status: reference
 compare: [next-prisma-starter, Hono-Postgres]
 ---
 
@@ -60,10 +60,22 @@ not encode either assumption.
 
 ## Current status
 
-Marked `in-progress`: `arctic@3` no longer exports `Google` from the package
-root, so `src/lib/server/oauth.ts` needs migrating to the current provider API
-before the project builds. Install and lint pass; `build` is disabled in the CI
-manifest with that reason recorded rather than silently skipped.
+Install and build pass in CI. `lint` stays off: `npm run lint` exits 1 with
+Prettier style issues in 115 files, which is a formatting sweep, not a
+dependency problem, and belongs in its own change.
+
+`build` was disabled here for a long time under a diagnosis that turned out to
+be wrong — the note said `arctic@3` had stopped exporting `Google` from its
+package root. It had not; `Google` is one of 74 root exports in 3.7.0, and every
+call the app makes matches the v3 API. The real failure was that
+`$env/static/private` inlines secrets at build time, so the build needs every
+name in `.env.example` to be *present*, not correct. CI declares placeholders in
+`.github/projects.json` and the build passes unchanged.
+
+The lesson is the one this repository keeps relearning: a plausible reading of
+an error is not a diagnosis. `npm run build` said
+`"GOOGLE_CLIENT_ID" is not exported by "virtual:env/static/private"`, which
+names the real cause and no part of arctic.
 
 ## Running it
 

@@ -70,6 +70,16 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!--
+		  Spring Boot 4 split the test slices out of spring-boot-test-autoconfigure.
+		  @WebMvcTest now lives in org.springframework.boot.webmvc.test.autoconfigure,
+		  shipped by this module, which the test starter no longer pulls in.
+		-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-webmvc-test</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<dependencyManagement>

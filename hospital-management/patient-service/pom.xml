@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.4.1</version>
+		<version>4.1.1</version>
 		<relativePath/>
 	</parent>
 	<groupId>com.hospital</groupId>
@@ -16,7 +16,7 @@
 
 	<properties>
 		<java.version>17</java.version>
-		<spring-cloud.version>2024.0.0</spring-cloud.version>
+		<spring-cloud.version>2025.1.3</spring-cloud.version>
 		<mapstruct.version>1.6.3</mapstruct.version>
 	</properties>
 
@@ -68,6 +68,16 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<!--
+		  Spring Boot 4 split the test slices out of spring-boot-test-autoconfigure.
+		  @WebMvcTest now lives in org.springframework.boot.webmvc.test.autoconfigure,
+		  shipped by this module, which the test starter no longer pulls in.
+		-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-webmvc-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

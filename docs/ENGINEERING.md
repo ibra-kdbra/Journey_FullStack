@@ -135,9 +135,15 @@ runs. This is what makes per-project CI affordable across seventeen toolchains.
 | `node` (npm) | `npm install --legacy-peer-deps` | `npm test` |
 | `node` (bun) | `bun install --frozen-lockfile` | `npm test` |
 | `python` (poetry) | `poetry check --lock` then `poetry install` | `poetry run pytest` |
+| `python` (pip) | `pip install -r requirements.txt` (+ `requirements_dev.txt`) | `pytest` |
 
 `poetry check --lock` runs first because it fails when `pyproject.toml` has moved
 on without `poetry.lock` — the drift a manifest-only dependency bump creates.
+
+A project needing OS packages declares them in the manifest as
+`systemPackages`, rather than the workflow growing a special case per project.
+`solid-flask-web-app/api` uses this for the MySQL client headers `mysqlclient`
+needs to build from source.
 
 A project whose ecosystem is not in that table is skipped by
 `changed-projects.mjs` and produces **no jobs at all**. That is not the same as

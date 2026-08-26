@@ -106,10 +106,14 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         if: matrix.project.packageManager == 'bun'
 
-      # Version comes from the project's own `packageManager` field, so the
-      # manifest does not have to restate it.
+      # package_json_file is required: the action reads `packageManager` from the
+      # repository root by default, and this monorepo has no root package.json.
+      # Without it the step fails with "Please specify it by one of the
+      # following ways".
       - uses: pnpm/action-setup@v4
         if: matrix.project.packageManager == 'pnpm'
+        with:
+          package_json_file: ${{ matrix.project.path }}/package.json
 
       - uses: actions/setup-python@v7
         if: matrix.project.ecosystem == 'python'

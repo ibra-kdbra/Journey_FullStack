@@ -40,7 +40,7 @@ public class PatientController {
 
     @GetMapping
     public ResponseEntity<List<PatientResponseDTO>> getAll() {
-        var patients = patientUseCase.getAllPatients();
+        var patients = patientUseCase.getAllActivePatients();
         var dtos = patients.stream()
                 .map(mapper::toResponseDTO)
                 .collect(Collectors.toList());

@@ -21,7 +21,3 @@ public class Appointment {
     private String reason;
     private LocalDateTime createdAt;
 }
-
-enum AppointmentStatus {
-    SCHEDULED, CANCELLED, COMPLETED, NO_SHOW, RESCHEDULED
-}

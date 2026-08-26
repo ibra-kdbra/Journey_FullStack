@@ -277,9 +277,16 @@ unverified dependency bump.
 
 Tracked here rather than hidden behind a disabled flag.
 
+Each hold needs three things in agreement, and removing one means removing all
+three: an `ignore` rule in [`dependabot.yml`](../.github/dependabot.yml) so the
+same red PR does not return weekly, a row in this table, and an entry in
+[`check-holds.mjs`](../.github/scripts/check-holds.mjs) so something still asks
+whether the clearing condition has arrived. A hold with a written condition and
+nothing watching it stays held by default, which is how a constraint becomes
+"how this repository is".
+
 | Project | Issue | Status |
 |:---|:---|:---|
 | `sveltekit` | `arctic@3` no longer exports `Google` from the package root; `src/lib/server/oauth.ts` needs migrating to the current provider API. | `build: false`. Install and lint are green. |
-| `hospital-management` | `billing-service`, `clinical-service`, and `scheduling-service` contain sources but no `pom.xml`, so they cannot build or be tracked by Dependabot. | Excluded from the manifest until their POMs land. |
 | All Node projects | No lockfiles are committed, so installs are not reproducible and CI cannot use `npm ci`. | Deliberate for now; committing them is a per-project decision worth an ADR. |
-| `typescript` | Held at `^6` in `nestjs-s.o.l.i.d`, `vue3-clean-architecture` and `angular-s.o.l.i.d-advanced`. Nest CLI and `vue-tsc` need the programmatic compiler API that TS 7.0 removed; Angular 22's `compiler-cli` declares a `>=6.0 <6.1` peer range. | Clears when TS 7.1 restores the API and Angular widens its peer range. |
+| `typescript` | Held at `^6` in `nestjs-s.o.l.i.d`, `vue3-clean-architecture` and `angular-s.o.l.i.d-advanced`. Nest CLI and `vue-tsc` need the programmatic compiler API that TS 7.0 removed; Angular 22's `compiler-cli` declares a `>=6.0 <6.1` peer range. | Clears when TS 7.1 restores the API **and** Angular widens its peer range. Both are re-checked weekly by [`check-holds.mjs`](../.github/scripts/check-holds.mjs); it fails the `holds` job when the hold looks liftable. |

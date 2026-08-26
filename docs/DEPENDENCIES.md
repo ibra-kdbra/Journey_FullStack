@@ -48,6 +48,7 @@ repository has suffered came from, and the answer is usually already here.
 | `NG6008: Component is standalone, and cannot be declared in an NgModule` | Angular 19 flipped the `standalone` default to `true` | Add `standalone: false` to components that stay in an NgModule |
 | Prisma `datasource url is no longer supported` | Prisma 7 moved it to `prisma.config.ts` | Move the datasource block, or hold `prisma` at `^6` |
 | `Tsconfig not found @vue/tsconfig/tsconfig.node.json` | `@vue/tsconfig` 0.9 renamed its presets | Point at the new preset name |
+| `error: lockfile had changes, but lockfile is frozen` | A bun project registered under Dependabot's `npm` ecosystem: it updates `package.json` but never writes `bun.lock` | Register it as `package-ecosystem: "bun"`, and regenerate the lockfile for the update already open |
 
 ### A note on `--legacy-peer-deps`
 

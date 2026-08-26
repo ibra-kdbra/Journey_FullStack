@@ -227,7 +227,7 @@
         "lint": false,
         "test": false
       },
-      "notes": "No build script; Bun runs TypeScript directly."
+      "notes": "No build script; Bun runs TypeScript directly. Dependabot tracks it under the `bun` ecosystem so bun.lock is maintained alongside package.json \u2014 the `npm` ecosystem updated only the latter and broke `--frozen-lockfile`."
     },
     {
       "path": "vercel-cleaner",

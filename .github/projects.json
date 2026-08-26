@@ -61,7 +61,7 @@
     {
       "path": "nuxt-clean-architecture",
       "ecosystem": "node",
-      "packageManager": "npm",
+      "packageManager": "pnpm",
       "node": "22",
       "track": "clean-architecture",
       "checks": {
@@ -70,7 +70,7 @@
         "lint": false,
         "test": false
       },
-      "notes": "Declares pnpm@9.15.5 but installs cleanly with npm; unify on one package manager in a follow-up."
+      "notes": "Declares pnpm@9.15.5 and commits pnpm-lock.yaml, and CI now honours both: `pnpm install --frozen-lockfile` verifies the lockfile as well as installing from it. The only Node project here with a checked lockfile."
     },
     {
       "path": "angular-s.o.l.i.d-advanced",

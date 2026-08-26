@@ -105,10 +105,12 @@ factory exists.
 
 ## Running it
 
-The lockfile is pnpm's, and the project also installs cleanly with npm:
+pnpm, declared in `packageManager` and pinned by `pnpm-lock.yaml`. CI installs
+with `pnpm install --frozen-lockfile`, so the lockfile is verified on every run
+rather than merely carried:
 
 ```bash
-pnpm install       # or: npm install
+pnpm install
 pnpm dev
 
 pnpm test:unit     # vitest, single run

@@ -106,6 +106,15 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         if: matrix.project.packageManager == 'bun'
 
+      # package_json_file is required: the action reads `packageManager` from the
+      # repository root by default, and this monorepo has no root package.json.
+      # Without it the step fails with "Please specify it by one of the
+      # following ways".
+      - uses: pnpm/action-setup@v4
+        if: matrix.project.packageManager == 'pnpm'
+        with:
+          package_json_file: ${{ matrix.project.path }}/package.json
+
       - uses: actions/setup-python@v7
         if: matrix.project.ecosystem == 'python'
         with:
@@ -170,6 +179,12 @@ jobs:
             fi
           elif [ "${{ matrix.project.packageManager }}" = "bun" ]; then
             bun install --frozen-lockfile
+          elif [ "${{ matrix.project.packageManager }}" = "pnpm" ]; then
+            # --frozen-lockfile verifies the committed lockfile as well as
+            # installing from it. That is the whole point of honouring the
+            # project's `packageManager` declaration rather than reaching for
+            # npm: a lockfile nothing reads is a lockfile nothing checks.
+            pnpm install --frozen-lockfile
           else
             # No lockfiles are committed yet, so `npm ci` is not available.
             # See docs/ENGINEERING.md#known-open-work.
@@ -185,6 +200,10 @@ jobs:
             # black/pylint/mypy but none has been observed clean, so none enables
             # lint; the PR that turns one on adds the `poetry run` form it verified.
             ruff check .
+          elif [ "${{ matrix.project.packageManager }}" = "pnpm" ]; then
+            pnpm run lint
+          elif [ "${{ matrix.project.packageManager }}" = "bun" ]; then
+            bun run lint
           else
             npm run lint
           fi
@@ -194,6 +213,10 @@ jobs:
         run: |
           if [ "${{ matrix.project.ecosystem }}" = "maven" ]; then
             mvn -B -DskipTests package
+          elif [ "${{ matrix.project.packageManager }}" = "pnpm" ]; then
+            pnpm run build
+          elif [ "${{ matrix.project.packageManager }}" = "bun" ]; then
+            bun run build
           else
             npm run build
           fi
@@ -209,6 +232,10 @@ jobs:
             else
               poetry run pytest
             fi
+          elif [ "${{ matrix.project.packageManager }}" = "pnpm" ]; then
+            pnpm test
+          elif [ "${{ matrix.project.packageManager }}" = "bun" ]; then
+            bun test
           else
             npm test
           fi

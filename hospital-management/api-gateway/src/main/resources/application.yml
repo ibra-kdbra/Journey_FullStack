@@ -6,15 +6,20 @@ spring:
     name: api-gateway
   cloud:
     gateway:
-      discovery:
-        locator:
-          enabled: true
-          lower-case-service-id: true
-      routes:
-        - id: patient-service
-          uri: lb://patient-service
-          predicates:
-            - Path=/api/v1/patients/**
+      # Gateway 5.0 moved every property under server.webflux (or server.webmvc).
+      # The old spring.cloud.gateway.* keys no longer exist, and nothing binds
+      # them — the app would start clean and route nothing.
+      server:
+        webflux:
+          discovery:
+            locator:
+              enabled: true
+              lower-case-service-id: true
+          routes:
+            - id: patient-service
+              uri: lb://patient-service
+              predicates:
+                - Path=/api/v1/patients/**
 
 eureka:
   client:

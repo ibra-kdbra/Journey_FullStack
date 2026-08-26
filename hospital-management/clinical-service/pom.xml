@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.hospital</groupId>
+	<artifactId>clinical-service</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>clinical-service</name>
+	<description>Domain module for clinical: entities, repository ports and use cases</description>
+
+	<!--
+	  A plain Java library, not a Spring Boot application. This module currently
+	  contains only the inner ring — entity, repository interface, use case — and
+	  imports nothing but Lombok and the JDK. Giving it spring-boot-starter-parent
+	  would pull in a web stack it does not use and imply a runnable service that
+	  does not exist yet. When adapters and a main class land, this POM changes
+	  with them.
+	-->
+	<properties>
+		<maven.compiler.release>17</maven.compiler.release>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<lombok.version>1.18.36</lombok.version>
+		<maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<version>${lombok.version}</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven-compiler-plugin.version}</version>
+				<configuration>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>${lombok.version}</version>
+						</path>
+					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

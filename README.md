@@ -95,7 +95,7 @@ see [`.github/projects.json`](.github/projects.json).
 
 | Project | Stack | Demonstrates | Status |
 |:---|:---|:---|:---|
-| [`RAG-streamlit`](RAG-streamlit/) | Python, Streamlit, Poetry | Three separate Poetry projects, so the ingestion pipeline is testable without a model | reference |
+| [`RAG-streamlit`](RAG-streamlit/) | Python, Streamlit, Poetry | Three separate Poetry projects — [`backend`](RAG-streamlit/backend/), [`frontend`](RAG-streamlit/frontend/), [`pipelines`](RAG-streamlit/pipelines/) — so the ingestion pipeline is testable without a model | reference |
 
 ### Tooling & delivery
 

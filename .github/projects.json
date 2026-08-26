@@ -255,7 +255,49 @@
         "lint": false,
         "test": false
       },
-      "notes": "Three Poetry projects (backend, frontend, pipelines). Dependabot tracks them; CI coverage is not wired up yet."
+      "notes": "Umbrella entry. The three Poetry projects beneath it \u2014 backend, frontend and pipelines \u2014 carry their own manifest entries and CI checks."
+    },
+    {
+      "path": "RAG-streamlit/frontend",
+      "ecosystem": "python",
+      "packageManager": "poetry",
+      "python": "3.12",
+      "track": "ai-rag",
+      "checks": {
+        "install": true,
+        "build": false,
+        "lint": false,
+        "test": true
+      },
+      "notes": "Streamlit UI. install runs `poetry check --lock` then `poetry install`; 6 tests pass. No build step and no linter configured."
+    },
+    {
+      "path": "RAG-streamlit/pipelines",
+      "ecosystem": "python",
+      "packageManager": "poetry",
+      "python": "3.12",
+      "track": "ai-rag",
+      "checks": {
+        "install": true,
+        "build": false,
+        "lint": false,
+        "test": false
+      },
+      "notes": "Ingestion pipeline. install verified (~3.5 min; the torch/transformers tree is ~5.7 GB). test stays off: test_milvus_connector_collection_creation needs a live Milvus server, and test_markdown_processor fails with KeyError: 'title'. Both predate CI coverage."
+    },
+    {
+      "path": "RAG-streamlit/backend",
+      "ecosystem": "python",
+      "packageManager": "poetry",
+      "python": "3.12",
+      "track": "ai-rag",
+      "checks": {
+        "install": true,
+        "build": false,
+        "lint": false,
+        "test": false
+      },
+      "notes": "FastAPI service. install verified (~3 min). test stays off because tests/test_app.py and tests/test_models.py are both empty files \u2014 pytest collects nothing and exits 5."
     },
     {
       "path": "solid-flask-web-app",

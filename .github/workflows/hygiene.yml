@@ -35,6 +35,9 @@ jobs:
       - name: Validate repository structure
         run: node .github/scripts/check-manifest.mjs
 
+      - name: Validate Atlas course registry against the content tree
+        run: node .github/scripts/check-courses.mjs
+
       - name: Validate workflow and Dependabot YAML
         run: |
           python3 - <<'PY'

@@ -55,8 +55,24 @@ repository has suffered came from, and the answer is usually already here.
 | `PrismaConfigEnvError: Cannot resolve environment variable` | Prisma 7 stopped loading `.env` implicitly, and its `env()` helper throws when a variable is unset | `import 'dotenv/config'` in `prisma.config.ts`, and read `process.env.X` so `prisma generate` works without a database |
 | `Tsconfig not found @vue/tsconfig/tsconfig.node.json` | `@vue/tsconfig` 0.9 renamed its presets | Point at the new preset name |
 | `error: lockfile had changes, but lockfile is frozen` | A bun project registered under Dependabot's `npm` ecosystem: it updates `package.json` but never writes `bun.lock` | Register it as `package-ecosystem: "bun"`, and regenerate the lockfile for the update already open |
+| `npm warn deprecated <pkg>@1.0.0: Package deprecated. Please use <other> instead` on a `0.x → 1.0` bump | The `1.0.0` is the package line's *final* release, published to point at a renamed successor | Take the bump — it is still the newest of what you depend on — and open a separate issue for the rename. `npm view <pkg>@1.0.0 dist.fileCount` tells a real release from an empty stub |
+| `ERESOLVE could not resolve` naming a `peerOptional` range one version behind | A dependency moved past a peer range its consumer has not widened yet | Not automatically a break. `--legacy-peer-deps` installs it anyway; decide by *running* the built artefact, not by reading the warning |
 
 ### A note on `--legacy-peer-deps`
+
+The flag cuts both ways. `better-sqlite3` 13 sits outside `@nuxt/content`'s
+`peerOptional better-sqlite3@^12.5.0`, so a clean `npm install` refuses it while
+CI installs it without comment. That one turned out fine — the Atlas builds, and
+the built server renders its content-driven pages — but the flag is why nobody
+was asked. Treat a peer range crossed as a prompt to run the thing, not as a
+verdict either way.
+
+### Lockfiles that CI does not read
+
+`learning-doc` commits a `yarn.lock` that Dependabot maintains, and CI installs it
+with `npm install`. The lockfile is therefore updated by every dependency PR and
+consulted by nothing. Until the project picks one package manager, the resolved
+tree CI tests is not the tree the lockfile describes.
 
 CI installs with `--legacy-peer-deps` because most projects here have no lockfile.
 That silences peer-dependency conflicts at install time and defers them to the

@@ -58,6 +58,7 @@ repository has suffered came from, and the answer is usually already here.
 | `npm warn deprecated <pkg>@1.0.0: Package deprecated. Please use <other> instead` on a `0.x → 1.0` bump | The `1.0.0` is the package line's *final* release, published to point at a renamed successor | Take the bump — it is still the newest of what you depend on — and open a separate issue for the rename. `npm view <pkg>@1.0.0 dist.fileCount` tells a real release from an empty stub |
 | `ERESOLVE could not resolve` naming a `peerOptional` range one version behind | A dependency moved past a peer range its consumer has not widened yet | Not automatically a break. `--legacy-peer-deps` installs it anyway; decide by *running* the built artefact, not by reading the warning |
 | A Poetry PR that widens a constraint merges green with nothing upgraded | The already-locked version still satisfies the wider range, so `poetry lock` keeps it | Use `poetry update --lock <pkg>`. `poetry lock` only re-resolves what the constraint *forces*; a widening forces nothing |
+| `ERR_PNPM_BROKEN_LOCKFILE ... duplicated mapping key` | A lockfile no CI job reads can be corrupted by an unrelated merge and stay corrupt indefinitely | Regenerate with `pnpm install --lockfile-only`, never by hand — then give the project an install path that actually reads it, so the next corruption fails a build instead of waiting |
 
 ### A note on `--legacy-peer-deps`
 

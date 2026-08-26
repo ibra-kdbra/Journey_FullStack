@@ -112,8 +112,17 @@ jobs:
           python-version: ${{ matrix.project.python }}
 
       - name: Install Poetry
-        if: matrix.project.ecosystem == 'python'
+        if: matrix.project.ecosystem == 'python' && matrix.project.packageManager == 'poetry'
         run: pipx install poetry
+        working-directory: .
+
+      # Declared per project in the manifest rather than hardcoded here — the
+      # Flask API needs MySQL client headers to build mysqlclient from source.
+      - name: Install system packages
+        if: join(matrix.project.systemPackages, ' ') != ''
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ${{ join(matrix.project.systemPackages, ' ') }}
         working-directory: .
 
       - name: Apply project environment
@@ -130,11 +139,17 @@ jobs:
         if: matrix.project.install
         run: |
           if [ "${{ matrix.project.ecosystem }}" = "python" ]; then
-            # `check --lock` fails when pyproject.toml has moved on without
-            # poetry.lock — the drift a manifest-only dependency bump creates,
-            # and the same class of break that hid in Hono-Postgres.
-            poetry check --lock
-            poetry install
+            if [ "${{ matrix.project.packageManager }}" = "pip" ]; then
+              python -m pip install --upgrade pip
+              pip install -r requirements.txt
+              [ -f requirements_dev.txt ] && pip install -r requirements_dev.txt
+            else
+              # `check --lock` fails when pyproject.toml has moved on without
+              # poetry.lock — the drift a manifest-only dependency bump creates,
+              # and the same class of break that hid in Hono-Postgres.
+              poetry check --lock
+              poetry install
+            fi
           elif [ "${{ matrix.project.packageManager }}" = "bun" ]; then
             bun install --frozen-lockfile
           else
@@ -143,12 +158,18 @@ jobs:
             npm install --no-audit --no-fund --legacy-peer-deps
           fi
 
-      # Python linting is not wired yet: these projects carry black/pylint/mypy in
-      # their dev groups but none has been observed clean, so no `lint: true` is
-      # set for them. The PR that turns one on adds the step it verified.
       - name: Lint
         if: matrix.project.lint
-        run: npm run lint
+        run: |
+          if [ "${{ matrix.project.ecosystem }}" = "python" ]; then
+            # Only the pip-managed Flask API sets lint: true, and ruff is on PATH
+            # from its requirements_dev.txt. The Poetry projects carry
+            # black/pylint/mypy but none has been observed clean, so none enables
+            # lint; the PR that turns one on adds the `poetry run` form it verified.
+            ruff check .
+          else
+            npm run lint
+          fi
 
       - name: Build
         if: matrix.project.build
@@ -158,7 +179,11 @@ jobs:
         if: matrix.project.test
         run: |
           if [ "${{ matrix.project.ecosystem }}" = "python" ]; then
-            poetry run pytest
+            if [ "${{ matrix.project.packageManager }}" = "pip" ]; then
+              pytest
+            else
+              poetry run pytest
+            fi
           else
             npm test
           fi

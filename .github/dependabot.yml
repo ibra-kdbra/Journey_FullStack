@@ -268,6 +268,36 @@ updates:
   # billing-service / clinical-service / scheduling-service ship sources but no
   # pom.xml yet — add entries here once their POMs land.
   - package-ecosystem: "maven"
+    directory: "/hospital-management/billing-service"
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 5
+    commit-message: { prefix: "deps(billing-service)" }
+    groups:
+      billing-service-minor:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "maven"
+    directory: "/hospital-management/clinical-service"
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 5
+    commit-message: { prefix: "deps(clinical-service)" }
+    groups:
+      clinical-service-minor:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "maven"
+    directory: "/hospital-management/scheduling-service"
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 5
+    commit-message: { prefix: "deps(scheduling-service)" }
+    groups:
+      scheduling-service-minor:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "maven"
     directory: "/hospital-management/discovery-server"
     schedule: { interval: "weekly" }
     open-pull-requests-limit: 3

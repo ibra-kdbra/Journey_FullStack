@@ -333,17 +333,17 @@
     },
     {
       "path": "hospital-management",
-      "ecosystem": "java",
+      "ecosystem": "maven",
       "packageManager": "maven",
-      "java": "21",
+      "java": "17",
       "track": "microservices",
       "checks": {
         "install": false,
-        "build": false,
+        "build": true,
         "lint": false,
-        "test": false
+        "test": true
       },
-      "notes": "No aggregator POM. discovery-server, api-gateway and patient-service have POMs; billing-service, clinical-service and scheduling-service ship sources without one."
+      "notes": "Six Spring/Java modules behind an aggregator pom.xml. build runs `mvn -B -DskipTests package`, test runs `mvn -B verify` (4 tests, all in patient-service). billing/clinical/scheduling are domain-only modules \u2014 entity, repository port and use case, Lombok and the JDK only \u2014 so their POMs are plain Java libraries rather than Spring Boot applications."
     }
   ]
 }

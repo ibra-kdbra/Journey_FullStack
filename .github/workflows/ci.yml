@@ -35,11 +35,11 @@ jobs:
       matrix: ${{ steps.detect.outputs.matrix }}
       count: ${{ steps.detect.outputs.count }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         with:
           node-version: '22'
 
@@ -96,9 +96,9 @@ jobs:
       run:
         working-directory: ${{ matrix.project.path }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v7
         if: matrix.project.ecosystem == 'node' && matrix.project.packageManager != 'bun'
         with:
           node-version: ${{ matrix.project.node }}
@@ -106,12 +106,12 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         if: matrix.project.packageManager == 'bun'
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@v7
         if: matrix.project.ecosystem == 'python'
         with:
           python-version: ${{ matrix.project.python }}
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         if: matrix.project.ecosystem == 'maven'
         with:
           distribution: temurin

@@ -53,6 +53,11 @@ updates:
     schedule: { interval: "weekly" }
     open-pull-requests-limit: 5
     commit-message: { prefix: "deps(vue3-clean)" }
+    # typescript majors are held: see docs/ENGINEERING.md#known-open-work and
+    # issue #1296. Without this, Dependabot reopens the same red PR every week.
+    ignore:
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
     groups:
       vue3-clean-minor:
         patterns: ["*"]
@@ -73,6 +78,11 @@ updates:
     schedule: { interval: "weekly" }
     open-pull-requests-limit: 5
     commit-message: { prefix: "deps(angular-solid)" }
+    # typescript majors are held: see docs/ENGINEERING.md#known-open-work and
+    # issue #1296. Without this, Dependabot reopens the same red PR every week.
+    ignore:
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
     groups:
       angular-platform:
         patterns: ["@angular/*", "@angular-devkit/*", "zone.js", "rxjs"]
@@ -166,6 +176,11 @@ updates:
     schedule: { interval: "weekly" }
     open-pull-requests-limit: 5
     commit-message: { prefix: "deps(nest-solid)" }
+    # typescript majors are held: see docs/ENGINEERING.md#known-open-work and
+    # issue #1296. Without this, Dependabot reopens the same red PR every week.
+    ignore:
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
     groups:
       nest-platform:
         patterns: ["@nestjs/*"]

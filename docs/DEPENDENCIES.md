@@ -50,6 +50,7 @@ repository has suffered came from, and the answer is usually already here.
 | Prisma client opens an empty SQLite file | A driver adapter resolves a relative `file:` URL against the process CWD, where Prisma 6 resolved it against the schema directory | Write the path from the project root: `file:./prisma/dev.db` |
 | `PrismaConfigEnvError: Cannot resolve environment variable` | Prisma 7 stopped loading `.env` implicitly, and its `env()` helper throws when a variable is unset | `import 'dotenv/config'` in `prisma.config.ts`, and read `process.env.X` so `prisma generate` works without a database |
 | `Tsconfig not found @vue/tsconfig/tsconfig.node.json` | `@vue/tsconfig` 0.9 renamed its presets | Point at the new preset name |
+| `error: lockfile had changes, but lockfile is frozen` | A bun project registered under Dependabot's `npm` ecosystem: it updates `package.json` but never writes `bun.lock` | Register it as `package-ecosystem: "bun"`, and regenerate the lockfile for the update already open |
 
 ### A note on `--legacy-peer-deps`
 

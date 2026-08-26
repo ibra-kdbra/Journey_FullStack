@@ -209,6 +209,16 @@ updates:
   # --------------------------------------------------------------- python
   # `pip` is the ecosystem that reads Poetry's pyproject.toml + poetry.lock.
   - package-ecosystem: "pip"
+    directory: "/solid-flask-web-app/api"
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 5
+    commit-message: { prefix: "deps(flask-api)" }
+    groups:
+      flask-api-minor:
+        patterns: ["*"]
+        update-types: ["minor", "patch"]
+
+  - package-ecosystem: "pip"
     directory: "/RAG-streamlit/backend"
     schedule: { interval: "weekly" }
     open-pull-requests-limit: 5

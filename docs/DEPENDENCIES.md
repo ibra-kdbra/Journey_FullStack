@@ -24,8 +24,12 @@ version?" It is **"what breaks, and who finds out?"**
    rediscovering them in CI logs.
 5. **One project at a time.** Never fix a shared symptom by bumping the same
    package everywhere in one PR. Each project builds independently here.
-6. **A held dependency needs a written reason and a clearing condition.** Both
-   current holds are recorded in [known open work](ENGINEERING.md#known-open-work).
+6. **A held dependency needs a written reason and a clearing condition.** The one
+   current hold is recorded in [known open work](ENGINEERING.md#known-open-work).
+7. **A hold needs an `ignore` rule, not just a closed PR.** Dependabot recreates a
+   closed PR on its next run unless the target version is already satisfied or
+   `dependabot.yml` ignores it. Closing without the rule buys one week of quiet and
+   then the same red PR returns.
 
 ---
 

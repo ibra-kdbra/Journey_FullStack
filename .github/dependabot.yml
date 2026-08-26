@@ -184,7 +184,9 @@ updates:
         patterns: ["*"]
         update-types: ["minor", "patch"]
 
-  - package-ecosystem: "npm"
+  # Bun, not npm: the npm ecosystem updates package.json but never writes
+  # bun.lock, so `bun install --frozen-lockfile` in CI rejected every update.
+  - package-ecosystem: "bun"
     directory: "/Hono-Postgres"
     schedule: { interval: "weekly" }
     open-pull-requests-limit: 5

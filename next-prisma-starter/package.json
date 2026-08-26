@@ -16,16 +16,18 @@
   },
   "dependencies": {
     "@faker-js/faker": "^10.0.0",
-    "@prisma/client": "^6.0.0",
+    "@prisma/adapter-pg": "^7.10.0",
+    "@prisma/client": "^7.10.0",
     "@reduxjs/toolkit": "^2.5.0",
-    "@types/react": "19.2.18",
     "@types/node": "26.2.0",
+    "@types/react": "19.2.18",
     "@types/react-dom": "19.2.4",
     "autoprefixer": "10.5.4",
     "eslint": "10.8.1",
-    "next": "16.3.1",
-    "postcss": "8.5.26",
     "eslint-config-next": "16.3.1",
+    "next": "16.3.1",
+    "pg": "^8.23.0",
+    "postcss": "8.5.26",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "react-redux": "^9.2.0",
@@ -35,7 +37,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",
     "prettier": "^3.0.3",
-    "prisma": "^6.0.0",
+    "prisma": "^7.10.0",
     "ts-node": "^10.9.1"
   }
 }

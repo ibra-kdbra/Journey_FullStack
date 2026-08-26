@@ -46,7 +46,9 @@ repository has suffered came from, and the answer is usually already here.
 | `TypeError: Cannot read properties of undefined (reading 'Error')` in `@angular/compiler-cli` `readConfiguration` | TypeScript newer than the compiler-cli peer range (Angular 22 wants `>=6.0 <6.1`) | Pin `typescript` into the peer range; `npm view @angular/compiler-cli@<v> peerDependencies` gives it |
 | `TS2307: Cannot find module '@angular/material/<entry>'` | `moduleResolution: node` (node10) ignores package `exports` maps, and the on-disk directory holds only Sass | Switch to `moduleResolution: bundler` |
 | `NG6008: Component is standalone, and cannot be declared in an NgModule` | Angular 19 flipped the `standalone` default to `true` | Add `standalone: false` to components that stay in an NgModule |
-| Prisma `datasource url is no longer supported` | Prisma 7 moved it to `prisma.config.ts` | Move the datasource block, or hold `prisma` at `^6` |
+| Prisma `datasource url is no longer supported` | Prisma 7 removed `datasource.url` from the schema | Move the URL to `prisma.config.ts` and give the client a driver adapter — done in [ADR 0004](decisions/0004-migrate-to-prisma-7.md) |
+| Prisma client opens an empty SQLite file | A driver adapter resolves a relative `file:` URL against the process CWD, where Prisma 6 resolved it against the schema directory | Write the path from the project root: `file:./prisma/dev.db` |
+| `PrismaConfigEnvError: Cannot resolve environment variable` | Prisma 7 stopped loading `.env` implicitly, and its `env()` helper throws when a variable is unset | `import 'dotenv/config'` in `prisma.config.ts`, and read `process.env.X` so `prisma generate` works without a database |
 | `Tsconfig not found @vue/tsconfig/tsconfig.node.json` | `@vue/tsconfig` 0.9 renamed its presets | Point at the new preset name |
 
 ### A note on `--legacy-peer-deps`

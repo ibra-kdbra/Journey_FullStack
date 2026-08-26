@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import { PrismaPg } from '@prisma/adapter-pg'
 
 import client from '../config/default'
 
@@ -8,7 +9,16 @@ declare global {
 	var prisma: PrismaClient | undefined
 }
 
-export const prisma = global.prisma || new PrismaClient()
+/**
+ * Prisma 7 no longer reads the connection string from schema.prisma; the client
+ * is handed a driver adapter, which is what opens the connection.
+ */
+const createClient = () =>
+	new PrismaClient({
+		adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
+	})
+
+export const prisma = global.prisma || createClient()
 
 const connectDatabase = async () => {
 	try {

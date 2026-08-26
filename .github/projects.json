@@ -126,7 +126,7 @@
         "lint": false,
         "test": false
       },
-      "notes": "prebuild runs `prisma generate`. Prisma is held at ^6 \u2014 see docs/ENGINEERING.md#known-open-work."
+      "notes": "prebuild runs `prisma generate`, which needs no database. Prisma is on 7 with the pg driver adapter (ADR 0004); schema push and a live query were verified against a local Postgres 16."
     },
     {
       "path": "rn_clean_architecture",
@@ -199,7 +199,7 @@
         "lint": false,
         "test": false
       },
-      "notes": "prebuild runs `prisma generate`. TypeScript held at ^6 and Prisma at ^6 \u2014 see docs/ENGINEERING.md#known-open-work."
+      "notes": "prebuild runs `prisma generate`, which needs no database. Prisma is on 7 with the better-sqlite3 driver adapter (ADR 0004). TypeScript is held at ^6 \u2014 the Nest CLI needs the programmatic compiler API that TS 7.0 removed."
     },
     {
       "path": "API_s.o.l.i.d_TS",

@@ -10,7 +10,7 @@ packages = [{include = "src"}]
 python = "^3.12"
 fastapi = ">=0.109.2,<0.142.0"
 uvicorn = ">=0.27.1,<0.53.0"
-pymilvus = "^2.3.6"
+pymilvus = ">=2.3.6,<4.0.0"
 pydantic = "^2.6.1"
 pydantic-settings = "^2.1.0"
 langchain = "^0.3.22"

@@ -311,7 +311,25 @@
         "lint": false,
         "test": false
       },
-      "notes": "Flask API. Its `ui` subdirectory is covered separately as a node project."
+      "notes": "Flask API. Its own manifest entry is solid-flask-web-app/api; the frontend is covered separately as solid-flask-web-app/ui."
+    },
+    {
+      "path": "solid-flask-web-app/api",
+      "ecosystem": "python",
+      "packageManager": "pip",
+      "python": "3.13",
+      "track": "clean-architecture",
+      "systemPackages": [
+        "default-libmysqlclient-dev",
+        "pkg-config"
+      ],
+      "checks": {
+        "install": true,
+        "build": false,
+        "lint": true,
+        "test": true
+      },
+      "notes": "Flask API, pip + setuptools rather than Poetry. Python 3.13 to match Dockerfile.api. mysqlclient builds from source, so it needs MySQL client headers \u2014 declared in systemPackages. install, ruff and 75 tests all observed passing before these flags were set. No build step; the service runs from source."
     },
     {
       "path": "hospital-management",

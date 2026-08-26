@@ -1,6 +1,9 @@
 [tool.ruff]
 line-length = 89
-indent-width =4 
+indent-width = 4
+# Alembic writes these; `flask db migrate` would reintroduce a lint failure
+# every time. env.py is hand-maintained and stays linted.
+exclude = ["migrations/versions"]
 
 [tool.ruff.lint]
 select = [

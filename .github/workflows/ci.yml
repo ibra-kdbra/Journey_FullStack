@@ -73,11 +73,11 @@ jobs:
             node -e "
               const m = JSON.parse(process.argv[1]);
               if (!m.length) { console.log('_No project files changed — nothing to build._'); process.exit(0); }
-              console.log('| Project | Node | install | build | lint | test |');
+              console.log('| Project | Runtime | install | build | lint | test |');
               console.log('|:--|:--|:--|:--|:--|:--|');
               const tick = (v) => v ? 'yes' : '—';
               for (const p of m) {
-                console.log(\`| \\\`\${p.path}\\\` | \${p.node} | \${tick(p.install)} | \${tick(p.build)} | \${tick(p.lint)} | \${tick(p.test)} |\`);
+                console.log(\`| \\\`\${p.path}\\\` | \${p.runtime} | \${tick(p.install)} | \${tick(p.build)} | \${tick(p.lint)} | \${tick(p.test)} |\`);
               }
             " "$matrix"
           } >> "$GITHUB_STEP_SUMMARY"
@@ -99,12 +99,22 @@ jobs:
       - uses: actions/checkout@v5
 
       - uses: actions/setup-node@v5
-        if: matrix.project.packageManager != 'bun'
+        if: matrix.project.ecosystem == 'node' && matrix.project.packageManager != 'bun'
         with:
           node-version: ${{ matrix.project.node }}
 
       - uses: oven-sh/setup-bun@v2
         if: matrix.project.packageManager == 'bun'
+
+      - uses: actions/setup-python@v5
+        if: matrix.project.ecosystem == 'python'
+        with:
+          python-version: ${{ matrix.project.python }}
+
+      - name: Install Poetry
+        if: matrix.project.ecosystem == 'python'
+        run: pipx install poetry
+        working-directory: .
 
       - name: Apply project environment
         if: toJSON(matrix.project.env) != '{}'
@@ -119,7 +129,13 @@ jobs:
       - name: Install
         if: matrix.project.install
         run: |
-          if [ "${{ matrix.project.packageManager }}" = "bun" ]; then
+          if [ "${{ matrix.project.ecosystem }}" = "python" ]; then
+            # `check --lock` fails when pyproject.toml has moved on without
+            # poetry.lock — the drift a manifest-only dependency bump creates,
+            # and the same class of break that hid in Hono-Postgres.
+            poetry check --lock
+            poetry install
+          elif [ "${{ matrix.project.packageManager }}" = "bun" ]; then
             bun install --frozen-lockfile
           else
             # No lockfiles are committed yet, so `npm ci` is not available.
@@ -127,6 +143,9 @@ jobs:
             npm install --no-audit --no-fund --legacy-peer-deps
           fi
 
+      # Python linting is not wired yet: these projects carry black/pylint/mypy in
+      # their dev groups but none has been observed clean, so no `lint: true` is
+      # set for them. The PR that turns one on adds the step it verified.
       - name: Lint
         if: matrix.project.lint
         run: npm run lint
@@ -137,7 +156,12 @@ jobs:
 
       - name: Test
         if: matrix.project.test
-        run: npm test
+        run: |
+          if [ "${{ matrix.project.ecosystem }}" = "python" ]; then
+            poetry run pytest
+          else
+            npm test
+          fi
 
   result:
     name: CI result

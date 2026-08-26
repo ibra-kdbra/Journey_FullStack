@@ -128,6 +128,23 @@ for months. See the [postmortem](#postmortem-how-the-repository-went-red).
 Touch nothing but docs and no project job runs. Touch one project and one job
 runs. This is what makes per-project CI affordable across seventeen toolchains.
 
+### Ecosystems `ci.yml` can run
+
+| Ecosystem | Install | Test |
+|:---|:---|:---|
+| `node` (npm) | `npm install --legacy-peer-deps` | `npm test` |
+| `node` (bun) | `bun install --frozen-lockfile` | `npm test` |
+| `python` (poetry) | `poetry check --lock` then `poetry install` | `poetry run pytest` |
+
+`poetry check --lock` runs first because it fails when `pyproject.toml` has moved
+on without `poetry.lock` — the drift a manifest-only dependency bump creates.
+
+A project whose ecosystem is not in that table is skipped by
+`changed-projects.mjs` and produces **no jobs at all**. That is not the same as
+passing, and it is worth stating plainly: until this was fixed, every Python and
+Maven project reported a green tick having run nothing. `maven` is still in that
+position — see [#1292](https://github.com/ibra-kdbra/Journey_FullStack/issues/1292).
+
 ### `dependabot` — grouped, never auto-merged
 
 Configuration lives in [`.github/dependabot.yml`](../.github/dependabot.yml).

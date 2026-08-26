@@ -287,6 +287,5 @@ nothing watching it stays held by default, which is how a constraint becomes
 
 | Project | Issue | Status |
 |:---|:---|:---|
-| `sveltekit` | `arctic@3` no longer exports `Google` from the package root; `src/lib/server/oauth.ts` needs migrating to the current provider API. | `build: false`. Install and lint are green. |
 | All Node projects | No lockfiles are committed, so installs are not reproducible and CI cannot use `npm ci`. | Deliberate for now; committing them is a per-project decision worth an ADR. |
 | `typescript` | Held at `^6` in `nestjs-s.o.l.i.d`, `vue3-clean-architecture` and `angular-s.o.l.i.d-advanced`. Nest CLI and `vue-tsc` need the programmatic compiler API that TS 7.0 removed; Angular 22's `compiler-cli` declares a `>=6.0 <6.1` peer range. | Clears when TS 7.1 restores the API **and** Angular widens its peer range. Both are re-checked weekly by [`check-holds.mjs`](../.github/scripts/check-holds.mjs); it fails the `holds` job when the hold looks liftable. |

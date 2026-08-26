@@ -141,14 +141,25 @@ jobs:
           sudo apt-get install -y -qq ${{ join(matrix.project.systemPackages, ' ') }}
         working-directory: .
 
+      # The JSON arrives through the env block, not interpolated into the script.
+      # Interpolating it put GitHub's `toJSON` output inside a double-quoted
+      # shell string, which strips the quotes: a value like
+      # http://localhost:5173 then reached node as bare syntax and threw
+      # `SyntaxError: Unexpected token ':'`. It only ever worked because the
+      # sole env value in the manifest was the number 0, which happens to
+      # survive quote-stripping as valid JavaScript.
       - name: Apply project environment
         if: toJSON(matrix.project.env) != '{}'
+        env:
+          PROJECT_ENV: ${{ toJSON(matrix.project.env) }}
         run: |
-          node -e "
-            const env = ${{ toJSON(matrix.project.env) }};
-            const fs = require('fs');
-            for (const [k, v] of Object.entries(env)) fs.appendFileSync(process.env.GITHUB_ENV, k + '=' + v + '\n');
-          "
+          node -e '
+            const env = JSON.parse(process.env.PROJECT_ENV);
+            const fs = require("fs");
+            for (const [k, v] of Object.entries(env)) {
+              fs.appendFileSync(process.env.GITHUB_ENV, `${k}=${v}\n`);
+            }
+          '
         working-directory: .
 
       - name: Install

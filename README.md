@@ -83,7 +83,7 @@ see [`.github/projects.json`](.github/projects.json).
 | Project | Stack | Demonstrates | Status |
 |:---|:---|:---|:---|
 | [`Hono-Postgres`](Hono-Postgres/) | Hono, Bun, Drizzle | No build step, so no abstraction can hide; feature colocation over technical layering | reference |
-| [`sveltekit`](sveltekit/) | Svelte 5, Drizzle, Turso, R2 | A boundary the compiler enforces (`$lib/server`) beats one you agree to | in progress |
+| [`sveltekit`](sveltekit/) | Svelte 5, Drizzle, Turso, R2 | A boundary the compiler enforces (`$lib/server`) beats one you agree to | reference |
 
 ### Distributed systems
 

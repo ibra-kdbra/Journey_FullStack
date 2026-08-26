@@ -24,33 +24,26 @@ content/
   courses/          long-form course material
 components/
   ui/  common/  content/  course/  docs/  custom/
-composables/        useAuth  useTheme  useProgress  useExam  useComments
-services/           pocketbase.ts, comments/ — the only files that know the backend
+composables/        useTheme  useCodeInputAnalysis
 utils/
   atlas.ts          the project registry this site renders
-  academy.ts        course disciplines and technology tokens
+  academy.ts        the course registry — checked against content/courses/
 assets/css/
   courses.css       the design tokens; DESIGN.md at the repo root documents them
 pages/
   atlas/            index and entry routes
-  courses/  docs/  auth/
+  courses/  docs/
 server/api/
-pocketbase-docker/  local backend
-src_legacy/         a previous Next.js implementation, kept for reference, not routed
 ```
 
-`composables/` → `services/` is the boundary that matters: components call
-composables, composables call services, and `services/pocketbase.ts` is the only
-file that names PocketBase.
+Every page resolves through `queryCollection`, so `content/` is the only source
+of routes and the site is servable as static output. There is no backend and no
+runtime configuration to supply.
 
 ## Setup
 
 ```bash
 npm install
-
-# Local backend (auth + progress tracking)
-cd pocketbase-docker && docker compose up -d && cd ..
-
 npm run dev        # http://localhost:3000
 npm run build
 npm run preview

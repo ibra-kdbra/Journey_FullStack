@@ -1,16 +1,10 @@
 <script setup lang="ts">
-import { useAuth } from "~/composables/useAuth";
 import { useTheme } from "~/composables/useTheme";
-import { LogOut, User, Menu, X, Sparkles, Sun, Moon, BookOpen } from "lucide-vue-next";
+import { Menu, X, Sparkles, Sun, Moon, BookOpen } from "lucide-vue-next";
 
-const auth = useAuth();
 const { theme, toggleTheme, isInitialized } = useTheme();
 const isMenuOpen = ref(false);
 const scrolled = ref(false);
-
-const handleSignOut = () => {
-    auth.logout();
-};
 
 const toggleMenu = () => {
     isMenuOpen.value = !isMenuOpen.value;
@@ -70,33 +64,6 @@ onMounted(() => {
                     <Sun v-if="theme === 'dark'" :size="18" />
                     <Moon v-else :size="18" />
                 </button>
-                <template v-if="auth.isLoggedIn">
-                    <div class="hidden md:flex items-center gap-3">
-                        <NuxtLink to="/profile"
-                            class="flex items-center gap-2 rounded-md px-3.5 py-1.5 text-sm font-semibold bg-[rgb(var(--color-bg-soft))] text-[rgb(var(--color-accent-blue))] border border-[rgb(var(--color-border))]">
-                            <User :size="15" />
-                            {{ auth.user?.username }}
-                        </NuxtLink>
-                        <button @click="handleSignOut"
-                            class="inline-flex h-9 items-center justify-center rounded-md px-3 text-sm font-medium transition-colors hover:bg-rose-500/10 text-[rgb(var(--color-accent-rose))]">
-                            <LogOut :size="16" class="mr-1.5" />
-                            Logout
-                        </button>
-                    </div>
-                </template>
-                <template v-else>
-                    <div class="hidden md:flex items-center gap-2">
-                        <NuxtLink to="/auth/sign-in"
-                            class="inline-flex h-9 items-center justify-center rounded-md px-4 py-2 text-sm font-semibold transition-colors hover:bg-[rgb(var(--color-bg-soft))]"
-                            :style="{ color: `rgb(var(--color-text-soft))` }">
-                            Log in
-                        </NuxtLink>
-                        <NuxtLink to="/auth/sign-up" class="btn-primary !py-2 !px-4 !text-sm !rounded-md">
-                            Sign up
-                        </NuxtLink>
-                    </div>
-                </template>
-
                 <!-- Mobile Menu Toggle -->
                 <button @click="toggleMenu" class="md:hidden rounded-md p-2 transition-colors hover:bg-[rgb(var(--color-bg-soft))]"
                     :style="{ color: `rgb(var(--color-text))` }">
@@ -135,28 +102,6 @@ onMounted(() => {
                     <Moon v-else :size="18" />
                     {{ theme === 'dark' ? 'Light Mode' : 'Dark Mode' }}
                 </button>
-                <template v-if="auth.isLoggedIn">
-                    <NuxtLink to="/profile"
-                        class="block px-4 py-2.5 rounded-lg text-base font-semibold transition-colors hover:bg-[rgb(var(--color-bg-soft))]"
-                        :style="{ color: `rgb(var(--color-text))` }" @click="isMenuOpen = false">
-                        Profile
-                    </NuxtLink>
-                    <button @click="handleSignOut(); isMenuOpen = false"
-                        class="block w-full text-left px-4 py-2.5 rounded-lg text-base font-semibold text-[rgb(var(--color-accent-rose))]">
-                        Logout
-                    </button>
-                </template>
-                <template v-else>
-                    <NuxtLink to="/auth/sign-in"
-                        class="block px-4 py-2.5 rounded-lg text-base font-semibold transition-colors hover:bg-[rgb(var(--color-bg-soft))]"
-                        :style="{ color: `rgb(var(--color-text))` }" @click="isMenuOpen = false">
-                        Log in
-                    </NuxtLink>
-                    <NuxtLink to="/auth/sign-up" class="block text-center btn-primary !py-2.5 !rounded-lg"
-                        @click="isMenuOpen = false">
-                        Sign up
-                    </NuxtLink>
-                </template>
             </div>
         </Transition>
     </nav>

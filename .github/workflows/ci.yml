@@ -110,7 +110,7 @@ jobs:
       # repository root by default, and this monorepo has no root package.json.
       # Without it the step fails with "Please specify it by one of the
       # following ways".
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         if: matrix.project.packageManager == 'pnpm'
         with:
           package_json_file: ${{ matrix.project.path }}/package.json

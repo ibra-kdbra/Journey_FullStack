@@ -17,7 +17,7 @@
     "solid-js": "^1.9.10"
   },
   "devDependencies": {
-    "@eslint/js": "^9.39.2",
+    "@eslint/js": "^10.0.1",
     "@tailwindcss/vite": "^4.1.18",
     "@typescript-eslint/parser": "^8.50.0",
     "cypress": "^15.8.1",

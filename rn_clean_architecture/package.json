@@ -24,7 +24,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.28.0",
-    "@babel/plugin-proposal-decorators": "^7.28.0",
+    "@babel/plugin-proposal-decorators": "^8.0.2",
     "@babel/preset-env": "^7.28.0",
     "@babel/runtime": "^7.28.0",
     "@react-native/babel-preset": "0.87.0",

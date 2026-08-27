@@ -103,6 +103,26 @@ for (const p of projects) {
       }
     }
   }
+
+  // 6. ADR 0005: every node project commits a lockfile for its declared package
+  // manager, and only for that one. Both halves matter — a project carrying a
+  // lockfile nothing reads is how three of them silently went corrupt or stale.
+  if (p.ecosystem === 'node') {
+    const manager = p.packageManager ?? 'npm';
+    const expected = { npm: 'package-lock.json', pnpm: 'pnpm-lock.yaml', yarn: 'yarn.lock', bun: 'bun.lock' }[manager];
+
+    if (!expected) {
+      fail(`"${label}" declares an unrecognised packageManager "${manager}".`);
+    } else if (!existsSync(join(dir, expected))) {
+      fail(`"${label}" declares ${manager} but has no ${expected}. See ADR 0005 — installs must be reproducible.`);
+    }
+
+    for (const [otherManager, file] of Object.entries({ npm: 'package-lock.json', pnpm: 'pnpm-lock.yaml', yarn: 'yarn.lock', bun: 'bun.lock' })) {
+      if (file !== expected && existsSync(join(dir, file))) {
+        fail(`"${label}" declares ${manager} but also carries ${file}. A lockfile no install reads is a lockfile nothing checks — delete it or change packageManager to ${otherManager}.`);
+      }
+    }
+  }
 }
 
 /* ------------------------------------------------- filesystem → manifest gaps */

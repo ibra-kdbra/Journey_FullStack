@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import dayjs from "dayjs";
 
 import { IDateProvider } from "../../../../shared/container/providers/dateProvider/IDateProvider";
@@ -16,10 +15,7 @@ describe("Create a Rental", () => {
     beforeEach(() => {
         rentalRepositoryInMemory = new RentalsRepositoryInMemory();
         dateProvider = new DayJsDateProvider();
-        createRentalUseCase = new CreateRentalUseCase(
-            rentalRepositoryInMemory,
-            dateProvider,
-        );
+        createRentalUseCase = new CreateRentalUseCase(rentalRepositoryInMemory, dateProvider);
     });
 
     it("Should be able to create a new rental", async () => {

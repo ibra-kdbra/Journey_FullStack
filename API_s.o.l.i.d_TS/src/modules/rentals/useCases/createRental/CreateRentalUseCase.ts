@@ -20,18 +20,12 @@ class CreateRentalUseCase {
         private dateProvider: IDateProvider,
     ) {}
 
-    async execute({
-        userId,
-        carId,
-        expectedReturnDate,
-    }: IRequest): Promise<Rental> {
-        const carUnavailable =
-            await this.rentalsRepository.findOpenRentalByCar(carId);
+    async execute({ userId, carId, expectedReturnDate }: IRequest): Promise<Rental> {
+        const carUnavailable = await this.rentalsRepository.findOpenRentalByCar(carId);
         if (carUnavailable) {
             throw new AppError("Car is unavailable");
         }
-        const rentalOpenToUser =
-            await this.rentalsRepository.findOpenRentalByUser(userId);
+        const rentalOpenToUser = await this.rentalsRepository.findOpenRentalByUser(userId);
         if (rentalOpenToUser) {
             throw new AppError("User already have a open rental");
         }
@@ -39,10 +33,7 @@ class CreateRentalUseCase {
         const minimumHours = 24;
         const dateNow = this.dateProvider.dateNow();
 
-        const compare = this.dateProvider.compareInHours(
-            dateNow,
-            expectedReturnDate,
-        );
+        const compare = this.dateProvider.compareInHours(dateNow, expectedReturnDate);
 
         if (compare < minimumHours) {
             throw new AppError("Invalid return date");

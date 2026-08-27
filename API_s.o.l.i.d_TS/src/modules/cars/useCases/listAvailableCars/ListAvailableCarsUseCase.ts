@@ -11,16 +11,10 @@ interface IRequest {
 
 @injectable()
 class ListAvailableCarsUseCase {
-    constructor(
-        @inject("CarsRepository") private carsRepository: ICarsRepository,
-    ) {}
+    constructor(@inject("CarsRepository") private carsRepository: ICarsRepository) {}
 
     async execute({ categoryId, brand, name }: IRequest): Promise<Car[]> {
-        const cars = await this.carsRepository.findAvaliable(
-            brand,
-            categoryId,
-            name,
-        );
+        const cars = await this.carsRepository.findAvaliable(brand, categoryId, name);
         return cars;
     }
 }

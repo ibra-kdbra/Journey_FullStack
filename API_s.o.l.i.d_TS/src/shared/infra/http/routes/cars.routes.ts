@@ -18,12 +18,7 @@ const listAvaibleCarsController = new ListAvailableCarsController();
 const createCarSpecificationController = new CreateCarSpecificationController();
 const uploadCarImageController = new UploadCarImageController();
 
-carsRoutes.post(
-    "/",
-    ensureAuthenticated,
-    ensureAdmin,
-    createCarController.handle,
-);
+carsRoutes.post("/", ensureAuthenticated, ensureAdmin, createCarController.handle);
 
 carsRoutes.get("/available", listAvaibleCarsController.handle);
 

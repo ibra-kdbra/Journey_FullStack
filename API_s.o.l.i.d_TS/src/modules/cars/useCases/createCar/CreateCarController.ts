@@ -5,15 +5,8 @@ import { CreateCarUseCase } from "./CreateCarUseCase";
 
 class CreateCarController {
     async handle(req: Request, res: Response): Promise<Response> {
-        const {
-            name,
-            description,
-            daily_Rate,
-            license_plate,
-            fine_amount,
-            brand,
-            categoryId,
-        } = req.body;
+        const { name, description, daily_Rate, license_plate, fine_amount, brand, categoryId } =
+            req.body;
         const createCarUseCase = container.resolve(CreateCarUseCase);
         const car = await createCarUseCase.execute({
             name,

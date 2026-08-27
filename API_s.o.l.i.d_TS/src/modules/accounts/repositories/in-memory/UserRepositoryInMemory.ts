@@ -4,12 +4,7 @@ import { IUserRepository } from "../IUserRepository";
 
 class UserRepositoryInMemory implements IUserRepository {
     users: User[] = [];
-    async create({
-        name,
-        password,
-        email,
-        driver_license,
-    }: ICreateUserDTO): Promise<void> {
+    async create({ name, password, email, driver_license }: ICreateUserDTO): Promise<void> {
         const user = new User();
         Object.assign(user, {
             name,

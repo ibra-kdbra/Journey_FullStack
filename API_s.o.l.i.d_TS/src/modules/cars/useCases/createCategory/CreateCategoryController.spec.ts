@@ -1,4 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import request from "supertest";
 
 import { app } from "../../../../shared/infra/http/app";

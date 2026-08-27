@@ -287,4 +287,4 @@ nothing watching it stays held by default, which is how a constraint becomes
 
 | Project | Issue | Status |
 |:---|:---|:---|
-| `typescript` | Held at `^6` in `nestjs-s.o.l.i.d`, `vue3-clean-architecture` and `angular-s.o.l.i.d-advanced`. Nest CLI and `vue-tsc` need the programmatic compiler API that TS 7.0 removed; Angular 22's `compiler-cli` declares a `>=6.0 <6.1` peer range. | Clears when TS 7.1 restores the API **and** Angular widens its peer range. Both are re-checked weekly by [`check-holds.mjs`](../.github/scripts/check-holds.mjs); it fails the `holds` job when the hold looks liftable. |
+| `typescript` | Held at `^6` in `nestjs-s.o.l.i.d`, `vue3-clean-architecture`, `angular-s.o.l.i.d-advanced` and `API_s.o.l.i.d_TS`. Nest CLI, `vue-tsc` and `ts-node` all need the programmatic compiler API that TS 7.0 removed; Angular 22's `compiler-cli` declares a `>=6.0 <6.1` peer range. | Clears when TS 7.1 restores the API **and** Angular widens its peer range. Both are re-checked weekly by [`check-holds.mjs`](../.github/scripts/check-holds.mjs); it fails the `holds` job when the hold looks liftable. |

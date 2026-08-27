@@ -235,7 +235,7 @@
         "lint": false,
         "test": false
       },
-      "notes": "express-async-errors@3.1.1 peers express@^4.16.2 while this project runs express@^5.1.0, so npm ci needs --legacy-peer-deps (recorded in installFlags). The real fix is dropping the package: it is a side-effect patch for Express 4's router and Express 5 handles async errors natively. Tracked in issue #1289.",
+      "notes": "Express 5 + TypeORM + tsyringe. typescript held at ^6: ts-node needs the programmatic compiler API removed in TS 7, so the dev server and jest both die on import (issue #1296). npm ci still needs --legacy-peer-deps for eslint-config-airbnb-base@15, which peers eslint ^7||^8 against this project's eslint 10 (issue #1289). build and test stay off: four TypeORM repositories still call getRepository, removed in TypeORM 0.3.",
       "installFlags": [
         "--legacy-peer-deps"
       ]

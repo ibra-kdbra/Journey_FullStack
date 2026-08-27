@@ -1,4 +1,4 @@
-# SvelteKit 
+# SvelteKit
 
 <div align="center">
 <a href="#getting-started">Quick Start</a> ·
@@ -16,7 +16,7 @@ Whether you're a seasoned developer or just starting out, this starter kit is ca
 
 - [SvelteKit](#sveltekit)
   - [Overview](#overview)
-      - [Welcome to SvelteKit , the ultimate mise en place for your next SvelteKit project 🚀.](#welcome-to-sveltekit--the-ultimate-mise-en-place-for-your-next-sveltekit-project-)
+    - [Welcome to SvelteKit , the ultimate mise en place for your next SvelteKit project 🚀.](#welcome-to-sveltekit--the-ultimate-mise-en-place-for-your-next-sveltekit-project-)
   - [Table of Contents](#table-of-contents)
   - [Features](#features)
   - [Tech Stack](#tech-stack)

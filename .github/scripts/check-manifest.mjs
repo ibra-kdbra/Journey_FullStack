@@ -104,7 +104,24 @@ for (const p of projects) {
     }
   }
 
-  // 6. ADR 0005: every node project commits a lockfile for its declared package
+  // 6. `checks.typecheck` names a script rather than flipping a boolean, so the
+  // name has to exist. A manifest pointing at a script nobody wrote is a step
+  // that fails on the first run for a reason unrelated to the code.
+  if (typeof checks.typecheck === 'string') {
+    if (p.ecosystem !== 'node') {
+      fail(`"${label}" sets \`typecheck\` but is not a node project; only node projects run npm scripts.`);
+    } else {
+      const pkgPath = join(dir, 'package.json');
+      if (existsSync(pkgPath)) {
+        const scripts = JSON.parse(readFileSync(pkgPath, 'utf8')).scripts ?? {};
+        if (!scripts[checks.typecheck]) {
+          fail(`"${label}" sets \`typecheck: "${checks.typecheck}"\` but package.json defines no such script.`);
+        }
+      }
+    }
+  }
+
+  // 7. ADR 0005: every node project commits a lockfile for its declared package
   // manager, and only for that one. Both halves matter — a project carrying a
   // lockfile nothing reads is how three of them silently went corrupt or stale.
   if (p.ecosystem === 'node') {

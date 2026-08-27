@@ -4,7 +4,7 @@
 
   // Assets
   import logo from '$lib/assets/logo.png';
-  import { Github } from '@lucide/svelte';
+  import GithubIcon from '$lib/components/ui/GithubIcon.svelte';
   import {
     Database,
     HardDrive,
@@ -25,7 +25,7 @@
   <nav class="flex w-full max-w-3xl items-center justify-between">
     <div>
       <Button href="https://github.com/n00ki/sveltekit-omakase" target="_blank" variant="outline">
-        <Github size="16" />
+        <GithubIcon size="16" />
       </Button>
     </div>
     <div class="flex items-center gap-2">

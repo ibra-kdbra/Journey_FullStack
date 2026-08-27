@@ -11,7 +11,8 @@
     "rootDir": "./src",
     "outDir": "./dist",
     "types": [
-      "node"
+      "node",
+      "jest"
     ],
     "incremental": true,
     "skipLibCheck": true,

@@ -218,10 +218,10 @@
       "checks": {
         "install": true,
         "build": true,
-        "lint": false,
-        "test": false
+        "lint": true,
+        "test": true
       },
-      "notes": "prebuild runs `prisma generate`, which needs no database. Prisma is on 7 with the better-sqlite3 driver adapter (ADR 0004). TypeScript is held at ^6 \u2014 the Nest CLI needs the programmatic compiler API that TS 7.0 removed."
+      "notes": "NestJS SOLID demonstrations. Prisma 7 with the better-sqlite3 driver adapter (ADR 0004); prebuild runs prisma generate, which needs no database. typescript held at ^6 (issue #1296). lint migrated to ESLint 10 flat config and observed clean; test is jest, 1 suite passing."
     },
     {
       "path": "API_s.o.l.i.d_TS",

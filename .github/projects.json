@@ -142,7 +142,7 @@
         "lint": false,
         "test": false
       },
-      "notes": "prebuild runs `prisma generate`, which needs no database. Prisma is on 7 with the pg driver adapter (ADR 0004); schema push and a live query were verified against a local Postgres 16."
+      "notes": "prebuild runs prisma generate, which needs no database. Prisma is on 7 with the pg driver adapter (ADR 0004); schema push and a live query were verified against a local Postgres 16. lint stays off and is blocked upstream: eslint-config-next 16.3.2 declares eslint >=9.0.0 but bundles typescript-eslint 8, whose parser throws \"scopeManager.addGlobals is not a function\" against eslint 10. The config itself is migrated and correct, so the check flips the day that resolves."
     },
     {
       "path": "rn_clean_architecture",

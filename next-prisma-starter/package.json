@@ -6,13 +6,14 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "generate": "npx prisma generate",
     "push": "npx prisma db push",
     "studio": "npx prisma studio",
     "seed": "ts-node --transpile-only prisma/seed.ts --preview-feature",
     "format": "npx prisma format && prettier . --write",
-    "prebuild": "prisma generate"
+    "prebuild": "prisma generate",
+    "lint:fix": "eslint . --fix"
   },
   "dependencies": {
     "@faker-js/faker": "^10.0.0",

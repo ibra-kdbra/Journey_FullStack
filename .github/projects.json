@@ -67,10 +67,10 @@
       "checks": {
         "install": true,
         "build": true,
-        "lint": false,
-        "test": false
+        "lint": true,
+        "test": true
       },
-      "notes": "Declares pnpm@9.15.5 and commits pnpm-lock.yaml, and CI now honours both: `pnpm install --frozen-lockfile` verifies the lockfile as well as installing from it. The only Node project here with a checked lockfile."
+      "notes": "Nuxt 4 with six numbered layers, each a step in the same refactor. Declares pnpm@9.15.5 and commits pnpm-lock.yaml, and CI honours both: `pnpm install --frozen-lockfile` verifies the lockfile as well as installing from it. All four checks pass: 363 lint errors and a test suite that could not start were both traced to dependencies the project used but never declared - typescript, without which @nuxt/eslint-config silently treats it as a JavaScript project, and a vitest 3 stack that cannot drive nuxt 4's vite 8. 104 tests pass, 4 skipped by the author."
     },
     {
       "path": "angular-s.o.l.i.d-advanced",

@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 defineProps<{
-  isVisible: boolean,
+  isVisible: boolean
   version: string | undefined
-}>();
+}>()
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close'])
 </script>
 
 <template>
@@ -13,7 +13,7 @@ const emit = defineEmits(['close']);
     class="w-screen py-4 text-center bg-gray-300"
     data-testid="version-banner"
   >
-  (06) New Version {{ version }}
+    (06) New Version {{ version }}
     <button
       class="rounded bg-black text-white px-2"
       data-testid="version-close"

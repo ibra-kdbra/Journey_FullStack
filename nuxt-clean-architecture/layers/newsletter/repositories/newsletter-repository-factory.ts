@@ -11,5 +11,5 @@ export const createNewsletterRepository = (): INewsletterRepository => {
     return createInMemoryRepository()
   }
   // return createInMemoryRepository() // env.production + env.development
- return createSupabaseNewsletterRepository() // env.production + env.development
+  return createSupabaseNewsletterRepository() // env.production + env.development
 }

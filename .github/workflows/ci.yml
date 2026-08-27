@@ -144,16 +144,26 @@ jobs:
       # GitHub's ubuntu images ship PostgreSQL installed but stopped. Starting it
       # here rather than declaring a `services:` container keeps the cost on the
       # one project that needs a database, instead of adding a container start to
-      # all twenty-one jobs. The credentials set here are the ones the project's
-      # `env` block puts in DATABASE_URL — that block is the only source, since
-      # Hono-Postgres' .env.test is gitignored and the suite runs without it.
+      # all twenty-one jobs.
+      #
+      # DATABASE_URL is composed here rather than written in the manifest. A
+      # postgresql://user:pass@host string in a project's `env` block ends up
+      # inside the matrix JSON, and the runner refuses to publish a job output
+      # that looks like it carries a credential: "Skip output 'matrix' since it
+      # may contain secret". The matrix then arrives empty, fromJSON() gets
+      # nothing, and every project job silently fails to exist. The manifest
+      # names the database; the connection string is built next to the server
+      # that the same step just created it on.
       - name: Start PostgreSQL
         if: matrix.project.postgres
         run: |
           sudo systemctl start postgresql.service
           for i in $(seq 1 30); do pg_isready -h localhost -p 5432 && break; sleep 1; done
           sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"
-          sudo -u postgres createdb ${{ matrix.project.postgres }}
+          sudo -u postgres createdb "$DB_NAME"
+          echo "DATABASE_URL=postgresql://postgres:postgres@localhost:5432/$DB_NAME" >> "$GITHUB_ENV"
+        env:
+          DB_NAME: ${{ matrix.project.postgres }}
         working-directory: .
 
       # The JSON arrives through the env block, not interpolated into the script.
@@ -288,6 +298,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Report
+        env:
+          # Not interpolated into the script: this is the matrix JSON, and the
+          # only thing done with it is an emptiness test.
+          MATRIX: ${{ needs.discover.outputs.matrix }}
         run: |
           if [ "${{ needs.discover.result }}" != "success" ]; then
             echo "Project detection failed."
@@ -296,6 +310,17 @@ jobs:
           if [ "${{ needs.discover.outputs.count }}" = "0" ]; then
             echo "No project files changed — nothing to verify."
             exit 0
+          fi
+          # Detection claimed work but the matrix never arrived. The runner
+          # drops a job output it suspects of carrying a credential, and the
+          # matrix job then expands to nothing: no project job runs, and the
+          # next check below reports a failure that never happened. Say what
+          # actually went wrong instead.
+          if [ -z "$MATRIX" ]; then
+            echo "Detection selected ${{ needs.discover.outputs.count }} projects but the matrix output is empty."
+            echo "The runner skipped it - check the Detect job log for \"Skip output 'matrix' since it may contain secret\"."
+            echo "Something in .github/projects.json looks like a credential; see the Start PostgreSQL step comment."
+            exit 1
           fi
           if [ "${{ needs.project.result }}" != "success" ]; then
             echo "At least one project check failed."

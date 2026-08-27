@@ -253,11 +253,10 @@
         "lint": true,
         "test": true
       },
-      "notes": "Bun + Hono + Postgres. Registered under the bun ecosystem so Dependabot writes bun.lock. lint is biome, check-only (22 files, 2 infos, exit 0); the mutating form lives in lint:fix so CI checks rather than rewrites. test is a real integration suite: it shells out to drizzle db:push and truncates the table between cases, so CI starts the runner's PostgreSQL and creates the database named in the postgres field. 4 tests, 8 assertions, verified against a live Postgres 16. .env.test is gitignored and unnecessary - the env block below is what supplies DATABASE_URL, and the suite passes with the file absent.",
+      "notes": "Bun + Hono + Postgres. Registered under the bun ecosystem so Dependabot writes bun.lock. lint is biome, check-only (22 files, 2 infos, exit 0); the mutating form lives in lint:fix so CI checks rather than rewrites. test is a real integration suite: it shells out to drizzle db:push and truncates the table between cases, so CI starts the runner's PostgreSQL and creates the database named in the postgres field. That step also exports DATABASE_URL, because a postgresql://user:pass@host string in this env block makes the runner drop the whole matrix as a suspected secret. 4 tests, 8 assertions, verified against a live Postgres 16. .env.test is gitignored and unnecessary - the suite passes with the file absent.",
       "postgres": "hono_test",
       "env": {
-        "NODE_ENV": "test",
-        "DATABASE_URL": "postgresql://postgres:postgres@localhost:5432/hono_test"
+        "NODE_ENV": "test"
       }
     },
     {

@@ -1,7 +1,10 @@
 <script lang="ts">
+  // Routing
+  import { resolve } from '$app/paths';
+
   // Utils
   import { superForm } from 'sveltekit-superforms';
-  import { zodClient } from 'sveltekit-superforms/adapters';
+  import { zod4Client } from 'sveltekit-superforms/adapters';
   import { registrationSchema } from '$lib/validations/auth';
 
   // Components
@@ -16,7 +19,7 @@
   let { data } = $props();
 
   const form = superForm(data.form, {
-    validators: zodClient(registrationSchema)
+    validators: zod4Client(registrationSchema)
   });
 
   const { form: formData, enhance, delayed } = form;
@@ -158,7 +161,7 @@
         class={buttonVariants({
           variant: 'outline'
         })}
-        href="/login/google"
+        href={resolve('/login/google')}
       >
         Google
       </a>
@@ -166,7 +169,7 @@
 
     <div class="mt-4 text-center text-sm">
       Already have an account?
-      <a href="/login" class="underline"> Sign in </a>
+      <a href={resolve('/login')} class="underline"> Sign in </a>
     </div>
   </Card.Content>
 </Card.Root>

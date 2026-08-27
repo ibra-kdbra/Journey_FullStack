@@ -18,6 +18,11 @@ logs
 .fleet
 .idea
 
+# Written by tooling, not by hand: @nuxt/test-utils stamps its own version into
+# .nuxtrc on first run, and Node writes an 8 MB V8 cache next to it.
+.nuxtrc
+node-compile-cache
+
 # Local env files
 .env
 .env.*

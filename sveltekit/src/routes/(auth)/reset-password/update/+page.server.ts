@@ -4,7 +4,7 @@ import type { Action } from './$types';
 // Utils
 import { redirect } from 'sveltekit-flash-message/server';
 import { error } from '@sveltejs/kit';
-import { zod } from 'sveltekit-superforms/adapters';
+import { zod4 } from 'sveltekit-superforms/adapters';
 import { superValidate } from 'sveltekit-superforms/server';
 import { setFormFail, setFormError } from '$lib/utils/helpers/forms';
 import { eq } from 'drizzle-orm';
@@ -60,7 +60,7 @@ export async function load({ locals, url }) {
     redirect(302, '/reset-password');
   }
 
-  const form = await superValidate({ email: email ?? '', token: tokenParam }, zod(resetPasswordSchema), {
+  const form = await superValidate({ email: email ?? '', token: tokenParam }, zod4(resetPasswordSchema), {
     errors: false
   });
 
@@ -73,7 +73,7 @@ export async function load({ locals, url }) {
 }
 
 const reset: Action = async (event) => {
-  const form = await superValidate(event.request, zod(resetPasswordSchema));
+  const form = await superValidate(event.request, zod4(resetPasswordSchema));
 
   if (!form.valid) {
     return setFormFail(form, {

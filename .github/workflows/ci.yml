@@ -185,9 +185,21 @@ jobs:
             # project's `packageManager` declaration rather than reaching for
             # npm: a lockfile nothing reads is a lockfile nothing checks.
             pnpm install --frozen-lockfile
+          elif [ -f package-lock.json ]; then
+            # ADR 0005. The lockfile's presence is the signal, not a manifest
+            # flag: the filesystem cannot disagree with itself. `npm ci` fails
+            # when the lockfile and package.json diverge, which is the property
+            # a committed-but-unread lockfile never had.
+            #
+            # installFlags is per project and empty by default. Anything in it
+            # is a peer conflict someone wrote down — see issue #1289 — not a
+            # blanket escape hatch applied to every project at once.
+            echo "::notice::npm ci (lockfile present) ${{ join(matrix.project.installFlags, ' ') }}"
+            npm ci --no-audit --no-fund ${{ join(matrix.project.installFlags, ' ') }}
           else
-            # No lockfiles are committed yet, so `npm ci` is not available.
-            # See docs/ENGINEERING.md#known-open-work.
+            # Not yet migrated under ADR 0005. Resolves fresh every run, so a
+            # green result says nothing about the next one.
+            echo "::notice::npm install (no lockfile — see ADR 0005)"
             npm install --no-audit --no-fund --legacy-peer-deps
           fi
 

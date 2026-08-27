@@ -16,7 +16,7 @@
     user: SessionValidationResult['user'];
   }
 
-  const navItems = [
+  const navItems: ComponentProps<typeof SidebarContent>['items'] = [
     {
       title: 'Dashboard',
       url: '/dashboard',

@@ -7,9 +7,9 @@ export interface IVersionRepository {
 
 export const createInMemoryVersionRepository = (initialVersion: string | undefined): IVersionRepository => {
   let store: string | undefined = undefined
-  
+
   const getCurrentVersion = () => initialVersion
-  
+
   const getStoredVersion = () => store
 
   const storeVersion = (version: string) => {
@@ -29,9 +29,8 @@ export const createInMemoryVersionRepository = (initialVersion: string | undefin
 }
 
 export const createLocalStorageVersionRepository = (): IVersionRepository => {
-
   const VERSION_KEY = 'app-version'
-  
+
   const getCurrentVersion = () => {
     const version = useRuntimeConfig().public.version
 

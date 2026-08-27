@@ -48,12 +48,17 @@ const toMatrixEntry = (p) => ({
   install: Boolean(p.checks?.install),
   build: Boolean(p.checks?.build),
   lint: Boolean(p.checks?.lint),
+  // Unlike the others this is the *name* of the script to run, because the three
+  // projects that have one call it `check`, `typecheck` and `type-check`. '' is off.
+  typecheck: typeof p.checks?.typecheck === 'string' ? p.checks.typecheck : '',
   test: Boolean(p.checks?.test),
   env: p.env ?? {},
   systemPackages: p.systemPackages ?? [],
   // ADR 0005 / issue #1289. Empty for every project that resolves cleanly; a
   // non-empty value is a recorded peer conflict, not a default.
   installFlags: p.installFlags ?? [],
+  // Name of a database to create before the checks run, or '' for none.
+  postgres: p.postgres ?? '',
 });
 
 // Any ecosystem the workflow knows how to run. This filter previously admitted

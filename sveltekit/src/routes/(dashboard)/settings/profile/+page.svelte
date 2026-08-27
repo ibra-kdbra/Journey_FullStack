@@ -4,7 +4,7 @@
 
   // Utils
   import { superForm } from 'sveltekit-superforms';
-  import { zodClient } from 'sveltekit-superforms/adapters';
+  import { zod4Client } from 'sveltekit-superforms/adapters';
   import { uploadImageFile, imageFileUploadState } from '$lib/utils/helpers/uploadFile.svelte';
   import { toast } from 'svelte-sonner';
   import * as m from '$lib/utils/messages.json';
@@ -51,7 +51,7 @@
   }
 
   const form = superForm(data.form, {
-    validators: zodClient(editUserSchema),
+    validators: zod4Client(editUserSchema),
     onSubmit: async ({ formData, cancel }) => {
       if (avatarFileId) {
         formData.set('avatar', avatarFileId as string);

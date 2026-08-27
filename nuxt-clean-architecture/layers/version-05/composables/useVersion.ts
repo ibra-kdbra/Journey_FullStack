@@ -14,11 +14,11 @@ export const useVersion = () => {
       isVisible.value = true
     }
   }
-  
+
   return {
     close,
     version,
     isVisible,
-    init
+    init,
   }
 }

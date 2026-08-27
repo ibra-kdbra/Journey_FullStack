@@ -63,12 +63,31 @@ repository has suffered came from, and the answer is usually already here.
 
 ### A note on `--legacy-peer-deps`
 
-The flag cuts both ways. `better-sqlite3` 13 sits outside `@nuxt/content`'s
-`peerOptional better-sqlite3@^12.5.0`, so a clean `npm install` refuses it while
-CI installs it without comment. That one turned out fine — the Atlas builds, and
-the built server renders its content-driven pages — but the flag is why nobody
-was asked. Treat a peer range crossed as a prompt to run the thing, not as a
-verdict either way.
+It is no longer a global default. Under [ADR 0005](decisions/0005-commit-lockfiles.md)
+every Node project installs with `npm ci` from a committed lockfile, and four
+still need the flag — each declaring it in `installFlags`, with the conflicting
+packages named in its manifest `notes`:
+
+| Project | Conflict |
+|:---|:---|
+| `API_s.o.l.i.d_TS` | `express-async-errors@3.1.1` peers `express@^4.16.2`; project is on 5.x |
+| `astro-starter` | `@astrojs/check@0.9.10` peers `typescript@^5 \|\| ^6`; project is on 7.x |
+| `rn_clean_architecture` | `react-native-fast-image@8.6.3` peers `react@^17 \|\| ^18`; project is on 19.x |
+| `learning-doc` | `better-sqlite3@13` exceeds `@nuxt/content`'s `peerOptional ^12.5.0` |
+
+That short list is the point. Applied to all sixteen the flag silenced peer
+conflicts everywhere and deferred them to the build, where they surfaced as
+errors naming neither package involved — the Angular `compiler-cli` row above is
+exactly that. Twelve projects now fail loudly at install instead.
+
+The flag still cuts both ways where it remains. `better-sqlite3` 13 sits outside
+`@nuxt/content`'s range, and that one turned out fine — the Atlas builds, and the
+built server renders its content-driven pages. Treat a crossed peer range as a
+prompt to run the thing, not as a verdict either way.
+
+**Never generate a lockfile with `--legacy-peer-deps` if the project resolves
+without it.** The flag skips peer installs, so those packages never enter the
+lockfile and `npm ci` then refuses it with `Missing: <pkg> from lock file`.
 
 ### Resolving a Poetry lockfile conflict
 

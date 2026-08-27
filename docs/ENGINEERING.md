@@ -287,5 +287,4 @@ nothing watching it stays held by default, which is how a constraint becomes
 
 | Project | Issue | Status |
 |:---|:---|:---|
-| All Node projects | Installs are not reproducible: eleven of sixteen commit no lockfile, and three of the five that do were found corrupt or stale because CI never read them. | Settled by [ADR 0005](decisions/0005-commit-lockfiles.md) — commit a lockfile per project and install frozen. Migrating one project per PR; the count of projects still on `npm install` is the remaining work. |
 | `typescript` | Held at `^6` in `nestjs-s.o.l.i.d`, `vue3-clean-architecture` and `angular-s.o.l.i.d-advanced`. Nest CLI and `vue-tsc` need the programmatic compiler API that TS 7.0 removed; Angular 22's `compiler-cli` declares a `>=6.0 <6.1` peer range. | Clears when TS 7.1 restores the API **and** Angular widens its peer range. Both are re-checked weekly by [`check-holds.mjs`](../.github/scripts/check-holds.mjs); it fails the `holds` job when the hold looks liftable. |

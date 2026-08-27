@@ -1,19 +1,5 @@
 <script setup lang="ts">
-import {
-    Server,
-    Smartphone,
-    Binary,
-    Sparkles,
-    Target,
-    BookOpen,
-    ArrowRight,
-    Rocket,
-    Zap,
-    Code2,
-    Layers,
-    Cpu,
-    Monitor,
-} from "lucide-vue-next";
+import { Server, Smartphone, Binary, Sparkles, Target, BookOpen, ArrowRight, Rocket, Zap, Code2, Layers, Cpu, Monitor } from "@lucide/vue";
 import { ref } from "vue";
 import { atlasTracks, atlasProjects, projectsByTrack } from "~/utils/atlas";
 

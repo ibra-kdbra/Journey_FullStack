@@ -9,12 +9,12 @@
     "preview": "nuxt preview"
   },
   "dependencies": {
+    "@lucide/vue": "^1.34.0",
     "@nuxt/content": "^3.15.2",
     "@nuxtjs/tailwindcss": "^6.14.0",
     "@pinia/nuxt": "^0.11.3",
     "@vueuse/motion": "^3.0.3",
     "better-sqlite3": "^13.0.3",
-    "lucide-vue-next": "^1.0.0",
     "mermaid": "^11.16.1",
     "nuxt": "^4.5.2",
     "pinia": "^3.0.4",

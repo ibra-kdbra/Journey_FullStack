@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ArrowLeft, ExternalLink, GitCompare } from "lucide-vue-next";
+import { ArrowLeft, ExternalLink, GitCompare } from "@lucide/vue";
 import {
     atlasProjects,
     projectByPath,

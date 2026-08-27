@@ -1,4 +1,4 @@
-import { Monitor, Server, Database, Cpu, Smartphone, Globe } from "lucide-vue-next";
+import { Monitor, Server, Database, Cpu, Smartphone, Globe } from "@lucide/vue";
 
 /**
  * The course registry is derived from what is actually on disk under

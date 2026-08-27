@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { BookOpen, Code2, Users, Zap, Shield, Heart, ArrowRight } from "lucide-vue-next";
+import { BookOpen, Code2, Users, Zap, Shield, Heart, ArrowRight } from "@lucide/vue";
 
 useHead({
     title: 'About — Journey Doc',

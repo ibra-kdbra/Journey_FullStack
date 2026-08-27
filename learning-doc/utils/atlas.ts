@@ -1,11 +1,4 @@
-import {
-    Boxes,
-    Layers,
-    Zap,
-    Network,
-    Brain,
-    Wrench,
-} from "lucide-vue-next";
+import { Boxes, Layers, Zap, Network, Brain, Wrench } from "@lucide/vue";
 
 /**
  * The Atlas registry.

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useTheme } from "~/composables/useTheme";
-import { Menu, X, Sparkles, Sun, Moon, BookOpen } from "lucide-vue-next";
+import { Menu, X, Sparkles, Sun, Moon, BookOpen } from "@lucide/vue";
 
 const { theme, toggleTheme, isInitialized } = useTheme();
 const isMenuOpen = ref(false);

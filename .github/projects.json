@@ -249,10 +249,10 @@
       "checks": {
         "install": true,
         "build": false,
-        "lint": false,
+        "lint": true,
         "test": false
       },
-      "notes": "No build script; Bun runs TypeScript directly. Dependabot tracks it under the `bun` ecosystem so bun.lock is maintained alongside package.json \u2014 the `npm` ecosystem updated only the latter and broke `--frozen-lockfile`."
+      "notes": "Bun + Hono + Postgres. Registered under the bun ecosystem so Dependabot writes bun.lock. lint is biome, observed clean (23 files, 2 infos, exit 0); the mutating form moved to lint:fix so CI checks rather than rewrites. test stays off: it loads .env.test, which is not committed."
     },
     {
       "path": "vercel-cleaner",

@@ -129,6 +129,27 @@ updates:
     schedule: { interval: "weekly" }
     open-pull-requests-limit: 5
     commit-message: { prefix: "deps(rn-clean)" }
+    # Babel 8 and jest 30 majors are held: React Native 0.87's presets reject
+    # both at runtime while declaring peers loose enough for npm to install
+    # them, so the PRs resolve cleanly and then fail. Verified against 0.87.0,
+    # each isolated from the other:
+    #
+    #   @babel/core 8.0.1  -> [BABEL] @react-native/jest-preset requires Babel
+    #                         "^7.0.0-0", but was loaded with "8.0.1", thrown
+    #                         from @react-native/babel-preset's overrides
+    #   jest 30.4.2        -> TypeError: this._moduleMocker.clearMocksOnScope
+    #                         is not a function, in jest-runtime
+    #
+    # @react-native/babel-preset declares `@babel/core: "*"`, which is why the
+    # peer graph never objects. Lift these when React Native ships presets that
+    # accept Babel 8 and jest 30. See issue #1360 and docs/DEPENDENCIES.md.
+    ignore:
+      - dependency-name: "@babel/*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "jest"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "jest-environment-node"
+        update-types: ["version-update:semver-major"]
     groups:
       react-native-platform:
         patterns: ["react-native", "@react-native/*", "@react-native-community/*"]

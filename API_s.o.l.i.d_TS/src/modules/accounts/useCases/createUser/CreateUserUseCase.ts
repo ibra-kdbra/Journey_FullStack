@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { hash } from "bcrypt";
 import { inject, injectable } from "tsyringe";
 
@@ -8,15 +7,8 @@ import { IUserRepository } from "../../repositories/IUserRepository";
 
 @injectable()
 class CreateUserUseCase {
-    constructor(
-        @inject("UserRepository") private userRepository: IUserRepository,
-    ) {}
-    async execute({
-        name,
-        password,
-        email,
-        driver_license,
-    }: ICreateUserDTO): Promise<void> {
+    constructor(@inject("UserRepository") private userRepository: IUserRepository) {}
+    async execute({ name, password, email, driver_license }: ICreateUserDTO): Promise<void> {
         const userAlreadyExists = await this.userRepository.findByEmail(email);
         if (userAlreadyExists) {
             throw new AppError("User Already Exists");

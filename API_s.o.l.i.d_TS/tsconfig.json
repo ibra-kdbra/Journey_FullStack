@@ -105,5 +105,11 @@
         /* Completeness */
         // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
         "skipLibCheck": true /* Skip type checking all .d.ts files. */
-    }
+    },
+
+    // Without this, tsc walks the whole directory through its default include,
+    // hits jest.config.ts outside rootDir, and stops at TS6059 - reporting one
+    // config error and none of the 36 real type errors underneath it.
+    "include": ["src/**/*.ts"]
+
 }

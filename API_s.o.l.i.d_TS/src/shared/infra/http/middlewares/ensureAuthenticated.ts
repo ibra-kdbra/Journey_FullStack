@@ -8,11 +8,7 @@ interface IPayload {
     sub: string;
 }
 
-export async function ensureAuthenticated(
-    req: Request,
-    res: Response,
-    next: NextFunction,
-) {
+export async function ensureAuthenticated(req: Request, res: Response, next: NextFunction) {
     const authHeader = req.headers.authorization;
 
     if (!authHeader) {
@@ -21,10 +17,7 @@ export async function ensureAuthenticated(
 
     const [, token] = authHeader.split(" ");
     try {
-        const { sub: userID } = verify(
-            token,
-            "923aea88786448f4a8840c30f0327f8f",
-        ) as IPayload;
+        const { sub: userID } = verify(token, "923aea88786448f4a8840c30f0327f8f") as IPayload;
 
         const userRepository = new UserRepository();
         const user = userRepository.findById(userID);

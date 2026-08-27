@@ -5,11 +5,7 @@ import { IRentalsRepository } from "../IRentalsRepository";
 class RentalsRepositoryInMemory implements IRentalsRepository {
     rentals: Rental[] = [];
 
-    async create({
-        userId,
-        carId,
-        expectedReturnDate,
-    }: ICreateRentalDTO): Promise<Rental> {
+    async create({ userId, carId, expectedReturnDate }: ICreateRentalDTO): Promise<Rental> {
         const rental = new Rental();
         Object.assign(rental, {
             userId,
@@ -22,14 +18,10 @@ class RentalsRepositoryInMemory implements IRentalsRepository {
     }
 
     async findOpenRentalByCar(carId: string): Promise<Rental | undefined> {
-        return this.rentals.find(
-            (rental) => rental.carId === carId && !rental.endDate,
-        );
+        return this.rentals.find((rental) => rental.carId === carId && !rental.endDate);
     }
     async findOpenRentalByUser(userId: string): Promise<Rental | undefined> {
-        return this.rentals.find(
-            (rental) => rental.userId === userId && !rental.endDate,
-        );
+        return this.rentals.find((rental) => rental.userId === userId && !rental.endDate);
     }
 }
 

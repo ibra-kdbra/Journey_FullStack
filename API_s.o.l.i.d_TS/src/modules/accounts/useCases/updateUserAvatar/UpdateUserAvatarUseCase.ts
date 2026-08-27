@@ -9,9 +9,7 @@ interface IRequest {
 }
 @injectable()
 class UpdateUserAvatarUseCase {
-    constructor(
-        @inject("UserRepository") private userRepository: IUserRepository,
-    ) {}
+    constructor(@inject("UserRepository") private userRepository: IUserRepository) {}
     async execute({ userID, avatarFile }: IRequest): Promise<void> {
         const user = await this.userRepository.findById(userID);
         if (user.avatar) {

@@ -1,10 +1,9 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { parse } from "csv-parse";
 import fs from "fs";
 import { inject, injectable } from "tsyringe";
 
-import { ICategoryRepository } from "../../repositories/ICategoriesRepository";
 import { CategoryRepository } from "../../infra/typeorm/repositories/CategoryRepository";
+import { ICategoryRepository } from "../../repositories/ICategoriesRepository";
 
 interface IImportCategory {
     name: string;

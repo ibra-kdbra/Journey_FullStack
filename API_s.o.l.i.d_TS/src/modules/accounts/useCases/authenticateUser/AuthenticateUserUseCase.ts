@@ -1,6 +1,4 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { compare } from "bcrypt";
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { sign } from "jsonwebtoken";
 import { inject, injectable } from "tsyringe";
 
@@ -21,9 +19,7 @@ interface IRequest {
 }
 @injectable()
 class AuthenticateUserUseCase {
-    constructor(
-        @inject("UserRepository") private userRepository: IUserRepository,
-    ) {}
+    constructor(@inject("UserRepository") private userRepository: IUserRepository) {}
 
     async execute({ email, password }: IRequest): Promise<IResponse> {
         const user = await this.userRepository.findByEmail(email);

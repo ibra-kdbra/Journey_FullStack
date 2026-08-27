@@ -14,10 +14,7 @@ import { ISpecificationsRepository } from "../../modules/cars/repositories/ISpec
 import { RentalsRepository } from "../../modules/rentals/infra/typeorm/repositories/RentalsRepository";
 import { IRentalsRepository } from "../../modules/rentals/repositories/IRentalsRepository";
 
-container.registerSingleton<ICategoryRepository>(
-    "CategoryRepository",
-    CategoryRepository,
-);
+container.registerSingleton<ICategoryRepository>("CategoryRepository", CategoryRepository);
 container.registerSingleton<ISpecificationsRepository>(
     "SpecificationRepository",
     SpecificationsRepository,
@@ -26,11 +23,5 @@ container.registerSingleton<IUserRepository>("UserRepository", UserRepository);
 
 container.registerSingleton<ICarsRepository>("CarsRepository", CarsRepository);
 
-container.registerSingleton<ICarsImageRepository>(
-    "CarsImageRepository",
-    CarsImageRepository,
-);
-container.registerSingleton<IRentalsRepository>(
-    "RentalsRepository",
-    RentalsRepository,
-);
+container.registerSingleton<ICarsImageRepository>("CarsImageRepository", CarsImageRepository);
+container.registerSingleton<IRentalsRepository>("RentalsRepository", RentalsRepository);

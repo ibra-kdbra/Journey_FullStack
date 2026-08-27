@@ -64,13 +64,12 @@ repository has suffered came from, and the answer is usually already here.
 ### A note on `--legacy-peer-deps`
 
 It is no longer a global default. Under [ADR 0005](decisions/0005-commit-lockfiles.md)
-every Node project installs with `npm ci` from a committed lockfile, and four
+every Node project installs with `npm ci` from a committed lockfile, and three
 still need the flag — each declaring it in `installFlags`, with the conflicting
 packages named in its manifest `notes`:
 
 | Project | Conflict |
 |:---|:---|
-| `API_s.o.l.i.d_TS` | `express-async-errors@3.1.1` peers `express@^4.16.2`; project is on 5.x |
 | `astro-starter` | `@astrojs/check@0.9.10` peers `typescript@^5 \|\| ^6`; project is on 7.x |
 | `rn_clean_architecture` | `react-native-fast-image@8.6.3` peers `react@^17 \|\| ^18`; project is on 19.x |
 | `learning-doc` | `better-sqlite3@13` exceeds `@nuxt/content`'s `peerOptional ^12.5.0` |
@@ -78,7 +77,14 @@ packages named in its manifest `notes`:
 That short list is the point. Applied to all sixteen the flag silenced peer
 conflicts everywhere and deferred them to the build, where they surfaced as
 errors naming neither package involved — the Angular `compiler-cli` row above is
-exactly that. Twelve projects now fail loudly at install instead.
+exactly that. Thirteen projects now fail loudly at install instead.
+
+The three that remain are all upstream waits. Every conflict that was the
+project's own to fix has been fixed, and both turned out to be dead code rather
+than a version puzzle: `API_s.o.l.i.d_TS` needed the flag first for
+`express-async-errors` (a patch Express 5 made redundant) and then for
+`eslint-config-airbnb-base`, which was pinning an eslint config that ESLint 10
+could no longer even read. Deleting each removed the conflict outright.
 
 The flag still cuts both ways where it remains. `better-sqlite3` 13 sits outside
 `@nuxt/content`'s range, and that one turned out fine — the Atlas builds, and the

@@ -233,13 +233,10 @@
       "checks": {
         "install": true,
         "build": false,
-        "lint": false,
+        "lint": true,
         "test": false
       },
-      "notes": "Express 5 + TypeORM + tsyringe. typescript held at ^6: ts-node needs the programmatic compiler API removed in TS 7, so the dev server and jest both die on import (issue #1296). npm ci still needs --legacy-peer-deps for eslint-config-airbnb-base@15, which peers eslint ^7||^8 against this project's eslint 10 (issue #1289). build and test stay off: four TypeORM repositories still call getRepository, removed in TypeORM 0.3.",
-      "installFlags": [
-        "--legacy-peer-deps"
-      ]
+      "notes": "Express 5 + TypeORM + tsyringe. typescript held at ^6: ts-node needs the programmatic compiler API removed in TS 7, so the dev server and jest both die on import (issue #1296). lint runs eslint 10 against a flat config; the old .eslintrc.json had been unreadable since eslint 9 and its airbnb-base preset was the last reason this project needed --legacy-peer-deps (issue #1289). build and test stay off: five TypeORM repositories still import getRepository, removed in TypeORM 0.3, and `tsc --noEmit` reports 36 errors across those and the strict-null gaps around them."
     },
     {
       "path": "Hono-Postgres",

@@ -1,4 +1,7 @@
 <script lang="ts">
+  // Routing
+  import { resolve } from '$app/paths';
+
   // Env Variables
   import { PUBLIC_R2_BUCKET_URL } from '$env/static/public';
 
@@ -80,7 +83,7 @@
         <DropdownMenu.Group>
           <DropdownMenu.Item>
             {#snippet child({ props })}
-              <a href="/settings/profile" {...props}>
+              <a href={resolve('/settings/profile')} {...props}>
                 <Settings />
                 Settings
               </a>

@@ -156,7 +156,10 @@
         "lint": false,
         "test": false
       },
-      "notes": "React Native has no `build` script; producing an artifact needs the Android/iOS toolchains, which CI does not provision."
+      "notes": "react-native-fast-image@8.6.3 peers react@^17||^18 while this project runs react@19.2.8, so npm ci needs --legacy-peer-deps (recorded in installFlags). The package was last published in 2022. Tracked in issue #1289.",
+      "installFlags": [
+        "--legacy-peer-deps"
+      ]
     },
     {
       "path": "solid-flask-web-app/ui",
@@ -187,7 +190,10 @@
         "lint": false,
         "test": false
       },
-      "notes": "The Engineering Atlas. Nuxt 4 + Nuxt Content."
+      "notes": "The Engineering Atlas. Nuxt 4 + Nuxt Content. better-sqlite3 13 sits outside @nuxt/content's peerOptional ^12.5.0, so npm ci needs --legacy-peer-deps (recorded in installFlags). That combination was verified by running the built server, not just by building it - see docs/DEPENDENCIES.md. Tracked in issue #1289.",
+      "installFlags": [
+        "--legacy-peer-deps"
+      ]
     },
     {
       "path": "nodejs-s.o.l.i.d",

@@ -22,7 +22,7 @@
     "@hono/node-server": "^2.0.0",
     "@rajmazumder/grabenv": "^0.1.2",
     "drizzle-orm": "^0.45.1",
-    "hono": "^4.13.3",
+    "hono": "^4.13.4",
     "http-status-codes": "^2.3.0",
     "postgres": "^3.4.9",
     "winston": "^3.19.0"

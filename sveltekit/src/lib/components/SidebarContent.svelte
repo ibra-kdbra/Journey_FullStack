@@ -1,6 +1,11 @@
 <script lang="ts">
+  // Routing
+  import { resolve } from '$app/paths';
+
   // Types
   import { type Component } from '@lucide/svelte';
+  import type { Pathname } from '$app/types';
+
   // Stores
   import { page } from '$app/state';
 
@@ -15,7 +20,7 @@
   }: {
     items: {
       title: string;
-      url: string;
+      url: Pathname;
       icon?: typeof Component;
     }[];
   } = $props();
@@ -29,7 +34,7 @@
 
       <Sidebar.MenuButton {isActive}>
         {#snippet child({ props })}
-          <a href={item.url} {...props}>
+          <a href={resolve(item.url)} {...props}>
             {#if item.icon}
               {@const Icon = item.icon}
               <Icon class="size-4 shrink-0" />

@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 defineProps<{
-  isVisible: boolean,
+  isVisible: boolean
   version: string
-}>();
+}>()
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close'])
 </script>
 
 <template>

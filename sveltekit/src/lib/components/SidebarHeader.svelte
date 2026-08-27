@@ -1,4 +1,7 @@
 <script lang="ts">
+  // Routing
+  import { resolve } from '$app/paths';
+
   // Components
   import * as Sidebar from '$lib/components/ui/sidebar';
 
@@ -10,7 +13,7 @@
   <Sidebar.MenuItem>
     <Sidebar.MenuButton size="lg">
       {#snippet child({ props })}
-        <a href="/dashboard" {...props}>
+        <a href={resolve('/dashboard')} {...props}>
           <div
             class="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg"
           >

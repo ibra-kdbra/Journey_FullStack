@@ -20,7 +20,7 @@ function withSetup<T>(composable: () => T): [T, App] {
         return () => {} // Render an empty element
       },
     })
-  
+
     app.mount(document.createElement('div')) // Attach to DOM
     return [result as T, app]
   }
@@ -32,59 +32,58 @@ const STORED_VERSION = '0.0.7'
 
 // Mock useRuntimeConfig from Nuxt
 mockNuxtImport('useRuntimeConfig', () => {
-   return () => ({
-     public: {
-       version: CURRENT_VERSION,
-     },
-   })
+  return () => ({
+    public: {
+      version: CURRENT_VERSION,
+    },
+  })
 })
 
 describe('useVersion', () => {
+  beforeEach(() => {
+    localStorage.removeItem(VERSION_KEY)
+  })
 
-    beforeEach(() => {
-        localStorage.removeItem(VERSION_KEY)
+  it('should return correct initial state with withSetup', () => {
+    const { version, isVisible } = useVersion()
+    expect(version).toBe(CURRENT_VERSION)
+    expect(isVisible.value).toBe(false)
+  })
+
+  describe('should show banner', () => {
+    it('when version is not stored', () => {
+      const { init, isVisible } = useVersion()
+      init()
+
+      expect(isVisible.value).toBe(true)
     })
 
-    it('should return correct initial state with withSetup', () => {
-        const { version, isVisible } = useVersion()
-        expect(version).toBe(CURRENT_VERSION) 
-        expect(isVisible.value).toBe(false) 
+    it('when version differs from localStorage', async () => {
+      localStorage.setItem(VERSION_KEY, STORED_VERSION)
+      const { init, isVisible } = useVersion()
+      init()
+
+      expect(isVisible.value).toBe(true)
+    })
+  })
+
+  describe('should hide banner', () => {
+    it('when the same version is stored', () => {
+      localStorage.setItem(VERSION_KEY, CURRENT_VERSION)
+      const { init, isVisible } = useVersion()
+      init()
+
+      expect(isVisible.value).toBe(false)
     })
 
-    describe('should show banner', () => {
-        it('when version is not stored', () => {
-            const { init, isVisible } = useVersion()
-            init()
-            
-            expect(isVisible.value).toBe(true) 
-        })
+    it('and store version in localStorage on closeBanner', () => {
+      const { init, close, isVisible } = useVersion()
+      init()
 
-        it('when version differs from localStorage', async () => {
-            localStorage.setItem(VERSION_KEY, STORED_VERSION)
-            const { init, isVisible } = useVersion()
-            init()
+      close()
 
-            expect(isVisible.value).toBe(true) 
-        })
+      expect(isVisible.value).toBe(false)
+      expect(localStorage.getItem(VERSION_KEY)).toBe(CURRENT_VERSION)
     })
-
-    describe('should hide banner', () => {
-        it('when the same version is stored', () => {
-            localStorage.setItem(VERSION_KEY, CURRENT_VERSION)
-            const { init, isVisible } = useVersion()
-            init()
-            
-            expect(isVisible.value).toBe(false) 
-        })
-
-        it('and store version in localStorage on closeBanner', () => {
-            const { init, close, isVisible } = useVersion()
-            init()
-            
-            close()
-            
-            expect(isVisible.value).toBe(false)
-            expect(localStorage.getItem(VERSION_KEY)).toBe(CURRENT_VERSION)  
-        })
-    })
+  })
 })

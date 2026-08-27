@@ -194,6 +194,12 @@ updates:
     schedule: { interval: "weekly" }
     open-pull-requests-limit: 5
     commit-message: { prefix: "deps(api-solid)" }
+    # typescript majors are held: see docs/ENGINEERING.md#known-open-work and
+    # issue #1296. ts-node cannot load under TS 7 - the programmatic compiler
+    # API it needs was removed - so the dev server and jest both die on import.
+    ignore:
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
     groups:
       api-solid-minor:
         patterns: ["*"]

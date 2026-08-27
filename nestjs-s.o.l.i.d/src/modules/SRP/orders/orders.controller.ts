@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { EmailsService } from '../emails/emails.service';
 import { IsNumber } from 'class-validator';

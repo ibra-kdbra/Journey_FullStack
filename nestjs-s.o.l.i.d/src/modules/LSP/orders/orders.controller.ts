@@ -1,14 +1,7 @@
-import { Body, Controller, Get, Inject, Param, Post } from '@nestjs/common';
-import { IsNumber } from 'class-validator';
+import { Controller, Get, Inject, Param } from '@nestjs/common';
 import { PricingService } from '../pricing/pricing.service';
 import { SalePricingStrategy } from '../pricing/sale-pricing-strategy.service';
 import { OrdersService } from './orders.service';
-import { RegularPricingStrategy } from '../pricing/regular-pricing-strategy.service';
-
-class SubmitOrderDto {
-  @IsNumber()
-  productId: number;
-}
 
 @Controller('/LSP/orders')
 export class OrdersController {

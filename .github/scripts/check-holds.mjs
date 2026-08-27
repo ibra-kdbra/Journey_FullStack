@@ -39,9 +39,9 @@ const minor = (v) => parseInt(String(v).split('.')[1] ?? '0', 10)
 const HOLDS = [
   {
     name: 'typescript held at ^6',
-    projects: ['nestjs-s.o.l.i.d', 'vue3-clean-architecture', 'angular-s.o.l.i.d-advanced'],
+    projects: ['nestjs-s.o.l.i.d', 'vue3-clean-architecture', 'angular-s.o.l.i.d-advanced', 'API_s.o.l.i.d_TS'],
     why:
-      'TS 7.0 removed the programmatic compiler API that the Nest CLI and vue-tsc both need. ' +
+      'TS 7.0 removed the programmatic compiler API that the Nest CLI, vue-tsc and ts-node all need. ' +
       'Angular is a second, independent constraint: @angular/compiler-cli@22 declares a ' +
       'typescript >=6.0 <6.1 peer range.',
     clearsWhen: 'TS 7.1+ restores the compiler API AND @angular/compiler-cli widens its peer range.',

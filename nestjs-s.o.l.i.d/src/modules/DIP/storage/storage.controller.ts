@@ -1,7 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { StorageFetcher, StorageService } from './storage.service';
-import { StorageS3FetcherService } from './storage-s3-fetcher.service';
-import { StorageCSFetcherService } from './storage-cs-fetcher.service';
+import { StorageFetcher } from './storage.service';
 
 @Controller('/storage')
 export class StorageController {

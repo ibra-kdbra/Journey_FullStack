@@ -9,7 +9,10 @@ module.exports = {
     [
       require('@babel/plugin-proposal-decorators').default,
       {
-        legacy: true,
+        // Renamed upstream: the plugin now requires `version`, and rejects the
+        // old `legacy: true` with "The decorators plugin requires a 'version'
+        // option, whose value must be one of: '2023-11' or 'legacy'."
+        version: 'legacy',
       },
     ],
     [

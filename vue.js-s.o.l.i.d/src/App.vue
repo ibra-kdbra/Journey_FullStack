@@ -1,6 +1,6 @@
 <script setup>
   import { onMounted, inject } from 'vue';
-  import ProductsView from './views/products.vue';
+  import ProductsView from './views/ProductsView.vue';
 
   const products = [
     { id: 1, name: 'Product 1', imageURL: 'https://placehold.co/200x400', type: 'electronics' },

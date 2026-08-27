@@ -36,10 +36,10 @@
       "checks": {
         "install": true,
         "build": true,
-        "lint": false,
+        "lint": true,
         "test": false
       },
-      "notes": "Has a lint script; not yet verified clean, so it stays off."
+      "notes": "Vue 3 SPA, plain JavaScript. lint migrated from .eslintrc.cjs to flat config for ESLint 10 and observed clean; the check-only form is lint, the mutating one is lint:fix. No test script."
     },
     {
       "path": "vue3-clean-architecture",
@@ -142,7 +142,7 @@
         "lint": false,
         "test": false
       },
-      "notes": "prebuild runs `prisma generate`, which needs no database. Prisma is on 7 with the pg driver adapter (ADR 0004); schema push and a live query were verified against a local Postgres 16."
+      "notes": "prebuild runs prisma generate, which needs no database. Prisma is on 7 with the pg driver adapter (ADR 0004); schema push and a live query were verified against a local Postgres 16. lint stays off and is blocked upstream: eslint-config-next 16.3.2 declares eslint >=9.0.0 but bundles typescript-eslint 8, whose parser throws \"scopeManager.addGlobals is not a function\" against eslint 10. The config itself is migrated and correct, so the check flips the day that resolves."
     },
     {
       "path": "rn_clean_architecture",
@@ -156,7 +156,7 @@
         "lint": false,
         "test": false
       },
-      "notes": "react-native-fast-image@8.6.3 peers react@^17||^18 while this project runs react@19.2.8, so npm ci needs --legacy-peer-deps (recorded in installFlags). The package was last published in 2022. Tracked in issue #1289.",
+      "notes": "React Native clean architecture with inversify. react-native-fast-image@8.6.3 peers react ^17||^18 against react 19, so npm ci needs --legacy-peer-deps (issue #1289). RN 0.87 does not support Babel 8 or jest 30 despite declaring permissive peers, so both are pinned to what its preset actually requires. lint is blocked upstream: @react-native/eslint-config 0.87 bundles a parser that throws \"scopeManager.addGlobals is not a function\" on eslint 10. test is blocked on inversify property injection, which Babel now rejects - constructor injection would fix it.",
       "installFlags": [
         "--legacy-peer-deps"
       ]
@@ -218,10 +218,10 @@
       "checks": {
         "install": true,
         "build": true,
-        "lint": false,
-        "test": false
+        "lint": true,
+        "test": true
       },
-      "notes": "prebuild runs `prisma generate`, which needs no database. Prisma is on 7 with the better-sqlite3 driver adapter (ADR 0004). TypeScript is held at ^6 \u2014 the Nest CLI needs the programmatic compiler API that TS 7.0 removed."
+      "notes": "NestJS SOLID demonstrations. Prisma 7 with the better-sqlite3 driver adapter (ADR 0004); prebuild runs prisma generate, which needs no database. typescript held at ^6 (issue #1296). lint migrated to ESLint 10 flat config and observed clean; test is jest, 1 suite passing."
     },
     {
       "path": "API_s.o.l.i.d_TS",
@@ -235,7 +235,7 @@
         "lint": false,
         "test": false
       },
-      "notes": "express-async-errors@3.1.1 peers express@^4.16.2 while this project runs express@^5.1.0, so npm ci needs --legacy-peer-deps (recorded in installFlags). The real fix is dropping the package: it is a side-effect patch for Express 4's router and Express 5 handles async errors natively. Tracked in issue #1289.",
+      "notes": "Express 5 + TypeORM + tsyringe. typescript held at ^6: ts-node needs the programmatic compiler API removed in TS 7, so the dev server and jest both die on import (issue #1296). npm ci still needs --legacy-peer-deps for eslint-config-airbnb-base@15, which peers eslint ^7||^8 against this project's eslint 10 (issue #1289). build and test stay off: four TypeORM repositories still call getRepository, removed in TypeORM 0.3.",
       "installFlags": [
         "--legacy-peer-deps"
       ]

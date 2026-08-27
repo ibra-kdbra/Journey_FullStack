@@ -28,7 +28,7 @@ describe("Create Car Specification", () => {
             });
         } catch (error) {
             expect(error).toBeInstanceOf(AppError);
-            expect(error.message).toBe("Car does not exists!");
+            expect((error as AppError).message).toBe("Car does not exists!");
         }
     });
 
@@ -46,7 +46,7 @@ describe("Create Car Specification", () => {
             description: "Specficiation desc",
             name: "specification",
         });
-        const specificationId = [specification.id];
+        const specificationId = [specification.id as string];
         const specificationCar = await createCarSpecificationUseCase.execute({
             carId: car.id,
             specificationId,

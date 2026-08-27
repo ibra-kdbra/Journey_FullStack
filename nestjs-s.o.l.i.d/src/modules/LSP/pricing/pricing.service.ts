@@ -1,5 +1,3 @@
-import { Injectable } from '@nestjs/common';
-
 //✅ Good
 //Either class or an interface
 //Class is better since it's a javascript object

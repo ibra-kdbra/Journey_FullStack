@@ -10,11 +10,7 @@
 </script>
 
 <Html>
-  <Head
-    subject="🥋 Welcome to SvelteKit!"
-    preview="We are thrilled to have you onboard. ⭐"
-    theme={mailTheme}
-  />
+  <Head subject="🥋 Welcome to SvelteKit!" preview="We are thrilled to have you onboard. ⭐" theme={mailTheme} />
   <Body>
     <Section>
       <Column>

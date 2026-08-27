@@ -34,6 +34,13 @@ export default ts.config(
     }
   },
   {
+    // Email templates render to MJML for a mail client, not to the SvelteKit
+    // router. Their hrefs are absolute URLs built from PUBLIC_BASE_URL, so
+    // resolve() - which prefixes the app's base path - would corrupt them.
+    files: ['src/lib/utils/mail/templates/**/*.svelte'],
+    rules: { 'svelte/no-navigation-without-resolve': 'off' }
+  },
+  {
     ignores: ['*.env', 'node_modules/', 'build/', '.svelte-kit/', 'src/lib/components/ui/**']
   }
 );

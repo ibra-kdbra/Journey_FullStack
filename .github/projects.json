@@ -36,10 +36,10 @@
       "checks": {
         "install": true,
         "build": true,
-        "lint": false,
+        "lint": true,
         "test": false
       },
-      "notes": "Has a lint script; not yet verified clean, so it stays off."
+      "notes": "Vue 3 SPA, plain JavaScript. lint migrated from .eslintrc.cjs to flat config for ESLint 10 and observed clean; the check-only form is lint, the mutating one is lint:fix. No test script."
     },
     {
       "path": "vue3-clean-architecture",

@@ -116,7 +116,7 @@
         "typecheck": "check",
         "test": false
       },
-      "notes": "SvelteKit with Lucia-style sessions and Google OAuth via arctic. $env/static/private inlines secrets at build time, so the build needs every name in .env.example present - the values in env are placeholders, not credentials, and the artefact is discarded. The same names are what `svelte-kit sync` reads to generate the $env/static/public declarations, so typecheck needs them too. test stays off: `npm test` chains test:e2e, which wants Playwright browsers and a seeded database, and it shells out to pnpm, which this project does not install with.",
+      "notes": "SvelteKit with Lucia-style sessions and Google OAuth via arctic. $env/static/private inlines secrets at build time, so the build needs every name in .env.example present - the values in env are placeholders, not credentials, and the artefact is discarded. The same names are what `svelte-kit sync` reads to generate the $env/static/public declarations, so typecheck needs them too. test stays off: `npm test` chains test:e2e, which wants Playwright browsers and a seeded database, and it shells out to pnpm, which this project does not install with. That also leaves vite-node uncovered: it appears only in db:seed and db:clear, so a vite-node bump has to be exercised by hand against a scratch libsql file.",
       "env": {
         "PUBLIC_BASE_URL": "http://localhost:5173",
         "DATABASE_URL": "file:sveltekit_local.db",

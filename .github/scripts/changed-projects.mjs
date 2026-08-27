@@ -51,6 +51,9 @@ const toMatrixEntry = (p) => ({
   test: Boolean(p.checks?.test),
   env: p.env ?? {},
   systemPackages: p.systemPackages ?? [],
+  // ADR 0005 / issue #1289. Empty for every project that resolves cleanly; a
+  // non-empty value is a recorded peer conflict, not a default.
+  installFlags: p.installFlags ?? [],
 });
 
 // Any ecosystem the workflow knows how to run. This filter previously admitted

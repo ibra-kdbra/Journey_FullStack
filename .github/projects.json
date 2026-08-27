@@ -98,7 +98,10 @@
         "lint": false,
         "test": false
       },
-      "notes": "Tailwind v4 via @tailwindcss/vite; the v3 theme is loaded through @config in src/layouts/global.css."
+      "notes": "@astrojs/check@0.9.10 peers typescript@^5||^6 while this project runs ^7.0.2, so npm ci needs --legacy-peer-deps (recorded in installFlags). Same family as the typescript hold: the tool has not widened for TS 7 yet. Tracked in issue #1289.",
+      "installFlags": [
+        "--legacy-peer-deps"
+      ]
     },
     {
       "path": "sveltekit",
@@ -226,7 +229,10 @@
         "lint": false,
         "test": false
       },
-      "notes": "No build script; the project runs from source via ts-node."
+      "notes": "express-async-errors@3.1.1 peers express@^4.16.2 while this project runs express@^5.1.0, so npm ci needs --legacy-peer-deps (recorded in installFlags). The real fix is dropping the package: it is a side-effect patch for Express 4's router and Express 5 handles async errors natively. Tracked in issue #1289.",
+      "installFlags": [
+        "--legacy-peer-deps"
+      ]
     },
     {
       "path": "Hono-Postgres",

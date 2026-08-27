@@ -112,10 +112,11 @@
       "checks": {
         "install": true,
         "build": true,
-        "lint": false,
+        "lint": true,
+        "typecheck": "check",
         "test": false
       },
-      "notes": "SvelteKit with Lucia-style sessions and Google OAuth via arctic. $env/static/private inlines secrets at build time, so the build needs every name in .env.example present - the values in env are placeholders, not credentials, and the artefact is discarded. lint stays off: `npm run lint` exits 1 on Prettier style issues in 115 files. e2e needs a real database and browsers.",
+      "notes": "SvelteKit with Lucia-style sessions and Google OAuth via arctic. $env/static/private inlines secrets at build time, so the build needs every name in .env.example present - the values in env are placeholders, not credentials, and the artefact is discarded. The same names are what `svelte-kit sync` reads to generate the $env/static/public declarations, so typecheck needs them too. test stays off: `npm test` chains test:e2e, which wants Playwright browsers and a seeded database, and it shells out to pnpm, which this project does not install with.",
       "env": {
         "PUBLIC_BASE_URL": "http://localhost:5173",
         "DATABASE_URL": "file:sveltekit_local.db",
@@ -250,9 +251,14 @@
         "install": true,
         "build": false,
         "lint": true,
-        "test": false
+        "test": true
       },
-      "notes": "Bun + Hono + Postgres. Registered under the bun ecosystem so Dependabot writes bun.lock. lint is biome, observed clean (23 files, 2 infos, exit 0); the mutating form moved to lint:fix so CI checks rather than rewrites. test stays off: it loads .env.test, which is not committed."
+      "notes": "Bun + Hono + Postgres. Registered under the bun ecosystem so Dependabot writes bun.lock. lint is biome, check-only (22 files, 2 infos, exit 0); the mutating form lives in lint:fix so CI checks rather than rewrites. test is a real integration suite: it shells out to drizzle db:push and truncates the table between cases, so CI starts the runner's PostgreSQL and creates the database named in the postgres field. 4 tests, 8 assertions, verified against a live Postgres 16. .env.test is gitignored and unnecessary - the env block below is what supplies DATABASE_URL, and the suite passes with the file absent.",
+      "postgres": "hono_test",
+      "env": {
+        "NODE_ENV": "test",
+        "DATABASE_URL": "postgresql://postgres:postgres@localhost:5432/hono_test"
+      }
     },
     {
       "path": "vercel-cleaner",

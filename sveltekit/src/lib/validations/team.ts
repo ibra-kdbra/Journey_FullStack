@@ -2,9 +2,9 @@ import { z } from 'zod';
 
 // Create Team Form Validation
 export const createTeamSchema = z.object({
-  userId: z.number({ required_error: 'User is required' }),
+  userId: z.number({ error: 'User is required' }),
   name: z
-    .string({ required_error: 'Name is required' })
+    .string({ error: 'Name is required' })
     .trim()
     .min(3, { message: 'Team name must be at least 3 characters' })
     .max(64, { message: 'Team name must be less than 64 characters' })
@@ -15,9 +15,9 @@ export const createTeamSchema = z.object({
 
 // Edit Team Form Validation
 export const editTeamSchema = z.object({
-  teamId: z.number({ required_error: 'Team is required' }).nonnegative(),
+  teamId: z.number({ error: 'Team is required' }).nonnegative(),
   name: z
-    .string({ required_error: 'Name is required' })
+    .string({ error: 'Name is required' })
     .trim()
     .min(3, { message: 'Team name must be at least 3 characters' })
     .max(64, { message: 'Team name must be less than 64 characters' })
@@ -28,14 +28,14 @@ export const editTeamSchema = z.object({
 
 // Delete Team Form Validation
 export const deleteTeamSchema = z.object({
-  teamId: z.number({ required_error: 'Team is required' }).nonnegative()
+  teamId: z.number({ error: 'Team is required' }).nonnegative()
 });
 
 // Team Invite Form Validation
 export const createTeamInviteSchema = z.object({
-  teamId: z.number({ required_error: 'Team is required' }).nonnegative(),
+  teamId: z.number({ error: 'Team is required' }).nonnegative(),
   email: z
-    .string({ required_error: 'Email is required' })
+    .string({ error: 'Email is required' })
     .trim()
     .max(64, { message: 'Email must be less than 64 characters' })
     .email({ message: 'Email is invalid' })
@@ -43,6 +43,6 @@ export const createTeamInviteSchema = z.object({
 
 // Remove User From Team Form Validation (or Leave Team)
 export const leaveTeamSchema = z.object({
-  teamId: z.number({ required_error: 'Team is required' }).nonnegative(),
-  userId: z.number({ required_error: 'User is required' })
+  teamId: z.number({ error: 'Team is required' }).nonnegative(),
+  userId: z.number({ error: 'User is required' })
 });

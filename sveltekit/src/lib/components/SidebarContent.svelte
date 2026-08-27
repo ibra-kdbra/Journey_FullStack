@@ -13,7 +13,7 @@
   import * as Sidebar from '$lib/components/ui/sidebar';
 
   // Assets
-  import { Github } from '@lucide/svelte';
+  import GithubIcon from '$lib/components/ui/GithubIcon.svelte';
 
   let {
     items
@@ -54,7 +54,7 @@
         <Sidebar.MenuButton size="sm">
           {#snippet child({ props })}
             <a href="https://github.com/n00ki/sveltekit-omakase" target="_blank" rel="noopener noreferrer" {...props}>
-              <Github class="size-4 shrink-0" />
+              <GithubIcon class="size-4 shrink-0" />
               <span>GitHub</span>
             </a>
           {/snippet}

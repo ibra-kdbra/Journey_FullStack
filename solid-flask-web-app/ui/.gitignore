@@ -9,6 +9,9 @@
 /coverage
 
 # production
+# This project builds with Vite, which emits to dist/. The /build entry below
+# is left over from the Create React App template and matches nothing here.
+/dist
 /build
 
 # misc

@@ -6,10 +6,11 @@
     "dev": "NODE_ENV=development bun run --hot src/app/development.ts",
     "test": "bun test",
     "prepare": "husky",
-    "lint": "biome lint --write",
+    "lint": "biome lint .",
     "format": "biome format --write",
     "db:push": "bunx drizzle-kit generate && bunx drizzle-kit push",
-    "db:generate": "bunx drizzle-kit generate"
+    "db:generate": "bunx drizzle-kit generate",
+    "lint:fix": "biome lint --write ."
   },
   "lint-staged": {
     "*.ts": [

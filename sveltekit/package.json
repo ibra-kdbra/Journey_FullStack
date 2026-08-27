@@ -42,7 +42,7 @@
     "dotenv": "^17.2.3",
     "drizzle-kit": "^0.31.8",
     "embla-carousel-svelte": "^8.6.0",
-    "eslint": "^9.37.0",
+    "eslint": "^10.9.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-svelte": "^3.14.0",
     "formsnap": "2.0.1",

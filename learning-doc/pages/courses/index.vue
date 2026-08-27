@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { BookOpen, ArrowRight, Layers, ChevronLeft } from "lucide-vue-next";
+import { BookOpen, ArrowRight, Layers, ChevronLeft } from "@lucide/vue";
 import {
     academyDisciplines,
     academyCourses,

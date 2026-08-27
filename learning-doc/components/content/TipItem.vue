@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Lightbulb, Info, AlertTriangle, CheckCircle2 } from "lucide-vue-next";
+import { Lightbulb, Info, AlertTriangle, CheckCircle2 } from "@lucide/vue";
 
 const props = defineProps<{
     title: string;

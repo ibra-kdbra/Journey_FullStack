@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, onMounted } from 'vue';
-import { ArrowLeft, List, Clock, ChevronLeft, ChevronRight } from "lucide-vue-next";
+import { ArrowLeft, List, Clock, ChevronLeft, ChevronRight } from "@lucide/vue";
 import { courseById, parseLessonPath, formatSegment } from "~/utils/academy";
 
 const route = useRoute();

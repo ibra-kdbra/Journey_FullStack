@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ArrowRight, ExternalLink, Github } from "lucide-vue-next";
+import { ArrowRight, ExternalLink } from "@lucide/vue";
+import GithubIcon from "~/components/ui/GithubIcon.vue";
 import {
     atlasTracks,
     atlasProjects,
@@ -64,7 +65,7 @@ const inProgressCount = atlasProjects.filter((p) => p.status === "in-progress").
                             rel="noopener noreferrer"
                             class="btn-primary inline-flex items-center gap-2"
                         >
-                            <Github :size="16" aria-hidden="true" />
+                            <GithubIcon :size="16" aria-hidden="true" />
                             Source on GitHub
                         </a>
                         <span class="text-sm text-[rgb(var(--color-text-muted))]">

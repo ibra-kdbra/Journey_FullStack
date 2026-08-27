@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { BookOpen, Github, MessageCircle } from "lucide-vue-next";
+import { BookOpen, MessageCircle } from "@lucide/vue";
+import GithubIcon from "~/components/ui/GithubIcon.vue";
 
 const year = new Date().getFullYear();
 </script>
@@ -59,7 +60,7 @@ const year = new Date().getFullYear();
                         <li>
                             <a href="https://github.com" target="_blank" rel="noopener"
                                 class="inline-flex items-center gap-1.5 text-xs text-[rgb(var(--color-text-soft))] hover:text-[rgb(var(--color-accent-blue))] transition-colors">
-                                <Github :size="13" />
+                                <GithubIcon :size="13" />
                                 GitHub
                             </a>
                         </li>

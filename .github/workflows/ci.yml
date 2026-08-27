@@ -73,11 +73,11 @@ jobs:
             node -e "
               const m = JSON.parse(process.argv[1]);
               if (!m.length) { console.log('_No project files changed — nothing to build._'); process.exit(0); }
-              console.log('| Project | Runtime | install | build | lint | test |');
-              console.log('|:--|:--|:--|:--|:--|:--|');
+              console.log('| Project | Runtime | install | build | lint | typecheck | test |');
+              console.log('|:--|:--|:--|:--|:--|:--|:--|');
               const tick = (v) => v ? 'yes' : '—';
               for (const p of m) {
-                console.log(\`| \\\`\${p.path}\\\` | \${p.runtime} | \${tick(p.install)} | \${tick(p.build)} | \${tick(p.lint)} | \${tick(p.test)} |\`);
+                console.log(\`| \\\`\${p.path}\\\` | \${p.runtime} | \${tick(p.install)} | \${tick(p.build)} | \${tick(p.lint)} | \${p.typecheck || '—'} | \${tick(p.test)} |\`);
               }
             " "$matrix"
           } >> "$GITHUB_STEP_SUMMARY"
@@ -139,6 +139,21 @@ jobs:
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y -qq ${{ join(matrix.project.systemPackages, ' ') }}
+        working-directory: .
+
+      # GitHub's ubuntu images ship PostgreSQL installed but stopped. Starting it
+      # here rather than declaring a `services:` container keeps the cost on the
+      # one project that needs a database, instead of adding a container start to
+      # all twenty-one jobs. The credentials set here are the ones the project's
+      # `env` block puts in DATABASE_URL — that block is the only source, since
+      # Hono-Postgres' .env.test is gitignored and the suite runs without it.
+      - name: Start PostgreSQL
+        if: matrix.project.postgres
+        run: |
+          sudo systemctl start postgresql.service
+          for i in $(seq 1 30); do pg_isready -h localhost -p 5432 && break; sleep 1; done
+          sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'postgres';"
+          sudo -u postgres createdb ${{ matrix.project.postgres }}
         working-directory: .
 
       # The JSON arrives through the env block, not interpolated into the script.
@@ -218,6 +233,20 @@ jobs:
             bun run lint
           else
             npm run lint
+          fi
+
+      # A string, not a boolean: the three projects with a type-check script call
+      # it `check`, `typecheck` and `type-check`. Naming it in the manifest beats
+      # guessing here, and '' means the project has none.
+      - name: Typecheck
+        if: matrix.project.typecheck != ''
+        run: |
+          if [ "${{ matrix.project.packageManager }}" = "pnpm" ]; then
+            pnpm run ${{ matrix.project.typecheck }}
+          elif [ "${{ matrix.project.packageManager }}" = "bun" ]; then
+            bun run ${{ matrix.project.typecheck }}
+          else
+            npm run ${{ matrix.project.typecheck }}
           fi
 
       - name: Build

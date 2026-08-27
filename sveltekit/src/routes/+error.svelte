@@ -1,4 +1,7 @@
 <script>
+  // Routing
+  import { resolve } from '$app/paths';
+
   // Stores
   import { page } from '$app/state';
 </script>
@@ -8,6 +11,8 @@
     {page.status}: {page.error?.message}
   </h1>
   <p>
-    <a href="/" class="text-muted-foreground/80 hover:text-muted-foreground text-base md:text-xl">Go back home</a>
+    <a href={resolve('/')} class="text-muted-foreground/80 hover:text-muted-foreground text-base md:text-xl"
+      >Go back home</a
+    >
   </p>
 </div>

@@ -1,18 +1,20 @@
 // @vitest-environment nuxt
 import { describe, it, expect, beforeEach } from 'vitest'
-import { mockNuxtImport } from '@nuxt/test-utils/runtime'
 import { useVersion } from '../../composables/useVersion'
 import { createLocalStorageVersionRepository } from '../../repositories/version-repository'
 
 const CURRENT_VERSION = '0.0.1'
 const OTHER_VERSION = '0.0.2'
 
-mockNuxtImport('useRuntimeConfig', () => () => ({ public: { version: CURRENT_VERSION } }))
-
 describe('useVersion', () => {
   const repository = createLocalStorageVersionRepository()
 
   beforeEach(() => {
+    // The repository reads useRuntimeConfig() on every call, so overriding the
+    // value is enough. mockNuxtImport() would be the obvious alternative, but
+    // it mocks the whole of #app/nuxt and that currently breaks the Nuxt
+    // environment's own beforeAll hook - see the note in .github/projects.json.
+    useRuntimeConfig().public.version = CURRENT_VERSION
     repository.clear()
   })
 

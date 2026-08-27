@@ -1,7 +1,10 @@
 <script lang="ts">
+  // Routing
+  import { resolve } from '$app/paths';
+
   // Utils
   import { superForm } from 'sveltekit-superforms';
-  import { zodClient } from 'sveltekit-superforms/adapters';
+  import { zod4Client } from 'sveltekit-superforms/adapters';
   import { loginSchema } from '$lib/validations/auth';
   import { buttonVariants } from '$components/ui/button';
 
@@ -16,7 +19,7 @@
   let { data } = $props();
 
   const form = superForm(data.form, {
-    validators: zodClient(loginSchema)
+    validators: zod4Client(loginSchema)
   });
 
   const { form: formData, enhance, delayed } = form;
@@ -61,7 +64,9 @@
                 {#snippet children({ props })}
                   <div class="flex items-center">
                     <Form.Label>Password</Form.Label>
-                    <a href="/reset-password" class="ml-auto inline-block text-sm underline"> Forgot your password? </a>
+                    <a href={resolve('/reset-password')} class="ml-auto inline-block text-sm underline">
+                      Forgot your password?
+                    </a>
                   </div>
                   <Input
                     type="password"
@@ -99,7 +104,7 @@
           class: isRedirecting ? 'pointer-events-none cursor-not-allowed opacity-50' : ''
         })}
         onclick={() => (isRedirecting = true)}
-        href="/login/google"
+        href={resolve('/login/google')}
       >
         {#if isRedirecting}
           <RotateCw size="16" class="mr-2 animate-spin" />
@@ -110,7 +115,7 @@
 
     <div class="mt-4 text-center text-sm">
       Don&apos;t have an account?
-      <a href="/register" class="underline"> Sign up </a>
+      <a href={resolve('/register')} class="underline"> Sign up </a>
     </div>
   </Card.Content>
 </Card.Root>

@@ -106,6 +106,22 @@ updates:
     schedule: { interval: "weekly" }
     open-pull-requests-limit: 5
     commit-message: { prefix: "deps(sveltekit)" }
+    # typescript 7 is held, but 6 is not: both of this project's TS-consuming
+    # tools accept 6 and refuse 7 by name. Verified by forcing 7.0.2 in:
+    #
+    #   svelte-check       "TypeScript 7 support currently requires both
+    #                       TypeScript 7 and TypeScript 6 installed in your
+    #                       project, and requires using the --tsgo ... flag"
+    #   typescript-eslint  "typescript-eslint does not support TS 7.0."
+    #
+    # npm refuses it before that anyway - svelte-check 4.7.6 peers
+    # `^5.0.0 || ^6.0.0` and typescript-eslint 8.68.0 peers `>=4.8.4 <6.1.0`.
+    # This is a `versions` bound rather than the semver-major form used for
+    # the four holds in #1296, because a TS 6 bump here would genuinely work
+    # and should not be blocked. See #1296 and issue #1360.
+    ignore:
+      - dependency-name: "typescript"
+        versions: [">=7.0.0"]
     groups:
       sveltekit-minor:
         patterns: ["*"]

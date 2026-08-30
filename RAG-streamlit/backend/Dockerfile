@@ -1,5 +1,5 @@
 # === Stage 1: Build + download model ===
-FROM python:3.12-slim AS builder
+FROM python:3.14-slim AS builder
 
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 RUN pip install poetry==1.8.3
@@ -23,7 +23,7 @@ RUN pip install huggingface_hub hf_xet
 RUN python -c "from huggingface_hub import snapshot_download; snapshot_download(repo_id='sentence-transformers/${EMBEDDING_MODEL}')" 
 
 # === Stage 2: Offline run image ===
-FROM python:3.12-slim
+FROM python:3.14-slim
 
 RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
 RUN pip install poetry==1.8.3

@@ -86,11 +86,24 @@ for (const p of projects) {
     if (!(field in p)) fail(`"${label}" is missing required field \`${field}\`.`);
   }
 
-  // 4. Every disabled check must explain itself, so `false` never means "unknown".
+  // 4. Every disabled check must explain itself *by name*, so `false` never
+  //    means "unknown".
+  //
+  //    This used to accept any `notes` at all when any check was off, which is
+  //    how angular-s.o.l.i.d-advanced sat at `test: false` while carrying a
+  //    note about its typescript hold. Five spec files and a full Karma setup
+  //    were sitting there unread, and the manifest looked complete (#1407).
   const checks = p.checks ?? {};
-  const anyDisabled = Object.values(checks).some((v) => v === false);
-  if (anyDisabled && !p.notes) {
-    fail(`"${label}" disables a check but has no \`notes\` explaining why.`);
+  const notes = (p.notes ?? '').toLowerCase();
+  for (const name of ['install', 'build', 'lint', 'test']) {
+    if (checks[name] !== false) continue;
+    if (!new RegExp(`\\b${name}\\b`).test(notes)) {
+      fail(
+        `"${label}" sets \`${name}: false\` but its \`notes\` never mention ${name}. ` +
+          `Say why - no script, a placeholder, a failing case, an upstream wait - ` +
+          `so the next reader can tell "nothing to run" from "nobody looked".`,
+      );
+    }
   }
 
   // 5. A node project with `build: true` must actually have a build script.

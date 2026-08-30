@@ -98,7 +98,7 @@
         "lint": false,
         "test": false
       },
-      "notes": "@astrojs/check@0.9.10 peers typescript@^5||^6 while this project runs ^7.0.2, so npm ci needs --legacy-peer-deps (recorded in installFlags). Same family as the typescript hold: the tool has not widened for TS 7 yet. Tracked in issue #1289.",
+      "notes": "@astrojs/check@0.9.10 peers typescript@^5||^6 while this project runs ^7.0.2, so npm ci needs --legacy-peer-deps (recorded in installFlags). Same family as the typescript hold: the tool has not widened for TS 7 yet. Tracked in issue #1289. No lint or test script is defined, so both stay off.",
       "installFlags": [
         "--legacy-peer-deps"
       ]
@@ -143,7 +143,7 @@
         "lint": false,
         "test": false
       },
-      "notes": "prebuild runs prisma generate, which needs no database. Prisma is on 7 with the pg driver adapter (ADR 0004); schema push and a live query were verified against a local Postgres 16. lint stays off and is blocked upstream: eslint-config-next 16.3.2 declares eslint >=9.0.0 but bundles typescript-eslint 8, whose parser throws \"scopeManager.addGlobals is not a function\" against eslint 10. The config itself is migrated and correct, so the check flips the day that resolves."
+      "notes": "prebuild runs prisma generate, which needs no database. Prisma is on 7 with the pg driver adapter (ADR 0004); schema push and a live query were verified against a local Postgres 16. lint stays off and is blocked upstream: eslint-config-next 16.3.2 declares eslint >=9.0.0 but bundles typescript-eslint 8, whose parser throws \"scopeManager.addGlobals is not a function\" against eslint 10. The config itself is migrated and correct, so the check flips the day that resolves. No test script is defined."
     },
     {
       "path": "rn_clean_architecture",
@@ -157,7 +157,7 @@
         "lint": false,
         "test": false
       },
-      "notes": "React Native clean architecture with inversify. react-native-fast-image@8.6.3 peers react ^17||^18 against react 19, so npm ci needs --legacy-peer-deps (issue #1289). RN 0.87 does not support Babel 8 or jest 30 despite declaring permissive peers, so both are pinned to what its preset actually requires. lint is blocked upstream: @react-native/eslint-config 0.87 bundles a parser that throws \"scopeManager.addGlobals is not a function\" on eslint 10. test is blocked on inversify property injection, which Babel now rejects - constructor injection would fix it.",
+      "notes": "React Native clean architecture with inversify. react-native-fast-image@8.6.3 peers react ^17||^18 against react 19, so npm ci needs --legacy-peer-deps (issue #1289). RN 0.87 does not support Babel 8 or jest 30 despite declaring permissive peers, so both are pinned to what its preset actually requires. lint is blocked upstream: @react-native/eslint-config 0.87 bundles a parser that throws \"scopeManager.addGlobals is not a function\" on eslint 10. test is blocked on inversify property injection, which Babel now rejects - constructor injection would fix it. No build script is defined - React Native builds through Xcode and Gradle, not npm.",
       "installFlags": [
         "--legacy-peer-deps"
       ]
@@ -177,7 +177,7 @@
         "lint": false,
         "test": false
       },
-      "notes": "Frontend of the Flask app. The Python API alongside it is not yet covered by CI."
+      "notes": "Frontend of the Flask app. The Python API alongside it is not yet covered by CI. No lint or test script is defined."
     },
     {
       "path": "learning-doc",
@@ -191,7 +191,7 @@
         "lint": false,
         "test": false
       },
-      "notes": "The Engineering Atlas. Nuxt 4 + Nuxt Content. better-sqlite3 13 sits outside @nuxt/content's peerOptional ^12.5.0, so npm ci needs --legacy-peer-deps (recorded in installFlags). That combination was verified by running the built server, not just by building it - see docs/DEPENDENCIES.md. Tracked in issue #1289.",
+      "notes": "The Engineering Atlas. Nuxt 4 + Nuxt Content. better-sqlite3 13 sits outside @nuxt/content's peerOptional ^12.5.0, so npm ci needs --legacy-peer-deps (recorded in installFlags). That combination was verified by running the built server, not just by building it - see docs/DEPENDENCIES.md. Tracked in issue #1289. No lint or test script is defined.",
       "installFlags": [
         "--legacy-peer-deps"
       ]
@@ -208,7 +208,7 @@
         "lint": false,
         "test": false
       },
-      "notes": "build runs tsc. A `typecheck` script is also available."
+      "notes": "build runs tsc. A `typecheck` script is also available. No lint script is defined. test is npm's placeholder, `echo \"Error: no test specified\" && exit 1`, so it can only fail. typecheck stays off too, but for a different reason: it is `tsc --noEmit` over the same files build already compiles with `tsc`, so it would double the job for no extra signal (issue #1360)."
     },
     {
       "path": "nestjs-s.o.l.i.d",
@@ -251,7 +251,7 @@
         "lint": true,
         "test": true
       },
-      "notes": "Bun + Hono + Postgres. Registered under the bun ecosystem so Dependabot writes bun.lock. lint is biome, check-only (22 files, 2 infos, exit 0); the mutating form lives in lint:fix so CI checks rather than rewrites. test is a real integration suite: it shells out to drizzle db:push and truncates the table between cases, so CI starts the runner's PostgreSQL and creates the database named in the postgres field. That step also exports DATABASE_URL, because a postgresql://user:pass@host string in this env block makes the runner drop the whole matrix as a suspected secret. 4 tests, 8 assertions, verified against a live Postgres 16. .env.test is gitignored and unnecessary - the suite passes with the file absent.",
+      "notes": "Bun + Hono + Postgres. Registered under the bun ecosystem so Dependabot writes bun.lock. lint is biome, check-only (22 files, 2 infos, exit 0); the mutating form lives in lint:fix so CI checks rather than rewrites. test is a real integration suite: it shells out to drizzle db:push and truncates the table between cases, so CI starts the runner's PostgreSQL and creates the database named in the postgres field. That step also exports DATABASE_URL, because a postgresql://user:pass@host string in this env block makes the runner drop the whole matrix as a suspected secret. 4 tests, 8 assertions, verified against a live Postgres 16. .env.test is gitignored and unnecessary - the suite passes with the file absent. No build script is defined; bun runs the TypeScript directly.",
       "postgres": "hono_test",
       "env": {
         "NODE_ENV": "test"
@@ -269,7 +269,7 @@
         "lint": false,
         "test": false
       },
-      "notes": "Single-file operational script; no build step."
+      "notes": "Single-file operational script; no build step. No lint script is defined, and test is npm's placeholder, `echo \"Error: no test specified\" && exit 1`, so it can only fail."
     },
     {
       "path": "RAG-streamlit",
@@ -283,7 +283,7 @@
         "lint": false,
         "test": false
       },
-      "notes": "Umbrella entry. The three Poetry projects beneath it \u2014 backend, frontend and pipelines \u2014 carry their own manifest entries and CI checks."
+      "notes": "Umbrella entry. The three Poetry projects beneath it \u2014 backend, frontend and pipelines \u2014 carry their own manifest entries and CI checks. Nothing runs at this level: install, build, lint and test are all off because there is no project here to run them against."
     },
     {
       "path": "RAG-streamlit/frontend",
@@ -297,7 +297,7 @@
         "lint": false,
         "test": true
       },
-      "notes": "Streamlit UI. install runs `poetry check --lock` then `poetry install`; 6 tests pass. No build step and no linter configured."
+      "notes": "Streamlit UI. install runs `poetry check --lock` then `poetry install`; 6 tests pass. No build step and no linter configured. No linter is configured, so lint stays off."
     },
     {
       "path": "RAG-streamlit/pipelines",
@@ -311,7 +311,7 @@
         "lint": false,
         "test": false
       },
-      "notes": "Ingestion pipeline. install verified (~3.5 min; the torch/transformers tree is ~5.7 GB). test stays off: test_milvus_connector_collection_creation needs a live Milvus server, and test_markdown_processor fails with KeyError: 'title'. Both predate CI coverage."
+      "notes": "Ingestion pipeline. install verified (~3.5 min; the torch/transformers tree is ~5.7 GB). test stays off: test_milvus_connector_collection_creation needs a live Milvus server, and test_markdown_processor fails with KeyError: 'title'. Both predate CI coverage. build is off because a Poetry library has no build step. lint is off because black, mypy and pylint are all available but none has been observed clean; the PR that turns one on adds the `poetry run` form it verified."
     },
     {
       "path": "RAG-streamlit/backend",
@@ -325,7 +325,7 @@
         "lint": false,
         "test": false
       },
-      "notes": "FastAPI service. install verified (~3 min). test stays off because tests/test_app.py and tests/test_models.py are both empty files \u2014 pytest collects nothing and exits 5."
+      "notes": "FastAPI service. install verified (~3 min). test stays off because tests/test_app.py and tests/test_models.py are both empty files \u2014 pytest collects nothing and exits 5. build is off because a Poetry service has no build step. lint is off because black, mypy and pylint are all available but none has been observed clean; the PR that turns one on adds the `poetry run` form it verified."
     },
     {
       "path": "solid-flask-web-app",
@@ -339,7 +339,7 @@
         "lint": false,
         "test": false
       },
-      "notes": "Flask API. Its own manifest entry is solid-flask-web-app/api; the frontend is covered separately as solid-flask-web-app/ui."
+      "notes": "Flask API. Its own manifest entry is solid-flask-web-app/api; the frontend is covered separately as solid-flask-web-app/ui. Umbrella entry. The two projects beneath it - api and ui - carry their own manifest entries and CI checks, so install, build, lint and test are all off here."
     },
     {
       "path": "solid-flask-web-app/api",
@@ -371,7 +371,7 @@
         "lint": false,
         "test": true
       },
-      "notes": "Six Spring/Java modules behind an aggregator pom.xml. build runs `mvn -B -DskipTests package`, test runs `mvn -B verify` (4 tests, all in patient-service). billing/clinical/scheduling are domain-only modules \u2014 entity, repository port and use case, Lombok and the JDK only \u2014 so their POMs are plain Java libraries rather than Spring Boot applications."
+      "notes": "Six Spring/Java modules behind an aggregator pom.xml. build runs `mvn -B -DskipTests package`, test runs `mvn -B verify` (4 tests, all in patient-service). billing/clinical/scheduling are domain-only modules \u2014 entity, repository port and use case, Lombok and the JDK only \u2014 so their POMs are plain Java libraries rather than Spring Boot applications. install is off because `mvn verify` resolves dependencies itself, so a separate install step would only download the same tree twice. lint is off because the pom configures no checkstyle, spotless or pmd plugin."
     }
   ]
 }

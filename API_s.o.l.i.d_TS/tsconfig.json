@@ -27,6 +27,7 @@
         /* Modules */
         "module": "commonjs" /* Specify what module code is generated. */,
         "rootDir": "./src",                               /* TS 6 requires this explicitly; without it TS5011 infers the common source directory per entry point. */
+        "outDir": "./dist",                               /* `npm run build` is a real tsc emit, so it needs somewhere to put it. */
         // "moduleResolution": "node10",                     /* Specify how TypeScript looks up a file from a given module specifier. */
         // "baseUrl": "./",                                  /* Specify the base directory to resolve non-relative module names. */
         // "paths": {},                                      /* Specify a set of entries that re-map imports to additional lookup locations. */

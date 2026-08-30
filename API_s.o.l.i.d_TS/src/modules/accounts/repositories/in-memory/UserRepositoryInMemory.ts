@@ -14,13 +14,13 @@ class UserRepositoryInMemory implements IUserRepository {
         });
         this.users.push(user);
     }
-    async findByEmail(email: string): Promise<User | undefined> {
+    async findByEmail(email: string): Promise<User | null> {
         const user = this.users.find((user) => user.email === email);
-        return user;
+        return user ?? null;
     }
-    async findById(id: string): Promise<User | undefined> {
+    async findById(id: string): Promise<User | null> {
         const user = this.users.find((user) => user.id === id);
-        return user;
+        return user ?? null;
     }
 }
 export { UserRepositoryInMemory };

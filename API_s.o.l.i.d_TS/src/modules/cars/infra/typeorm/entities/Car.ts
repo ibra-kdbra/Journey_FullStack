@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import {
     Column,
     CreateDateColumn,
@@ -8,7 +9,6 @@ import {
     ManyToOne,
     PrimaryColumn,
 } from "typeorm";
-import { v4 as uuid } from "uuid";
 
 import { Category } from "./Category";
 import { Specification } from "./Specification";
@@ -49,7 +49,7 @@ class Car {
 
     constructor() {
         if (!this.id) {
-            this.id = uuid();
+            this.id = randomUUID();
             this.available = true;
         }
     }

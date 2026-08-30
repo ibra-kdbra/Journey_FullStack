@@ -7,6 +7,11 @@ export async function ensureAdmin(req: Request, res: Response, next: NextFunctio
     const { id } = req.user;
     const userRepository = new UserRepository();
     const user = await userRepository.findById(id);
+    // A token can outlive the user it names. Reading .isAdmin off null threw a
+    // raw TypeError, which the error handler turned into a 500.
+    if (!user) {
+        throw new AppError("User not found", 401);
+    }
     if (!user.isAdmin) {
         throw new AppError("User is not a admin");
     }

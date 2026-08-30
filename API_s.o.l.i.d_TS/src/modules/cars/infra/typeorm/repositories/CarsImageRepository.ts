@@ -1,12 +1,13 @@
-import { Repository, getRepository } from "typeorm";
+import { Repository } from "typeorm";
 
+import { AppDataSource } from "../../../../../shared/infra/typeorm";
 import { ICarsImageRepository } from "../../../repositories/ICarsImageRepository";
 import { CarImage } from "../entities/CarImage";
 
 class CarsImageRepository implements ICarsImageRepository {
     private repository: Repository<CarImage>;
     constructor() {
-        this.repository = getRepository(CarImage);
+        this.repository = AppDataSource.getRepository(CarImage);
     }
 
     async create(carId: string, imageName: string): Promise<CarImage> {

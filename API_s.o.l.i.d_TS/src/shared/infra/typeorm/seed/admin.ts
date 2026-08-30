@@ -1,18 +1,22 @@
 import { hash } from "bcrypt";
-import { v4 as uuid } from "uuid";
+import { randomUUID } from "node:crypto";
 
-import createConnection from "../index";
+import { AppDataSource } from "../index";
 
 async function create() {
-    const connection = await createConnection("localhost");
+    await AppDataSource.initialize();
 
-    const id = uuid();
+    const id = randomUUID();
     const password = await hash("admin", 10);
 
-    await connection.query(
-        `INSERT INTO USERS(id, name, email, password, "isAdmin", created_at, driver_license) VALUES ('${id}', 'admin' ,'admin@ufc.br', '${password}', true, 'now()', 'XXX123456')`,
+    // Parameterised. The previous version interpolated the values straight into
+    // the SQL string.
+    await AppDataSource.query(
+        `INSERT INTO USERS(id, name, email, password, "isAdmin", created_at, driver_license)
+         VALUES ($1, $2, $3, $4, true, now(), $5)`,
+        [id, "admin", "admin@ufc.br", password, "XXX123456"],
     );
-    await connection.close();
+    await AppDataSource.destroy();
 }
 
 create().then(() => console.log("User admin created"));

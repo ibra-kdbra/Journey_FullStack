@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from pymilvus import connections, Collection, utility
 from sentence_transformers import SentenceTransformer
 from langchain_core.tools import tool
-from langchain.schema import Document
+from langchain_core.documents import Document
 import logging
 
 # Configure logging

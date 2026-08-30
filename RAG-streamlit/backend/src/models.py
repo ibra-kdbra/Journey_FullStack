@@ -2,8 +2,8 @@ from abc import ABC, abstractmethod
 from typing import Optional, List, Any, AsyncGenerator
 from pydantic_settings import BaseSettings
 from langchain_ollama import ChatOllama
-from langchain.chat_models.base import BaseChatModel
-from langchain.schema import BaseMessage, SystemMessage
+from langchain_core.language_models.chat_models import BaseChatModel
+from langchain_core.messages import BaseMessage, SystemMessage
 from langchain_core.tools import BaseTool
 import logging
 

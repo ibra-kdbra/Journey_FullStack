@@ -119,9 +119,15 @@ updates:
     # This is a `versions` bound rather than the semver-major form used for
     # the four holds in #1296, because a TS 6 bump here would genuinely work
     # and should not be blocked. See #1296 and issue #1360.
+    #
+    # mjml 5 is held: sailkit is the only consumer and its latest release,
+    # 0.3.5, peers `mjml: "^4.0.0"`. The project imports mjml nowhere itself,
+    # so this is purely sailkit's constraint to widen. See issue #1360.
     ignore:
       - dependency-name: "typescript"
         versions: [">=7.0.0"]
+      - dependency-name: "mjml"
+        update-types: ["version-update:semver-major"]
     groups:
       sveltekit-minor:
         patterns: ["*"]

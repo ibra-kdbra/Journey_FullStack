@@ -155,9 +155,9 @@
         "install": true,
         "build": false,
         "lint": false,
-        "test": false
+        "test": true
       },
-      "notes": "React Native clean architecture with inversify. react-native-fast-image@8.6.3 peers react ^17||^18 against react 19, so npm ci needs --legacy-peer-deps (issue #1289). RN 0.87 does not support Babel 8 or jest 30 despite declaring permissive peers, so both are pinned to what its preset actually requires. lint is blocked upstream: @react-native/eslint-config 0.87 bundles a parser that throws \"scopeManager.addGlobals is not a function\" on eslint 10. test is blocked on inversify property injection, which Babel now rejects - constructor injection would fix it. No build script is defined - React Native builds through Xcode and Gradle, not npm.",
+      "notes": "React Native 0.87 + inversify. Babel majors and jest 30 are held: @react-native/babel-preset asserts ^7.0.0-0 on @babel/core internally, invisible to the resolver (issue #1296). jasmine has no part here. lint is blocked upstream: @react-native/eslint-config 0.87 bundles a typescript-eslint 8 parser that throws scopeManager.addGlobals is not a function against eslint 10 (issue #1360). build is off because no build script is defined - React Native builds through Xcode and Gradle, not npm. test runs jest: 6 tests, verified. It needed constructor injection first - Babel rejects a decorated field with a definite-assignment assertion - plus babel-plugin-transform-typescript-metadata, since Babel does not implement TypeScript parameter decorators on its own. Note `tsc --noEmit` cannot run at all here: tsconfig.json still sets moduleResolution=node10 and baseUrl, both removed in TypeScript 7. That is 8 config errors, unrelated to the source, and predates this entry.",
       "installFlags": [
         "--legacy-peer-deps"
       ]

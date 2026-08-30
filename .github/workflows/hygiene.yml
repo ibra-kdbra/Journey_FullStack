@@ -42,6 +42,13 @@ jobs:
       - name: Validate Atlas course registry against the content tree
         run: node .github/scripts/check-courses.mjs
 
+      # ci.yml notices a credential in projects.json, but only because GitHub
+      # drops a matrix output it distrusts. Nothing read the rest of the tree,
+      # which is how a live Postgres URL sat in ormconfig.json through every run
+      # this repository has made. See issue #1406.
+      - name: No credential-shaped strings in tracked files
+        run: node .github/scripts/check-secrets.mjs
+
       - name: Validate workflow and Dependabot YAML
         run: |
           python3 - <<'PY'

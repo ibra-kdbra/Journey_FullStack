@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import {
     Column,
     CreateDateColumn,
@@ -7,7 +8,6 @@ import {
     PrimaryColumn,
     UpdateDateColumn,
 } from "typeorm";
-import { v4 as uuid } from "uuid";
 
 import { Car } from "../../../../cars/infra/typeorm/entities/Car";
 
@@ -38,7 +38,7 @@ class Rental {
 
     constructor() {
         if (!this.id) {
-            this.id = uuid();
+            this.id = randomUUID();
         }
     }
 }

@@ -82,9 +82,9 @@
         "install": true,
         "build": true,
         "lint": false,
-        "test": false
+        "test": true
       },
-      "notes": "Angular CLI 22 requires Node >= 22.22.3, so this project pins Node 24. Build verified on Node 24 after pinning TypeScript to ~6 (compiler-cli peer range is >=6.0 <6.1), switching moduleResolution to bundler so Material's exports map resolves, completing the Tailwind v4 migration, and opting the five NgModule-declared components out of standalone."
+      "notes": "Angular 22 + Material. typescript majors are held: @angular/compiler-cli peers `>=6.0 <6.1` and the build dies inside readConfiguration on 7 (issue #1289). test runs the Karma/Jasmine suite headless - the script passes --watch=false --browsers=ChromeHeadless, since bare `ng test` watches and wants a real browser. jasmine is held at 5.x: 6 made its env methods non-writable and zone.js patches them by assignment, which kills the suite at load (issue #1407). 12 tests, verified headless. No lint script."
     },
     {
       "path": "astro-starter",

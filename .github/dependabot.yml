@@ -80,8 +80,22 @@ updates:
     commit-message: { prefix: "deps(angular-solid)" }
     # typescript majors are held: see docs/ENGINEERING.md#known-open-work and
     # issue #1296. Without this, Dependabot reopens the same red PR every week.
+    #
+    # jasmine majors are held. jasmine-core 6 made its env methods
+    # non-writable, and zone.js 0.16.2 - the version Angular 22 pins - patches
+    # them by assignment:
+    #
+    #   TypeError: Cannot assign to read only property 'describe'
+    #     at zone.js/fesm2015/zone-testing.js:86
+    #
+    # The whole suite dies at load, so this is not a stylistic hold. It lifts
+    # when zone.js stops assigning. See issue #1407.
     ignore:
       - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "jasmine-core"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@types/jasmine"
         update-types: ["version-update:semver-major"]
     groups:
       angular-platform:

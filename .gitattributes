@@ -1,0 +1,19 @@
+# Lockfiles are generated. Git's line-based merge can produce a file that looks
+# resolved and is not: two branches each adding packages will interleave cleanly
+# and leave a tree that never existed for any resolver. `npm ci` then either
+# fails with "Missing: <pkg> from lock file" or, worse, installs a set nobody
+# chose.
+#
+# -merge marks them as unmergeable, so a collision stops and asks. The fix is
+# always to regenerate rather than to edit:
+#
+#   git checkout --theirs <lockfile> && npm install --package-lock-only
+#   git checkout --theirs poetry.lock && poetry lock
+#
+# See docs/decisions/0005-commit-lockfiles.md.
+package-lock.json  -merge linguist-generated
+pnpm-lock.yaml     -merge linguist-generated
+bun.lock           -merge linguist-generated
+yarn.lock          -merge linguist-generated
+poetry.lock        -merge linguist-generated
+Gemfile.lock       -merge linguist-generated

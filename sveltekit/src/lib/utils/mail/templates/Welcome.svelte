@@ -24,7 +24,7 @@
         <Column.Divider />
         <Text>
           <p>
-            Need help? we are just an <a href="https://mailto:sonarfarouq@gmail.com">email</a> away.
+            Need help? we are just an <a href="mailto:sonarfarouq@gmail.com">email</a> away.
           </p>
         </Text>
       </Column>

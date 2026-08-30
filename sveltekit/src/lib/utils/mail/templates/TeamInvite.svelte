@@ -35,7 +35,7 @@
         <Text>
           <p>
             If you have any questions, feel free to
-            <a href="https://mailto:sonarfarouq@gmail.com">reach out</a>.
+            <a href="mailto:sonarfarouq@gmail.com">reach out</a>.
           </p>
           <p>Welcome aboard! 🎉</p>
         </Text>

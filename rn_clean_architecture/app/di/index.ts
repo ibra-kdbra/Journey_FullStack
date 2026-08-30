@@ -1,5 +1,7 @@
 import {Container} from 'inversify';
 import 'reflect-metadata';
+
+import {TYPES} from './types';
 import StorageGateway from 'data/gateway/StorageGateway';
 import RestApiGateway from 'data/gateway/RestApiGateway';
 import {
@@ -10,15 +12,6 @@ import {PhotoRepository} from 'domain/repositories/PhotoRepository';
 import {PhotoRepositoryImpl} from 'data/repositories/PhotoRepositoryImpl';
 import {GetPhotoUseCase} from 'domain/usecases/photo/GetPhotoUseCase';
 
-const TYPES = {
-  StorageGateway: Symbol.for('StorageGateway'),
-  RestApiGateway: Symbol.for('RestApiGateway'),
-  PhotoRemoteDataSource: Symbol.for('PhotoRemoteDataSource'),
-  PhotoRemoteDataSourceImpl: Symbol.for('PhotoRemoteDataSourceImpl'),
-  PhotoRepository: Symbol.for('PhotoRepository'),
-  PhotoRepositoryImpl: Symbol.for('PhotoRepositoryImpl'),
-  GetPhotoUseCase: Symbol.for('GetPhotoUseCase'),
-};
 
 const container = new Container();
 container.bind<RestApiGateway>(TYPES.RestApiGateway).to(RestApiGateway);

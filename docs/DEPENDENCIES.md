@@ -95,6 +95,63 @@ prompt to run the thing, not as a verdict either way.
 without it.** The flag skips peer installs, so those packages never enter the
 lockfile and `npm ci` then refuses it with `Missing: <pkg> from lock file`.
 
+### Why a lockfile conflict is never resolved by hand
+
+Git will merge a lockfile for you, and that is the problem. Two branches adding
+packages in distant regions of the file merge cleanly by line and produce a
+lockfile no resolver ever generated — still valid JSON, still parseable, simply
+describing a tree nobody chose. `npm ci` catches it later with
+`Missing: <pkg> from lock file`, or does not catch it at all.
+
+Demonstrated on `sveltekit/package-lock.json`, two branches each inserting one
+line 10,000 lines apart:
+
+```
+$ git merge tmp/b                       # without .gitattributes
+Auto-merging sveltekit/package-lock.json
+Merge made by the 'ort' strategy.
+ sveltekit/package-lock.json | 1 +      # both insertions survived
+```
+
+`.gitattributes` marks every lockfile `-merge`, so the same merge stops instead:
+
+```
+warning: Cannot merge binary files: sveltekit/package-lock.json (HEAD vs. tmp/b)
+CONFLICT (content): Merge conflict in sveltekit/package-lock.json
+```
+
+That is the whole point — a conflict you must answer beats a merge you would
+never have questioned. The answer is always to regenerate:
+
+```
+git checkout --theirs <project>/package-lock.json && npm install --package-lock-only
+git checkout --theirs <project>/poetry.lock       && poetry lock
+```
+
+### One PR per project per update kind
+
+Dependabot used to open one PR per major bump. Twelve arrived against
+`sveltekit/package-lock.json` in a single cycle — vite, eslint, typescript
+twice, lucide, `@types/node`, vite-node, prettier-plugin-svelte, jest-dom,
+`@eslint/js`, mjml, nanoid — and only one of them could ever merge, because they
+all rewrite the same file. The other eleven were closed and folded by hand into
+five branches.
+
+The cause was the config, not the tool: every `*-minor` group covered minor and
+patch only, so majors fell out individually. Each project with a lockfile now
+also declares a `*-major` group carrying the same `exclude-patterns`, so
+platform packages keep their own grouping and everything else's majors arrive
+together.
+
+Maven is deliberately excluded. The rationale is the shared lockfile;
+`hospital-management` has none, so a major there can land on its own and
+grouping would only hide which dependency moved.
+
+The tradeoff is real and worth stating: a grouped major PR is all-or-nothing, so
+one bad bump blocks the others. That was already true — they share a lockfile,
+so they always had to land together. Grouping just makes the tool produce what
+the constraint already required.
+
 ### Resolving a Poetry lockfile conflict
 
 Two dependency PRs against the same Poetry project always collide on

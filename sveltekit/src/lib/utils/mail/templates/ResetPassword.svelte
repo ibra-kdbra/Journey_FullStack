@@ -30,7 +30,7 @@
         <Text>
           <p>
             If you didn't request this, please ignore this email or
-            <a href="https://mailto:sonarfarouq@gmail.com">contact us</a>.
+            <a href="mailto:sonarfarouq@gmail.com">contact us</a>.
           </p>
           <p>Stay secure 🛟</p>
         </Text>

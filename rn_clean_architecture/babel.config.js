@@ -6,6 +6,12 @@ module.exports = {
     },
   },
   plugins: [
+    // Must come before the decorators plugin. Babel's decorator support covers
+    // class, method and field decorators but not TypeScript *parameter*
+    // decorators, which is what constructor injection is made of. Without this,
+    // `constructor(@inject(TYPES.X) private x: X)` is silently dropped and
+    // inversify resolves undefined.
+    'babel-plugin-transform-typescript-metadata',
     [
       require('@babel/plugin-proposal-decorators').default,
       {

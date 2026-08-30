@@ -1,6 +1,7 @@
 import {ApiResType} from 'common/helper/APIHelper';
 import RestApiGateway from 'data/gateway/RestApiGateway';
-import {container, TYPES} from 'di';
+import {container} from 'di';
+import {TYPES} from 'di/types';
 import {injectable} from 'inversify';
 import {Photos} from 'data/models/photo';
 

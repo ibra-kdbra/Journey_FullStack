@@ -37,6 +37,9 @@ updates:
       react-solid-minor:
         patterns: ["*"]
         update-types: ["minor", "patch"]
+      react-solid-major:
+        patterns: ["*"]
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "npm"
     directory: "/vue.js-s.o.l.i.d"
@@ -47,6 +50,9 @@ updates:
       vue-solid-minor:
         patterns: ["*"]
         update-types: ["minor", "patch"]
+      vue-solid-major:
+        patterns: ["*"]
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "npm"
     directory: "/vue3-clean-architecture"
@@ -62,6 +68,9 @@ updates:
       vue3-clean-minor:
         patterns: ["*"]
         update-types: ["minor", "patch"]
+      vue3-clean-major:
+        patterns: ["*"]
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "npm"
     directory: "/nuxt-clean-architecture"
@@ -72,6 +81,9 @@ updates:
       nuxt-clean-minor:
         patterns: ["*"]
         update-types: ["minor", "patch"]
+      nuxt-clean-major:
+        patterns: ["*"]
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "npm"
     directory: "/angular-s.o.l.i.d-advanced"
@@ -104,6 +116,10 @@ updates:
         patterns: ["*"]
         exclude-patterns: ["@angular/*", "@angular-devkit/*"]
         update-types: ["minor", "patch"]
+      angular-solid-major:
+        patterns: ["*"]
+        exclude-patterns: ["@angular/*", "@angular-devkit/*"]
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "npm"
     directory: "/astro-starter"
@@ -114,6 +130,9 @@ updates:
       astro-minor:
         patterns: ["*"]
         update-types: ["minor", "patch"]
+      astro-major:
+        patterns: ["*"]
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "npm"
     directory: "/sveltekit"
@@ -146,6 +165,9 @@ updates:
       sveltekit-minor:
         patterns: ["*"]
         update-types: ["minor", "patch"]
+      sveltekit-major:
+        patterns: ["*"]
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "npm"
     directory: "/next-prisma-starter"
@@ -159,6 +181,10 @@ updates:
         patterns: ["*"]
         exclude-patterns: ["next", "eslint-config-next", "@next/*"]
         update-types: ["minor", "patch"]
+      next-prisma-major:
+        patterns: ["*"]
+        exclude-patterns: ["next", "eslint-config-next", "@next/*"]
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "npm"
     directory: "/rn_clean_architecture"
@@ -193,6 +219,10 @@ updates:
         patterns: ["*"]
         exclude-patterns: ["react-native", "@react-native/*"]
         update-types: ["minor", "patch"]
+      rn-clean-major:
+        patterns: ["*"]
+        exclude-patterns: ["react-native", "@react-native/*"]
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "npm"
     directory: "/solid-flask-web-app/ui"
@@ -203,6 +233,9 @@ updates:
       flask-ui-minor:
         patterns: ["*"]
         update-types: ["minor", "patch"]
+      flask-ui-major:
+        patterns: ["*"]
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "npm"
     directory: "/learning-doc"
@@ -216,6 +249,10 @@ updates:
         patterns: ["*"]
         exclude-patterns: ["nuxt", "@nuxt/*", "@nuxtjs/*"]
         update-types: ["minor", "patch"]
+      atlas-major:
+        patterns: ["*"]
+        exclude-patterns: ["nuxt", "@nuxt/*", "@nuxtjs/*"]
+        update-types: ["version-update:semver-major"]
 
   # ------------------------------------------------------------- backend: js
   - package-ecosystem: "npm"
@@ -227,6 +264,9 @@ updates:
       node-solid-minor:
         patterns: ["*"]
         update-types: ["minor", "patch"]
+      node-solid-major:
+        patterns: ["*"]
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "npm"
     directory: "/nestjs-s.o.l.i.d"
@@ -245,6 +285,10 @@ updates:
         patterns: ["*"]
         exclude-patterns: ["@nestjs/*"]
         update-types: ["minor", "patch"]
+      nest-solid-major:
+        patterns: ["*"]
+        exclude-patterns: ["@nestjs/*"]
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "npm"
     directory: "/API_s.o.l.i.d_TS"
@@ -261,6 +305,9 @@ updates:
       api-solid-minor:
         patterns: ["*"]
         update-types: ["minor", "patch"]
+      api-solid-major:
+        patterns: ["*"]
+        update-types: ["version-update:semver-major"]
 
   # Bun, not npm: the npm ecosystem updates package.json but never writes
   # bun.lock, so `bun install --frozen-lockfile` in CI rejected every update.
@@ -273,6 +320,9 @@ updates:
       hono-minor:
         patterns: ["*"]
         update-types: ["minor", "patch"]
+      hono-major:
+        patterns: ["*"]
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "npm"
     directory: "/vercel-cleaner"
@@ -283,6 +333,9 @@ updates:
       vercel-cleaner-minor:
         patterns: ["*"]
         update-types: ["minor", "patch"]
+      vercel-cleaner-major:
+        patterns: ["*"]
+        update-types: ["version-update:semver-major"]
 
   # --------------------------------------------------------------- python
   # `pip` is the ecosystem that reads Poetry's pyproject.toml + poetry.lock.
@@ -295,6 +348,9 @@ updates:
       flask-api-minor:
         patterns: ["*"]
         update-types: ["minor", "patch"]
+      flask-api-major:
+        patterns: ["*"]
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "pip"
     directory: "/RAG-streamlit/backend"
@@ -305,6 +361,9 @@ updates:
       rag-backend-minor:
         patterns: ["*"]
         update-types: ["minor", "patch"]
+      rag-backend-major:
+        patterns: ["*"]
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "pip"
     directory: "/RAG-streamlit/frontend"
@@ -315,6 +374,9 @@ updates:
       rag-frontend-minor:
         patterns: ["*"]
         update-types: ["minor", "patch"]
+      rag-frontend-major:
+        patterns: ["*"]
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: "pip"
     directory: "/RAG-streamlit/pipelines"
@@ -325,6 +387,9 @@ updates:
       rag-pipelines-minor:
         patterns: ["*"]
         update-types: ["minor", "patch"]
+      rag-pipelines-major:
+        patterns: ["*"]
+        update-types: ["version-update:semver-major"]
 
   # ------------------------------------------------------------------ java
   # hospital-management has no aggregator POM, so each service is its own entry.

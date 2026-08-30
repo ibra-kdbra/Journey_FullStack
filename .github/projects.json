@@ -232,11 +232,12 @@
       "track": "solid",
       "checks": {
         "install": true,
-        "build": false,
+        "build": true,
         "lint": true,
-        "test": false
+        "test": true
       },
-      "notes": "Express 5 + TypeORM + tsyringe. typescript held at ^6: ts-node needs the programmatic compiler API removed in TS 7, so the dev server and jest both die on import (issue #1296). lint runs eslint 10 against a flat config; the old .eslintrc.json had been unreadable since eslint 9 and its airbnb-base preset was the last reason this project needed --legacy-peer-deps (issue #1289). build and test stay off: five TypeORM repositories still import getRepository, removed in TypeORM 0.3, and `tsc --noEmit` reports 36 errors across those and the strict-null gaps around them."
+      "notes": "Express 5 + TypeORM + tsyringe. typescript held at ^6: ts-node needs the programmatic compiler API removed in TS 7, so the dev server and jest both die on import (issue #1296). lint runs eslint 10 against a flat config. build is `tsc` to dist/. test is a real suite: 6 unit specs against in-memory repositories plus one integration spec that runs the migrations and reads back through CategoryRepository, so CI starts the runner's PostgreSQL and creates the database named in the postgres field. The DataSource reads DATABASE_URL when set, which is what that step exports. 21 tests, verified against a live PostgreSQL 16 from an empty database.",
+      "postgres": "api_solid_test"
     },
     {
       "path": "Hono-Postgres",

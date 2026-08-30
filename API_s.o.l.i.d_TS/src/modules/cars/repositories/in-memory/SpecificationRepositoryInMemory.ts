@@ -16,12 +16,13 @@ class SpecificationsRepositoryInMemory implements ISpecificationsRepository {
         return specification;
     }
 
-    async findByName(name: string): Promise<Specification> {
-        return this.specifications.find((specification) => specification.name === name);
+    async findByName(name: string): Promise<Specification | null> {
+        return this.specifications.find((specification) => specification.name === name) ?? null;
     }
     async findByIds(ids: string[]): Promise<Specification[]> {
-        const allSpecifications = this.specifications.filter((specification) =>
-            ids.includes(specification.id),
+        // Specification.id is optional on the entity, so guard before matching.
+        const allSpecifications = this.specifications.filter(
+            (specification) => specification.id !== undefined && ids.includes(specification.id),
         );
 
         return allSpecifications;

@@ -323,9 +323,9 @@
         "install": true,
         "build": false,
         "lint": false,
-        "test": false
+        "test": true
       },
-      "notes": "FastAPI service. install verified (~3 min). test stays off because tests/test_app.py and tests/test_models.py are both empty files \u2014 pytest collects nothing and exits 5. build is off because a Poetry service has no build step. lint is off because black, mypy and pylint are all available but none has been observed clean; the PR that turns one on adds the `poetry run` form it verified."
+      "notes": "FastAPI service. install verified (~3 min). test is 5 import-and-construct checks: every module imports, app.app is a FastAPI carrying the documented routes, and tools stays lazy. They exist because install was the only check and PR #1416 shipped a langgraph/langgraph-prebuilt pairing that installs cleanly and cannot import - CI was green over a backend that could not start (issue #1423). Those two are pinned in pyproject with the reason inline. build is off because a Poetry service has no build step. lint is off because black, mypy and pylint are all available but none has been observed clean; the PR that turns one on adds the `poetry run` form it verified."
     },
     {
       "path": "solid-flask-web-app",

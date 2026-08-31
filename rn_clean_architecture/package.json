@@ -28,6 +28,7 @@
     "@babel/plugin-proposal-decorators": "^7.28.0",
     "@babel/preset-env": "^7.28.0",
     "@babel/runtime": "^7.28.0",
+    "@eslint/eslintrc": "^3.3.6",
     "@react-native/babel-preset": "0.87.1",
     "@react-native/eslint-config": "0.87.1",
     "@react-native/jest-preset": "^0.87.0",

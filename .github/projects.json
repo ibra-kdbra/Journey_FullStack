@@ -223,7 +223,7 @@
         "lint": true,
         "test": true
       },
-      "notes": "NestJS SOLID demonstrations. Prisma 7 with the better-sqlite3 driver adapter (ADR 0004); prebuild runs prisma generate, which needs no database. typescript held at ^6 (issue #1296). lint migrated to ESLint 10 flat config and observed clean; test is jest, 1 suite passing."
+      "notes": "NestJS SOLID demonstrations. Prisma 7 with the better-sqlite3 driver adapter (ADR 0004); prebuild runs prisma generate, which needs no database. typescript held at ^6 (issue #1296). lint migrated to ESLint 10 flat config and observed clean. Nest 12 ships pure ESM - every package is \"type\": \"module\" with no require condition in its exports - so jest cannot load @nestjs/testing through its CommonJS transform and dies at import with SyntaxError: Unexpected token 'export'. test therefore runs under NODE_OPTIONS=--experimental-vm-modules with ts-jest in ESM mode (module esnext, moduleResolution bundler, overridden per transform so the CommonJS build is untouched): 1 suite, 1 test, observed running rather than merely resolving. The build still emits CommonJS, and node dist/main starts only because Node 22.12+ can require() an ESM graph, so the node 22 pin above is load-bearing - the same dist on Node 20 would not boot, even though @nestjs/core still declares engines >= 20. test:e2e is not a CI check but now runs (1 test, boots the app against dev.db): it needed the src/* path alias mapped, which no jest-e2e config had ever configured, and a default supertest import in place of import * as, which is not callable under ESM."
     },
     {
       "path": "API_s.o.l.i.d_TS",

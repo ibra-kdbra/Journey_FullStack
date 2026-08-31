@@ -178,7 +178,7 @@
         "lint": false,
         "test": false
       },
-      "notes": "Frontend of the Flask app. The Python API alongside it is not yet covered by CI. No lint or test script is defined."
+      "notes": "Frontend of the Flask app. The Python API alongside it is covered separately as solid-flask-web-app/api (install, ruff and 75 tests). No lint or test script is defined."
     },
     {
       "path": "learning-doc",
@@ -310,9 +310,9 @@
         "install": true,
         "build": false,
         "lint": false,
-        "test": false
+        "test": true
       },
-      "notes": "Ingestion pipeline. install verified (~3.5 min; the torch/transformers tree is ~5.7 GB). test stays off: test_milvus_connector_collection_creation needs a live Milvus server, and test_markdown_processor fails with KeyError: 'title'. Both predate CI coverage. build is off because a Poetry library has no build step. lint is off because black, mypy and pylint are all available but none has been observed clean; the PR that turns one on adds the `poetry run` form it verified."
+      "notes": "Ingestion pipeline. install verified (~3.5 min; the torch/transformers tree is ~5.7 GB). test is 9 tests, all passing, and needs neither a live Milvus nor network access - verified by running the suite with HF_HUB_OFFLINE=1 and the proxy variables unset. The recorded reason it used to be off was wrong: test_milvus_connector_collection_creation does not need a Milvus server, it was simply missing the mock_models fixture its two sibling tests apply, so constructing a MilvusConnector reached Hugging Face to download all-MiniLM-L6-v2. test_markdown_processor was failing on a real defect - parse_markdown loaded the front matter and then discarded it, returning a header dict built by indexing an HTML string as if it were a mapping, so metadata was always empty. build is off because a Poetry library has no build step. lint is off because black, mypy and pylint are all available but none has been observed clean; the PR that turns one on adds the `poetry run` form it verified."
     },
     {
       "path": "RAG-streamlit/backend",

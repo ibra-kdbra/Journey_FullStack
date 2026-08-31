@@ -210,8 +210,23 @@ class ContextRetriever:
             logger.error(f"Failed to retrieve context: {str(e)}")
             raise
 
-# Initialize the context retriever
-context_retriever = ContextRetriever()
+# Built on first use, not at import.
+#
+# ContextRetriever() constructs an EmbeddingService, which calls
+# SentenceTransformer(model_name) and downloads the model from HuggingFace, and
+# a MilvusService, which opens a connection. Doing that at module scope meant
+# `import src.tools` needed the network and a running Milvus - so the module
+# could not be imported to read, test, or type-check it, and any consumer paid
+# the download whether or not it ever retrieved anything.
+_context_retriever: "ContextRetriever | None" = None
+
+
+def get_context_retriever() -> ContextRetriever:
+    """Return the process-wide retriever, constructing it on first call."""
+    global _context_retriever
+    if _context_retriever is None:
+        _context_retriever = ContextRetriever()
+    return _context_retriever
 
 @tool
 def retrieve_context(query: str) -> List[Document]:
@@ -226,7 +241,7 @@ def retrieve_context(query: str) -> List[Document]:
     top_k = TOP_K
     try:
         # Get context from the retriever
-        context_items = context_retriever.retrieve(query, top_k)
+        context_items = get_context_retriever().retrieve(query, top_k)
         
         # Convert to Document objects
         documents = []

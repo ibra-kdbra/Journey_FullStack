@@ -13,7 +13,9 @@ import styles, {
 const AppTextInput = (props: IProps) => {
   const {isClear, onLastValueChange} = props;
   const textChange$ = new BehaviorSubject('');
-  const textChangeRef = useRef<TextInput>(null);
+  // React 19 + RN 0.87: TextInput is the component type, and the instance
+  // type - the one carrying .clear() - is what a ref actually holds.
+  const textChangeRef = useRef<React.ComponentRef<typeof TextInput>>(null);
   let subscription = textChange$
     .pipe(
       debounceTime(400),

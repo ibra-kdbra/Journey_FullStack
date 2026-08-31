@@ -67,8 +67,13 @@ This is the backend service for the RAG (Retrieval-Augmented Generation) applica
 5. Run the application locally:
 
    ```bash
-   poetry run uvicorn src.app:app --host 0.0.0.0 --port 8000 --reload
+   cd src && poetry run uvicorn app:app --host 0.0.0.0 --port 8000 --reload
    ```
+
+   The modules import each other by bare name (`from tools import ...`), so
+   `src/` has to be the import root. `uvicorn src.app:app` from the project
+   root fails with `ModuleNotFoundError: No module named 'tools'`. The
+   Dockerfile does the same thing by copying `src/` to the image root.
 
 The API will be available at `http://localhost:8000`.
 

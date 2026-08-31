@@ -232,11 +232,16 @@ jobs:
         if: matrix.project.lint
         run: |
           if [ "${{ matrix.project.ecosystem }}" = "python" ]; then
-            # Only the pip-managed Flask API sets lint: true, and ruff is on PATH
-            # from its requirements_dev.txt. The Poetry projects carry
-            # black/pylint/mypy but none has been observed clean, so none enables
-            # lint; the PR that turns one on adds the `poetry run` form it verified.
-            ruff check .
+            # ruff either way; only how it is reached differs. The pip-managed
+            # Flask API has it on PATH from requirements_dev.txt, while a Poetry
+            # project keeps it in its own virtualenv. The remaining Poetry
+            # projects also carry black/pylint/mypy, but none of those has been
+            # observed clean anywhere, so none of them gates a check.
+            if [ "${{ matrix.project.packageManager }}" = "poetry" ]; then
+              poetry run ruff check .
+            else
+              ruff check .
+            fi
           elif [ "${{ matrix.project.packageManager }}" = "pnpm" ]; then
             pnpm run lint
           elif [ "${{ matrix.project.packageManager }}" = "bun" ]; then

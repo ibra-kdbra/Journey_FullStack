@@ -2,18 +2,16 @@ import yaml
 import os
 from pathlib import Path
 from datetime import datetime
-from typing import Dict, List, Any, Optional, Tuple
+from typing import Dict, List, Any, Tuple
 from pymilvus import connections, Collection, utility, FieldSchema, CollectionSchema, DataType
 from pymilvus.exceptions import MilvusException
 from sentence_transformers import SentenceTransformer
-from sentence_transformers.util import import_from_string
 from keybert import KeyBERT
 import markdown
 import frontmatter
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 import logging
 from dataclasses import dataclass
-from enum import Enum
 import re
 
 # Set up logging
@@ -253,8 +251,7 @@ class MarkdownProcessor:
         chunks = []
         current_chunk = []
         current_headers = {}  # Track current header hierarchy
-        current_level = 0
-        
+
         for line in lines:
             # Check for headers
             header_match = re.match(r'^(#{1,6})\s+(.+)$', line)
@@ -360,8 +357,11 @@ def main():
     finally:
         try:
             connections.disconnect("default")
-        except:
-            pass
+        except Exception as e:
+            # Shutdown is best effort; a failure to disconnect must not mask
+            # the error that brought us here. A bare `except` would also have
+            # swallowed KeyboardInterrupt and SystemExit.
+            logger.debug(f"Failed to disconnect from Milvus: {str(e)}")
 
 if __name__ == "__main__":
     main()

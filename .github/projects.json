@@ -155,9 +155,10 @@
         "install": true,
         "build": false,
         "lint": false,
+        "typecheck": "typecheck",
         "test": true
       },
-      "notes": "React Native 0.87 + inversify. Babel majors and jest 30 are held: @react-native/babel-preset asserts ^7.0.0-0 on @babel/core internally, invisible to the resolver (issue #1296). jasmine has no part here. lint is blocked upstream: @react-native/eslint-config 0.87 bundles a typescript-eslint 8 parser that throws scopeManager.addGlobals is not a function against eslint 10 (issue #1360). build is off because no build script is defined - React Native builds through Xcode and Gradle, not npm. test runs jest: 6 tests, verified. It needed constructor injection first - Babel rejects a decorated field with a definite-assignment assertion - plus babel-plugin-transform-typescript-metadata, since Babel does not implement TypeScript parameter decorators on its own. Note `tsc --noEmit` cannot run at all here: tsconfig.json still sets moduleResolution=node10 and baseUrl, both removed in TypeScript 7. That is 8 config errors, unrelated to the source, and predates this entry.",
+      "notes": "React Native 0.87 + inversify. Babel majors and jest 30 are held: @react-native/babel-preset asserts ^7.0.0-0 on @babel/core internally, invisible to the resolver (issue #1296). jasmine has no part here. lint is blocked upstream: @react-native/eslint-config 0.87 bundles a typescript-eslint 8 parser that throws scopeManager.addGlobals is not a function against eslint 10 (issue #1360). build is off because no build script is defined - React Native builds through Xcode and Gradle, not npm. test runs jest: 6 tests, verified. It needed constructor injection first - Babel rejects a decorated field with a definite-assignment assertion - plus babel-plugin-transform-typescript-metadata, since Babel does not implement TypeScript parameter decorators on its own. typecheck runs `tsc --noEmit`, clean. It could not run at all until tsconfig.json started extending @react-native/typescript-config instead of restating a drifted copy of it - the copy kept moduleResolution=node10 and baseUrl, both removed in TypeScript 7, and lost skipLibCheck and types:[jest] (issue #1360).",
       "installFlags": [
         "--legacy-peer-deps"
       ]

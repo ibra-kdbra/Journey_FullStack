@@ -13,12 +13,12 @@ import {it} from '@jest/globals';
 // Note: test renderer must be required after react-native.
 import renderer from 'react-test-renderer';
 
-function sum(a, b) {
+function sum(a: number, b: number) {
   return a + b;
 }
 
-function filterByTerm(inputArr, searchTerm) {
-  return inputArr.filter(function (arrayElement) {
+function filterByTerm(inputArr: {url: string}[], searchTerm: string) {
+  return inputArr.filter(function (arrayElement: {url: string}) {
     return arrayElement.url.match(searchTerm);
   });
 }

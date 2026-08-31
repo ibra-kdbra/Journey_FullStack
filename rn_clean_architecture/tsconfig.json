@@ -1,25 +1,25 @@
 {
+  // @react-native/typescript-config was installed but never extended, so this
+  // file restated a partial, drifting copy of it. That is why `tsc` could not
+  // run at all: it kept `moduleResolution: "node"` and `baseUrl`, both removed
+  // in TypeScript 7, while the base config already sets `bundler`, skipLibCheck
+  // and `types: ["jest"]`.
+  "extends": "@react-native/typescript-config",
   "compilerOptions": {
     "experimentalDecorators": true,
-    "resolveJsonModule": true,
-    "allowJs": true,
-    "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "isolatedModules": true,
-    "jsx": "react-native",
-    "lib": ["es2017", "ES2021.String"],
-    "moduleResolution": "node",
-    "noEmit": true,
-    "strict": true,
-    "target": "esnext",
-    "baseUrl": ".",
+    // TypeScript 7 no longer honours the base config's `jsx: "react-native"`.
+    // `preserve` is what that mode always meant - emit the JSX untouched and
+    // let Metro's Babel transform handle it.
+    "jsx": "preserve",
+    // Relative to this file. TS 7 removed baseUrl; these mirror the
+    // module-resolver roots in babel.config.js.
     "paths": {
-      "*": ["app/*"],
-      "@common/*": ["app/common/*"],
-      "@data/*": ["app/data/*"],
-      "@domain/*": ["app/domain/*"],
-      "@presentation/*": ["app/presentation/*"],
-      "@di/*": ["app/di/*"]
+      "*": ["./app/*"],
+      "@common/*": ["./app/common/*"],
+      "@data/*": ["./app/data/*"],
+      "@domain/*": ["./app/domain/*"],
+      "@presentation/*": ["./app/presentation/*"],
+      "@di/*": ["./app/di/*"]
     }
   },
   "exclude": [

@@ -131,7 +131,7 @@ def test_milvus_connector_initialization(config, mock_milvus, mock_models):
         "default", host=config.milvus_host, port=config.milvus_port
     )
 
-def test_milvus_connector_collection_creation(config, mock_milvus):
+def test_milvus_connector_collection_creation(config, mock_milvus, mock_models):
     """Test collection creation in MilvusConnector."""
     connector = MilvusConnector(config)
     connector.ensure_collection_exists()
@@ -245,3 +245,36 @@ def test_error_handling():
         mock_st.side_effect = Exception("Model loading failed")
         with pytest.raises(ModelError):
             MilvusConnector(Config.from_dict(SAMPLE_CONFIG)) 
+def test_process_markdown_strips_front_matter(tmp_path):
+    """Front matter is metadata, not prose, so it must not reach the embeddings.
+
+    process_markdown used to read the file raw, which left "---",
+    "title: ..." and "author: ..." in the chunk text that gets embedded and
+    inserted into Milvus. test_process_documents could not see this: it only
+    counts insert and flush calls, never looking at what was inserted.
+    """
+    doc = tmp_path / "doc.md"
+    doc.write_text(
+        "---\n"
+        "title: Test Document\n"
+        "author: Test Author\n"
+        "---\n"
+        "\n"
+        "# Heading\n"
+        "\n"
+        "The only body text.\n"
+    )
+
+    processor = MarkdownProcessor(chunk_size=500, chunk_overlap=100)
+    chunks = processor.process_markdown(str(doc))
+
+    assert chunks, "expected at least one chunk"
+    body = "\n".join(chunk["content"] for chunk in chunks)
+    assert "The only body text." in body
+    assert "title: Test Document" not in body
+    assert "author: Test Author" not in body
+    assert "---" not in body
+
+    # The heading is lifted out of the body into the chunk's header hierarchy.
+    assert chunks[0]["metadata"]["headers"] == {"1": "Heading"}
+    assert chunks[0]["metadata"]["source"] == str(doc)

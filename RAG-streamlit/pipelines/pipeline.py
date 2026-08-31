@@ -2,7 +2,7 @@ import yaml
 import os
 from pathlib import Path
 from datetime import datetime
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any, Optional, Tuple
 from pymilvus import connections, Collection, utility, FieldSchema, CollectionSchema, DataType
 from pymilvus.exceptions import MilvusException
 from sentence_transformers import SentenceTransformer
@@ -214,31 +214,27 @@ class MarkdownProcessor:
         self.chunk_overlap = chunk_overlap
 
     @staticmethod
-    def parse_markdown(file_path: str):
+    def parse_markdown(file_path: str) -> Tuple[Dict[str, Any], str]:
+        """Return a document's YAML front matter and its rendered HTML.
+
+        The front matter is the document's own metadata - title, author and
+        whatever else the author put there - so it is what the caller gets
+        back. Header text is already in the rendered HTML as <h1>..<h6>.
+        """
         try:
             with open(file_path, "r", encoding="utf-8") as f:
                 post = frontmatter.load(f)
-                content = post.content            
-            parsed_content = markdown.markdown(content)
-            headers = {}
-            current_level = 1            
-            while True:
-                level_str = f"header.{current_level}"
-                if level_str in parsed_content and isinstance(parsed_content[level_str], str):
-                    headers[level_str] = parsed_content[level_str]
-                    current_level += 1
-                else:
-                    break            
-            metadata = headers 
-            return metadata, parsed_content
+            return dict(post.metadata), markdown.markdown(post.content)
         except Exception as e:
             raise ConfigError(f"Failed to parse markdown file {file_path}: {str(e)}")
 
-    def chunk_text(self, text: str):
+    @staticmethod
+    def chunk_text(text: str, chunk_size: int = 500, overlap: int = 100) -> List[str]:
+        """Split text into overlapping chunks of at most chunk_size."""
         try:
             splitter = RecursiveCharacterTextSplitter(
-                chunk_size=self.chunk_size, 
-                chunk_overlap=self.chunk_overlap
+                chunk_size=chunk_size,
+                chunk_overlap=overlap,
             )
             return splitter.split_text(text)
         except Exception as e:
@@ -246,11 +242,14 @@ class MarkdownProcessor:
 
     def process_markdown(self, file_path: str) -> List[Dict]:
         """Process a markdown file and return chunks with metadata."""
+        # frontmatter.load strips the YAML preamble; reading the file raw left
+        # it in the body, so "---", "title: ..." and "author: ..." were being
+        # embedded as if they were prose.
         with open(file_path, 'r', encoding='utf-8') as f:
-            content = f.read()
-        
+            post = frontmatter.load(f)
+
         # Split content into lines for processing
-        lines = content.split('\n')
+        lines = post.content.split('\n')
         chunks = []
         current_chunk = []
         current_headers = {}  # Track current header hierarchy

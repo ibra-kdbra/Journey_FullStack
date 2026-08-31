@@ -14,7 +14,6 @@ export class TableExportComponent {
 
 
   public download():  void{
-    console.log(this.matTableDataSource.data,'download');
     // generate worksheet
     const ws: WorkSheet = utils.json_to_sheet(this.matTableDataSource.filteredData);
     // generate workbook and add the worksheet

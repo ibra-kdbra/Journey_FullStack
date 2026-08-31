@@ -29,4 +29,14 @@ describe('PaginatorComponent', () => {
   it('renders a paginator', () => {
     expect(fixture.nativeElement.querySelector('mat-paginator')).toBeTruthy();
   });
+
+  it('re-emits page events instead of swallowing them', () => {
+    const seen: unknown[] = [];
+    component.page.subscribe((e) => seen.push(e));
+
+    const event = { pageIndex: 2, pageSize: 10, length: 100 };
+    component.listenPage(event as never);
+
+    expect(seen).toEqual([event]);
+  });
 });

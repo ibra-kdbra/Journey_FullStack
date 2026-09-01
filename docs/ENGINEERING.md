@@ -283,8 +283,14 @@ same red PR does not return weekly, a row in this table, and an entry in
 [`check-holds.mjs`](../.github/scripts/check-holds.mjs) so something still asks
 whether the clearing condition has arrived. A hold with a written condition and
 nothing watching it stays held by default, which is how a constraint becomes
-"how this repository is".
+"how this repository is". `check-manifest.mjs` enforces two of the three: an
+`ignore` rule with no `covers` entry in `check-holds.mjs` fails the hygiene job,
+so a new hold cannot be added without a clearing condition to go with it.
 
 | Project | Issue | Status |
 |:---|:---|:---|
 | `typescript` | Held at `^6` in `nestjs-s.o.l.i.d`, `vue3-clean-architecture`, `angular-s.o.l.i.d-advanced` and `API_s.o.l.i.d_TS`. Nest CLI, `vue-tsc` and `ts-node` all need the programmatic compiler API that TS 7.0 removed; Angular 22's `compiler-cli` declares a `>=6.0 <6.1` peer range. | Clears when TS 7.1 restores the API **and** Angular widens its peer range. Both are re-checked weekly by [`check-holds.mjs`](../.github/scripts/check-holds.mjs); it fails the `holds` job when the hold looks liftable. |
+| `mjml` | Held at `^4` in `sveltekit`. `sailkit` is the only consumer — the project imports `mjml` nowhere itself — and `sailkit@0.3.5` peers `mjml: ^4.0.0`. mjml is at 5.4.0. | Clears when sailkit widens its peer range to admit 5.x. Re-checked weekly. |
+| `jasmine-core`, `@types/jasmine` | Held at 5.x in `angular-s.o.l.i.d-advanced`. jasmine 6 made its env methods non-writable and `zone.js` patches them by assignment, killing the suite at load ([#1407](https://github.com/ibra-kdbra/Journey_FullStack/issues/1407)). jasmine-core is at 7.0.2, so the gap is two majors now. | Clears when `zone.js` releases past 0.16.2, the version that still patches by assignment. Re-checked weekly. |
+| `@babel/*` | Majors held at 7 in `rn_clean_architecture`. `@react-native/babel-preset` peers `@babel/core` as `*` — permissive enough that the resolver sees no conflict — while depending on `^7.25.2` internally, so bumping to `@babel/core` 8 yields two Babels rather than an upgrade ([#1296](https://github.com/ibra-kdbra/Journey_FullStack/issues/1296)). | Clears when `@react-native/babel-preset` depends on `@babel/core` 8.x. Re-checked weekly. |
+| `jest`, `jest-environment-node` | Held at 29 in `rn_clean_architecture`. `@react-native/jest-preset@0.87` is a jest 29 preset: it depends on `babel-jest@^29.7.0`, `jest-environment-node@^29.7.0` and `@jest/create-cache-key-function@^29.7.0` ([#1296](https://github.com/ibra-kdbra/Journey_FullStack/issues/1296)). | Clears when `@react-native/jest-preset` depends on the 30.x jest packages. Re-checked weekly. |

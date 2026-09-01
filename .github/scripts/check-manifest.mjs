@@ -16,6 +16,7 @@
 import { readFileSync, readdirSync, existsSync, statSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { HOLDS } from './check-holds.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const errors = [];
@@ -236,6 +237,43 @@ if (existsSync(dependabotPath)) {
     docker: ['Dockerfile'],
     'github-actions': ['.github'],
   };
+
+  /* Every `ignore` rule is a hold, and a hold nobody re-checks becomes "how this
+   * repo is". check-holds.mjs is the thing that re-checks them, so an ignore rule
+   * with no entry there is a hold with no clearing condition and no watcher - the
+   * weekly job reports "all holds still justified" without ever looking at it.
+   * Six of the seven held dependencies were in exactly that state. */
+  const ignored = [];
+  {
+    let inIgnore = false;
+    let ignoreIndent = 0;
+    for (const line of raw.split('\n')) {
+      if (/^\s*#/.test(line) || !line.trim()) continue;
+      const indent = line.match(/^\s*/)[0].length;
+      if (/^\s*ignore:\s*$/.test(line)) {
+        inIgnore = true;
+        ignoreIndent = indent;
+        continue;
+      }
+      if (inIgnore && indent <= ignoreIndent && /^\s*[\w-]+:/.test(line)) inIgnore = false;
+      if (!inIgnore) continue;
+      const dep = line.match(/^\s*-\s*dependency-name:\s*["']([^"']+)["']/);
+      if (dep) ignored.push(dep[1]);
+    }
+  }
+
+  const covered = new Set(HOLDS.flatMap((h) => h.covers ?? []));
+  for (const dep of new Set(ignored)) {
+    if (covered.has(dep)) continue;
+    fail(
+      `dependabot.yml ignores "${dep}", but no entry in check-holds.mjs covers it. ` +
+        `An ignore rule with no hold entry is a hold with no clearing condition and ` +
+        `nothing asking whether it can be lifted - the weekly holds job will report ` +
+        `"all holds still justified" without ever checking this one. Add a HOLDS entry ` +
+        `with a \`covers: ['${dep}']\` field and a real check(), plus a row in ` +
+        `docs/ENGINEERING.md#known-open-work.`,
+    );
+  }
 
   for (const t of targets) {
     if (t.directory === '/') continue;

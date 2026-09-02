@@ -323,10 +323,10 @@
       "checks": {
         "install": true,
         "build": false,
-        "lint": false,
+        "lint": true,
         "test": true
       },
-      "notes": "FastAPI service. install verified (~3 min). test is 5 import-and-construct checks: every module imports, app.app is a FastAPI carrying the documented routes, and tools stays lazy. They exist because install was the only check and PR #1416 shipped a langgraph/langgraph-prebuilt pairing that installs cleanly and cannot import - CI was green over a backend that could not start (issue #1423). Those two are pinned in pyproject with the reason inline. build is off because a Poetry service has no build step. lint is off because black, mypy and pylint are all available but none has been observed clean; the PR that turns one on adds the `poetry run` form it verified."
+      "notes": "FastAPI service. install verified (~3 min). test is 5 import-and-construct checks: every module imports, app.app is a FastAPI carrying the documented routes, and tools stays lazy. They exist because install was the only check and PR #1416 shipped a langgraph/langgraph-prebuilt pairing that installs cleanly and cannot import - CI was green over a backend that could not start (issue #1423). Those two are pinned in pyproject with the reason inline. build is off because a Poetry service has no build step. lint is ruff, run as `poetry run ruff check .` and observed clean. It selects more than ruff's default: the default (E4, E7, E9, F) found nothing here, so gating on it would have been a green that could not go red. I (imports), UP (pyupgrade, safe outright at python ^3.12) and B (bugbear) are added, and B is what earned it - three handlers raised HTTPException inside an except block with no `from e`, losing the exception chain on every 500 and 503 this service returns. test_notebook.ipynb is excluded as interactive scratch. black, mypy and pylint stay in the dev group but gate nothing."
     },
     {
       "path": "solid-flask-web-app",

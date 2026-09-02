@@ -109,7 +109,7 @@ async def health_check() -> Dict[str, str]:
         return {"status": "healthy"}
     except Exception as e:
         logger.error(f"Health check failed: {str(e)}")
-        raise HTTPException(status_code=503, detail="Service unhealthy")
+        raise HTTPException(status_code=503, detail="Service unhealthy") from e
 
 @app.get("/config")
 async def get_config() -> Dict[str, Any]:
@@ -151,7 +151,7 @@ async def chat(request: ChatRequest) -> ChatResponse:
         return ChatResponse(response=response)
     except Exception as e:
         logger.error(f"Error in chat: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 @app.post("/chat/stream")
 async def chat_stream(request: ChatRequest):
@@ -184,7 +184,7 @@ async def chat_stream(request: ChatRequest):
         
     except Exception as e:
         logger.error(f"Error in chat stream: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        raise HTTPException(status_code=500, detail=str(e)) from e
 
 
 if __name__ == "__main__":

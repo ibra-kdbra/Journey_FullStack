@@ -1,10 +1,13 @@
-from typing import Annotated, TypedDict, List, Dict, Any, AsyncGenerator
-from langchain_core.tools import BaseTool
-from langchain_core.messages import AnyMessage, AIMessage, SystemMessage, HumanMessage
-from langgraph.graph import StateGraph, START, END
-from langgraph.prebuilt import tools_condition, ToolNode
-from langgraph.graph.message import add_messages
 import logging
+from collections.abc import AsyncGenerator
+from typing import Annotated, Any, TypedDict
+
+from langchain_core.messages import AIMessage, AnyMessage, HumanMessage, SystemMessage
+from langchain_core.tools import BaseTool
+from langgraph.graph import END, START, StateGraph
+from langgraph.graph.message import add_messages
+from langgraph.prebuilt import ToolNode, tools_condition
+
 from models import OllamaModelFactory
 
 # Configure logging
@@ -13,10 +16,10 @@ logger = logging.getLogger(__name__)
 
 class AgentState(TypedDict, total=False):
     """State for the agent graph."""
-    messages: Annotated[List[AnyMessage], add_messages]
+    messages: Annotated[list[AnyMessage], add_messages]
     streamed_output: AsyncGenerator[str, None]
 
-def assistant(state: AgentState, tools: List[BaseTool], system_prompt: str) -> Dict[str, Any]:
+def assistant(state: AgentState, tools: list[BaseTool], system_prompt: str) -> dict[str, Any]:
     logger.info("Running assistant node")
     logger.info(f"Current messages: {[msg.type for msg in state['messages']]}")
     messages = state["messages"]
@@ -31,7 +34,7 @@ def assistant(state: AgentState, tools: List[BaseTool], system_prompt: str) -> D
     logger.info(f"Assistant response: {getattr(response, 'content', '[no content]')}")
     return {"messages": [response]}
 
-async def final_answer_async(state: AgentState) -> Dict[str, Any]:
+async def final_answer_async(state: AgentState) -> dict[str, Any]:
     logger.debug("Running final answer async (streaming) node")
     messages = state["messages"]
     messages.append(AIMessage(content="Finalizing answer..."))
@@ -50,7 +53,7 @@ async def final_answer_async(state: AgentState) -> Dict[str, Any]:
 
     return {"streamed_output": wrapped_stream()}
 
-def final_answer_sync(state: AgentState) -> Dict[str, Any]:
+def final_answer_sync(state: AgentState) -> dict[str, Any]:
     logger.debug("Running final answer sync node")
     messages = state["messages"]
     messages.append(AIMessage(content="Finalizing answer..."))
@@ -60,7 +63,7 @@ def final_answer_sync(state: AgentState) -> Dict[str, Any]:
 
     return {"messages": [response]}
 
-def create_agent_graph(tools: List[BaseTool], system_prompt: str, streaming: bool = False) -> StateGraph:
+def create_agent_graph(tools: list[BaseTool], system_prompt: str, streaming: bool = False) -> StateGraph:
     builder = StateGraph(AgentState)
     
     # Define nodes

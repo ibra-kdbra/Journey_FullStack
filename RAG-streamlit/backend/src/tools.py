@@ -1,11 +1,12 @@
-from typing import List, Dict, Any
-import os
-from dotenv import load_dotenv
-from pymilvus import connections, Collection, utility
-from sentence_transformers import SentenceTransformer
-from langchain_core.tools import tool
-from langchain_core.documents import Document
 import logging
+import os
+from typing import Any
+
+from dotenv import load_dotenv
+from langchain_core.documents import Document
+from langchain_core.tools import tool
+from pymilvus import Collection, connections, utility
+from sentence_transformers import SentenceTransformer
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -43,7 +44,7 @@ class EmbeddingService:
             logger.error(f"Failed to initialize embedding model: {str(e)}")
             raise
     
-    def get_embeddings(self, texts: List[str]) -> List[List[float]]:
+    def get_embeddings(self, texts: list[str]) -> list[list[float]]:
         """Get embeddings for a list of texts.
         
         Args:
@@ -112,9 +113,9 @@ class MilvusService:
         
         return Collection(collection_name)
     
-    def search(self, collection_name: str, query_embedding: List[float], 
+    def search(self, collection_name: str, query_embedding: list[float], 
            top_k: int = TOP_K, search_field: str = "embedding", 
-           output_fields: List[str] = None) -> List[Dict[str, Any]]:
+           output_fields: list[str] = None) -> list[dict[str, Any]]:
         """Search for similar vectors in a collection.
         
         Args:
@@ -176,7 +177,7 @@ class ContextRetriever:
         self.embedding_service = EmbeddingService()
         self.milvus_service = MilvusService()
     
-    def retrieve(self, query: str, top_k: int = TOP_K) -> List[Dict[str, Any]]:
+    def retrieve(self, query: str, top_k: int = TOP_K) -> list[dict[str, Any]]:
         """Retrieve context for a query.
         
         Args:
@@ -229,7 +230,7 @@ def get_context_retriever() -> ContextRetriever:
     return _context_retriever
 
 @tool
-def retrieve_context(query: str) -> List[Document]:
+def retrieve_context(query: str) -> list[Document]:
     """Retrieve relevant context about DataNinja from the knowledge base. The knowledge base is a Milvus vector store.  Any queries about DataNinja should be answered using this tool.
     
     Args:

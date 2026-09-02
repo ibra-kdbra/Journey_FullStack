@@ -1,16 +1,21 @@
-from fastapi import FastAPI, HTTPException
-from fastapi.responses import StreamingResponse
-from fastapi.middleware.cors import CORSMiddleware
-from pydantic_settings import BaseSettings
-from pydantic import BaseModel, Field
-from typing import Dict, Any, Optional, List
-import logging
 import json
-import yaml
+import logging
 import os
+from typing import Any
 
-from tools import retrieve_context, multiply
-from langgraph_agent import create_agent_graph, run_agent_graph, run_agent_graph_streaming
+import yaml
+from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
+from pydantic import BaseModel, Field
+from pydantic_settings import BaseSettings
+
+from langgraph_agent import (
+    create_agent_graph,
+    run_agent_graph,
+    run_agent_graph_streaming,
+)
+from tools import multiply, retrieve_context
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -19,7 +24,7 @@ logger = logging.getLogger(__name__)
 # Load prompts from YAML file
 current_dir = os.path.dirname(os.path.abspath(__file__))
 prompts_path = os.path.join(current_dir, "prompts.yaml")
-with open(prompts_path, 'r') as stream:
+with open(prompts_path) as stream:
     prompt_templates = yaml.safe_load(stream)
 
 # Get the system prompt from the YAML file
@@ -56,7 +61,7 @@ class Settings(BaseSettings):
         extra = "ignore"
 
     @property
-    def allowed_origins(self) -> List[str]:
+    def allowed_origins(self) -> list[str]:
         """Get list of allowed CORS origins."""
         return [origin.strip() for origin in self.CORS_ORIGINS.split(",")]
 
@@ -71,7 +76,7 @@ except Exception as e:
 
 class ChatRequest(BaseModel):
     """Request model for chat endpoint."""
-    model: Optional[str] = settings.OLLAMA_MODEL  # Uses the env var via Settings
+    model: str | None = settings.OLLAMA_MODEL  # Uses the env var via Settings
     user_prompt: str
 
 class ChatResponse(BaseModel):
@@ -97,12 +102,12 @@ app.add_middleware(
 tools = [multiply, retrieve_context]
 
 @app.get("/")
-async def root() -> Dict[str, str]:
+async def root() -> dict[str, str]:
     """Root endpoint."""
     return {"message": "Hello World from RAG Backend!"}
 
 @app.get("/health")
-async def health_check() -> Dict[str, str]:
+async def health_check() -> dict[str, str]:
     """Health check endpoint."""
     try:
         # Add service health checks here
@@ -112,7 +117,7 @@ async def health_check() -> Dict[str, str]:
         raise HTTPException(status_code=503, detail="Service unhealthy") from e
 
 @app.get("/config")
-async def get_config() -> Dict[str, Any]:
+async def get_config() -> dict[str, Any]:
     """Get current configuration (excluding sensitive data)."""
     return {
         "milvus": {

@@ -1,11 +1,13 @@
+import logging
 from abc import ABC, abstractmethod
-from typing import Optional, List, Any, AsyncGenerator
-from pydantic_settings import BaseSettings
-from langchain_ollama import ChatOllama
+from collections.abc import AsyncGenerator
+from typing import Any
+
 from langchain_core.language_models.chat_models import BaseChatModel
 from langchain_core.messages import BaseMessage, SystemMessage
 from langchain_core.tools import BaseTool
-import logging
+from langchain_ollama import ChatOllama
+from pydantic_settings import BaseSettings
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -27,14 +29,14 @@ class ModelFactory(ABC):
     """Abstract factory for creating chat models."""
     
     @abstractmethod
-    def create_model(self, model_name: Optional[str] = None) -> BaseChatModel:
+    def create_model(self, model_name: str | None = None) -> BaseChatModel:
         """Create a chat model instance."""
         pass
 
 class OllamaModelFactory(ModelFactory):
     """Factory for creating Ollama chat models."""
     
-    def __init__(self, settings: Optional[OllamaSettings] = None):
+    def __init__(self, settings: OllamaSettings | None = None):
         """Initialize the factory with settings."""
         self.settings = settings or OllamaSettings()
         ## Generic System Prompt
@@ -45,7 +47,7 @@ class OllamaModelFactory(ModelFactory):
         Remember to use tools when they would provide more accurate or helpful results than trying to calculate or recall information yourself.
         """
     
-    def create_model(self, model_name: Optional[str] = None, system_prompt: Optional[str] = None, format:Optional[str] = "json", verbose: Optional[bool] = True) -> BaseChatModel:
+    def create_model(self, model_name: str | None = None, system_prompt: str | None = None, format:str | None = "json", verbose: bool | None = True) -> BaseChatModel:
         """Create an Ollama chat model instance.
         
         Args:
@@ -71,7 +73,7 @@ class ToolHandler(ABC):
     """Abstract base class for tool handling."""
     
     @abstractmethod
-    def handle_tool_call(self, model: BaseChatModel, messages: List[BaseMessage], tools: List[BaseTool]) -> Any:
+    def handle_tool_call(self, model: BaseChatModel, messages: list[BaseMessage], tools: list[BaseTool]) -> Any:
         """Handle a tool call and return the response."""
         pass
 
@@ -81,8 +83,8 @@ class StreamingToolHandler(ToolHandler):
     async def handle_tool_call(
         self,
         model: BaseChatModel,
-        messages: List[BaseMessage],
-        tools: List[BaseTool]
+        messages: list[BaseMessage],
+        tools: list[BaseTool]
     ) -> AsyncGenerator[str, None]:
         """Handle streaming tool calls and yield responses."""
         try:
@@ -128,8 +130,8 @@ class NonStreamingToolHandler(ToolHandler):
     def handle_tool_call(
         self,
         model: BaseChatModel,
-        messages: List[BaseMessage],
-        tools: List[BaseTool]
+        messages: list[BaseMessage],
+        tools: list[BaseTool]
     ) -> str:
         """Handle non-streaming tool calls and return the final response."""
         # Get the initial response from the model
@@ -162,13 +164,13 @@ class NonStreamingToolHandler(ToolHandler):
 class ModelManager:
     """Manages chat model instances and their lifecycle."""
     
-    def __init__(self, factory: Optional[ModelFactory] = None):
+    def __init__(self, factory: ModelFactory | None = None):
         """Initialize the model manager with a factory."""
         self.factory = factory or OllamaModelFactory()
         self.streaming_handler = StreamingToolHandler()
         self.non_streaming_handler = NonStreamingToolHandler()
     
-    def get_model(self, model_name: Optional[str] = None) -> BaseChatModel:
+    def get_model(self, model_name: str | None = None) -> BaseChatModel:
         """Get a chat model instance.
         
         Args:
@@ -179,7 +181,7 @@ class ModelManager:
         """
         return self.factory.create_model(model_name)
 
-    def bind_tools(self, model: BaseChatModel, tools: List[BaseTool]) -> BaseChatModel:
+    def bind_tools(self, model: BaseChatModel, tools: list[BaseTool]) -> BaseChatModel:
         """Bind tools to a chat model.
         
         Args:
@@ -194,8 +196,8 @@ class ModelManager:
     async def handle_streaming_tool_call(
         self,
         model: BaseChatModel,
-        messages: List[BaseMessage],
-        tools: List[BaseTool]
+        messages: list[BaseMessage],
+        tools: list[BaseTool]
     ) -> AsyncGenerator[str, None]:
         """Handle streaming tool calls."""
         return self.streaming_handler.handle_tool_call(model, messages, tools)
@@ -203,8 +205,8 @@ class ModelManager:
     def handle_tool_call(
         self,
         model: BaseChatModel,
-        messages: List[BaseMessage],
-        tools: List[BaseTool]
+        messages: list[BaseMessage],
+        tools: list[BaseTool]
     ) -> str:
         """Handle non-streaming tool calls."""
         return self.non_streaming_handler.handle_tool_call(model, messages, tools)
@@ -212,7 +214,7 @@ class ModelManager:
 # Create a singleton instance for backward compatibility
 _model_manager = ModelManager()
 
-def get_model(model_name: Optional[str] = None) -> BaseChatModel:
+def get_model(model_name: str | None = None) -> BaseChatModel:
     """Get a chat model instance (backward compatibility function).
     
     Args:
@@ -223,7 +225,7 @@ def get_model(model_name: Optional[str] = None) -> BaseChatModel:
     """
     return _model_manager.get_model(model_name)
 
-def bind_tools(model: BaseChatModel, tools: List[BaseTool]) -> BaseChatModel:
+def bind_tools(model: BaseChatModel, tools: list[BaseTool]) -> BaseChatModel:
     """Bind tools to a chat model (backward compatibility function).
     
     Args:
@@ -235,7 +237,7 @@ def bind_tools(model: BaseChatModel, tools: List[BaseTool]) -> BaseChatModel:
     """
     return _model_manager.bind_tools(model, tools)
 
-def handle_tool_call(model: BaseChatModel, messages: List[BaseMessage], tools: List[BaseTool]) -> str:
+def handle_tool_call(model: BaseChatModel, messages: list[BaseMessage], tools: list[BaseTool]) -> str:
     """Handle non-streaming tool calls (backward compatibility function).
     
     Args:
@@ -250,8 +252,8 @@ def handle_tool_call(model: BaseChatModel, messages: List[BaseMessage], tools: L
 
 async def handle_streaming_tool_call(
     model: BaseChatModel,
-    messages: List[BaseMessage],
-    tools: List[BaseTool]
+    messages: list[BaseMessage],
+    tools: list[BaseTool]
 ) -> AsyncGenerator[str, None]:
     """Handle streaming tool calls (backward compatibility function).
     

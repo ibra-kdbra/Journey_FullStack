@@ -43,3 +43,20 @@ multi_line_output = 3
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 addopts = "-v --cov=pipeline --cov-report=term-missing" 
+
+[tool.ruff]
+# This project declares python = "^3.9", so the floor is stated rather than
+# inferred: ruff's own default target has moved between releases, and a rewrite
+# that assumes 3.10 would break the declared support range silently.
+target-version = "py39"
+
+[tool.ruff.lint]
+# Wider than ruff's default (E4, E7, E9, F), which is what this project ran when
+# lint was first enabled. The default earned its place then - it found eight real
+# problems - but it cannot see the eleven broken exception chains B reports, so
+# a green under the default alone said less than it appeared to.
+#   I  - import sorting
+#   UP - pyupgrade; every finding here is PEP 585 generics, redundant open()
+#        modes and the deprecated typing aliases, all valid from 3.9
+#   B  - bugbear
+select = ["E4", "E7", "E9", "F", "I", "UP", "B"]

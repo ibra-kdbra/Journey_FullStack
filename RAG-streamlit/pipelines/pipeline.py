@@ -82,7 +82,7 @@ class Config:
                 collection_schema=config_dict['collection']['schema']
             )
         except Exception as e:
-            raise ConfigError(f"Invalid configuration: {str(e)}")
+            raise ConfigError(f"Invalid configuration: {str(e)}") from e
 
 class MilvusConnector:
     def __init__(self, config: Config):
@@ -99,7 +99,7 @@ class MilvusConnector:
             logger.info(f"Connecting to Milvus at {config.milvus_host}:{config.milvus_port}")
             connections.connect("default", host=config.milvus_host, port=config.milvus_port)
         except Exception as e:
-            raise ModelError(f"Failed to initialize models or connect to Milvus: {str(e)}")
+            raise ModelError(f"Failed to initialize models or connect to Milvus: {str(e)}") from e
 
     def _create_field_schema(self, field_config: Dict[str, Any]) -> FieldSchema:
         """Create a Milvus FieldSchema from config."""
@@ -125,7 +125,7 @@ class MilvusConnector:
                     field_params["max_length"] = field_config.get("max_length", 65535)              
             return FieldSchema(**field_params)        
         except Exception as e:
-            raise ConfigError(f"Invalid field schema: {str(e)}")
+            raise ConfigError(f"Invalid field schema: {str(e)}") from e
 
 
     def _create_collection_schema(self) -> CollectionSchema:
@@ -141,7 +141,7 @@ class MilvusConnector:
                 description=f"Collection for {self.config.collection_name}"
             )
         except Exception as e:
-            raise ConfigError(f"Invalid collection schema: {str(e)}")
+            raise ConfigError(f"Invalid collection schema: {str(e)}") from e
 
     def ensure_collection_exists(self) -> None:
         """Ensure collection exists with correct schema."""
@@ -165,7 +165,7 @@ class MilvusConnector:
                 collection = Collection(name=self.config.collection_name, schema=schema)
                 collection.create_index(field_name="embedding", index_type="IVF_FLAT", metric_type="L2")
         except MilvusException as e:
-            raise MilvusError(f"Failed to manage collection: {str(e)}")
+            raise MilvusError(f"Failed to manage collection: {str(e)}") from e
 
     def insert_data(self, chunks: List[str], metadata_list: List[Dict]) -> None:
         """Insert data into Milvus collection."""
@@ -202,9 +202,9 @@ class MilvusConnector:
             collection.flush()
             logger.info(f"Successfully inserted {len(entities)} entries into {self.config.collection_name}")
         except MilvusException as e:
-            raise MilvusError(f"Failed to insert data into Milvus: {str(e)}")
+            raise MilvusError(f"Failed to insert data into Milvus: {str(e)}") from e
         except Exception as e:
-            raise ModelError(f"Failed to process data: {str(e)}")
+            raise ModelError(f"Failed to process data: {str(e)}") from e
 
 class MarkdownProcessor:
     def __init__(self, chunk_size: int = 500, chunk_overlap: int = 100):
@@ -224,7 +224,7 @@ class MarkdownProcessor:
                 post = frontmatter.load(f)
             return dict(post.metadata), markdown.markdown(post.content)
         except Exception as e:
-            raise ConfigError(f"Failed to parse markdown file {file_path}: {str(e)}")
+            raise ConfigError(f"Failed to parse markdown file {file_path}: {str(e)}") from e
 
     @staticmethod
     def chunk_text(text: str, chunk_size: int = 500, overlap: int = 100) -> List[str]:
@@ -236,7 +236,7 @@ class MarkdownProcessor:
             )
             return splitter.split_text(text)
         except Exception as e:
-            raise ModelError(f"Failed to chunk text: {str(e)}")
+            raise ModelError(f"Failed to chunk text: {str(e)}") from e
 
     def process_markdown(self, file_path: str) -> List[Dict]:
         """Process a markdown file and return chunks with metadata."""
@@ -300,7 +300,7 @@ def load_config(config_path="config.yaml") -> Config:
             config_dict = yaml.safe_load(f)
         return Config.from_dict(config_dict)
     except Exception as e:
-        raise ConfigError(f"Failed to load config file: {str(e)}")
+        raise ConfigError(f"Failed to load config file: {str(e)}") from e
 
 def process_documents(config: Config, milvus_client: MilvusConnector) -> None:
     """Process markdown documents and insert them into Milvus."""
@@ -329,7 +329,7 @@ def process_documents(config: Config, milvus_client: MilvusConnector) -> None:
                 logger.error(f"Failed to process file {file}: {str(e)}")
                 continue
     except Exception as e:
-        raise MilvusError(f"Failed to process documents: {str(e)}")
+        raise MilvusError(f"Failed to process documents: {str(e)}") from e
 
 def main():
     try:

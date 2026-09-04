@@ -10,12 +10,18 @@ from app.errors import APIError, APIErrorEnum
 from app.extensions import api, db, login_manager, mail, migrate
 
 
-# B008: ProdConfig() is built once at import and shared by every call that does
-# not pass its own. Moving it into the body changes the factory's behaviour, not
-# just its style, so it is a decision of its own - see issue #1435.
-def create_app(
-    config_object: DevConfig | ProdConfig | TestConfig = ProdConfig(),  # noqa: B008
-):
+def create_app(config_object: DevConfig | ProdConfig | TestConfig | None = None):
+    """Build the Flask application.
+
+    config_object defaults to a fresh ProdConfig built per call. It used to be
+    a `= ProdConfig()` default argument, which Python evaluates once at import:
+    every caller that did not pass its own shared that instance, and anything
+    ProdConfig read from the environment was read when the module was imported
+    rather than when the app was made (issue #1435).
+    """
+    if config_object is None:
+        config_object = ProdConfig()
+
     app = Flask(__name__)
     app.config.from_object(config_object)
 

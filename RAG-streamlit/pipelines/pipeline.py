@@ -1,18 +1,26 @@
-import yaml
+import logging
 import os
-from pathlib import Path
+import re
+from dataclasses import dataclass
 from datetime import datetime
-from typing import Dict, List, Any, Tuple
-from pymilvus import connections, Collection, utility, FieldSchema, CollectionSchema, DataType
+from pathlib import Path
+from typing import Any
+
+import frontmatter
+import markdown
+import yaml
+from keybert import KeyBERT
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from pymilvus import (
+    Collection,
+    CollectionSchema,
+    DataType,
+    FieldSchema,
+    connections,
+    utility,
+)
 from pymilvus.exceptions import MilvusException
 from sentence_transformers import SentenceTransformer
-from keybert import KeyBERT
-import markdown
-import frontmatter
-from langchain.text_splitter import RecursiveCharacterTextSplitter
-import logging
-from dataclasses import dataclass
-import re
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -41,10 +49,10 @@ class Config:
     milvus_host: str
     milvus_port: str
     collection_name: str
-    collection_schema: Dict[str, Any]
+    collection_schema: dict[str, Any]
 
     @classmethod
-    def from_dict(cls, config_dict: Dict[str, Any]) -> 'Config':
+    def from_dict(cls, config_dict: dict[str, Any]) -> 'Config':
         """Create Config instance from dictionary with validation."""
         try:
             # Validate required fields
@@ -82,7 +90,7 @@ class Config:
                 collection_schema=config_dict['collection']['schema']
             )
         except Exception as e:
-            raise ConfigError(f"Invalid configuration: {str(e)}")
+            raise ConfigError(f"Invalid configuration: {str(e)}") from e
 
 class MilvusConnector:
     def __init__(self, config: Config):
@@ -99,9 +107,9 @@ class MilvusConnector:
             logger.info(f"Connecting to Milvus at {config.milvus_host}:{config.milvus_port}")
             connections.connect("default", host=config.milvus_host, port=config.milvus_port)
         except Exception as e:
-            raise ModelError(f"Failed to initialize models or connect to Milvus: {str(e)}")
+            raise ModelError(f"Failed to initialize models or connect to Milvus: {str(e)}") from e
 
-    def _create_field_schema(self, field_config: Dict[str, Any]) -> FieldSchema:
+    def _create_field_schema(self, field_config: dict[str, Any]) -> FieldSchema:
         """Create a Milvus FieldSchema from config."""
         try:
             data_type = getattr(DataType, field_config["data_type"])            
@@ -125,7 +133,7 @@ class MilvusConnector:
                     field_params["max_length"] = field_config.get("max_length", 65535)              
             return FieldSchema(**field_params)        
         except Exception as e:
-            raise ConfigError(f"Invalid field schema: {str(e)}")
+            raise ConfigError(f"Invalid field schema: {str(e)}") from e
 
 
     def _create_collection_schema(self) -> CollectionSchema:
@@ -141,7 +149,7 @@ class MilvusConnector:
                 description=f"Collection for {self.config.collection_name}"
             )
         except Exception as e:
-            raise ConfigError(f"Invalid collection schema: {str(e)}")
+            raise ConfigError(f"Invalid collection schema: {str(e)}") from e
 
     def ensure_collection_exists(self) -> None:
         """Ensure collection exists with correct schema."""
@@ -165,9 +173,9 @@ class MilvusConnector:
                 collection = Collection(name=self.config.collection_name, schema=schema)
                 collection.create_index(field_name="embedding", index_type="IVF_FLAT", metric_type="L2")
         except MilvusException as e:
-            raise MilvusError(f"Failed to manage collection: {str(e)}")
+            raise MilvusError(f"Failed to manage collection: {str(e)}") from e
 
-    def insert_data(self, chunks: List[str], metadata_list: List[Dict]) -> None:
+    def insert_data(self, chunks: list[str], metadata_list: list[dict]) -> None:
         """Insert data into Milvus collection."""
         try:
             collection = Collection(name=self.config.collection_name)
@@ -202,9 +210,9 @@ class MilvusConnector:
             collection.flush()
             logger.info(f"Successfully inserted {len(entities)} entries into {self.config.collection_name}")
         except MilvusException as e:
-            raise MilvusError(f"Failed to insert data into Milvus: {str(e)}")
+            raise MilvusError(f"Failed to insert data into Milvus: {str(e)}") from e
         except Exception as e:
-            raise ModelError(f"Failed to process data: {str(e)}")
+            raise ModelError(f"Failed to process data: {str(e)}") from e
 
 class MarkdownProcessor:
     def __init__(self, chunk_size: int = 500, chunk_overlap: int = 100):
@@ -212,7 +220,7 @@ class MarkdownProcessor:
         self.chunk_overlap = chunk_overlap
 
     @staticmethod
-    def parse_markdown(file_path: str) -> Tuple[Dict[str, Any], str]:
+    def parse_markdown(file_path: str) -> tuple[dict[str, Any], str]:
         """Return a document's YAML front matter and its rendered HTML.
 
         The front matter is the document's own metadata - title, author and
@@ -220,14 +228,14 @@ class MarkdownProcessor:
         back. Header text is already in the rendered HTML as <h1>..<h6>.
         """
         try:
-            with open(file_path, "r", encoding="utf-8") as f:
+            with open(file_path, encoding="utf-8") as f:
                 post = frontmatter.load(f)
             return dict(post.metadata), markdown.markdown(post.content)
         except Exception as e:
-            raise ConfigError(f"Failed to parse markdown file {file_path}: {str(e)}")
+            raise ConfigError(f"Failed to parse markdown file {file_path}: {str(e)}") from e
 
     @staticmethod
-    def chunk_text(text: str, chunk_size: int = 500, overlap: int = 100) -> List[str]:
+    def chunk_text(text: str, chunk_size: int = 500, overlap: int = 100) -> list[str]:
         """Split text into overlapping chunks of at most chunk_size."""
         try:
             splitter = RecursiveCharacterTextSplitter(
@@ -236,14 +244,14 @@ class MarkdownProcessor:
             )
             return splitter.split_text(text)
         except Exception as e:
-            raise ModelError(f"Failed to chunk text: {str(e)}")
+            raise ModelError(f"Failed to chunk text: {str(e)}") from e
 
-    def process_markdown(self, file_path: str) -> List[Dict]:
+    def process_markdown(self, file_path: str) -> list[dict]:
         """Process a markdown file and return chunks with metadata."""
         # frontmatter.load strips the YAML preamble; reading the file raw left
         # it in the body, so "---", "title: ..." and "author: ..." were being
         # embedded as if they were prose.
-        with open(file_path, 'r', encoding='utf-8') as f:
+        with open(file_path, encoding='utf-8') as f:
             post = frontmatter.load(f)
 
         # Split content into lines for processing
@@ -296,11 +304,11 @@ class MarkdownProcessor:
 def load_config(config_path="config.yaml") -> Config:
     """Load and validate configuration."""
     try:
-        with open(config_path, "r") as f:
+        with open(config_path) as f:
             config_dict = yaml.safe_load(f)
         return Config.from_dict(config_dict)
     except Exception as e:
-        raise ConfigError(f"Failed to load config file: {str(e)}")
+        raise ConfigError(f"Failed to load config file: {str(e)}") from e
 
 def process_documents(config: Config, milvus_client: MilvusConnector) -> None:
     """Process markdown documents and insert them into Milvus."""
@@ -329,7 +337,7 @@ def process_documents(config: Config, milvus_client: MilvusConnector) -> None:
                 logger.error(f"Failed to process file {file}: {str(e)}")
                 continue
     except Exception as e:
-        raise MilvusError(f"Failed to process documents: {str(e)}")
+        raise MilvusError(f"Failed to process documents: {str(e)}") from e
 
 def main():
     try:

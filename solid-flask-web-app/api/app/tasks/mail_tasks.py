@@ -20,7 +20,7 @@ def send_forgot_password_email(*, receiver: str, reset_token: str):
         f"email={receiver}&reset_token={reset_token}"
     )
 
-    with open("./email_templates/forgot_password.html", "r") as file:
+    with open("./email_templates/forgot_password.html") as file:
         html_content = file.read()
 
     html_content = Template(html_content).safe_substitute(
@@ -33,7 +33,6 @@ def send_forgot_password_email(*, receiver: str, reset_token: str):
         recipients=[receiver],
         html=html_content,
     )
-    message.html
     mail.send(message)
 
 
@@ -44,7 +43,7 @@ def send_email_verification_email(*, receiver: str, verification_token: str):
         f"email={receiver}&verification_token={verification_token}"
     )
 
-    with open("./email_templates/verify_email.html", "r") as file:
+    with open("./email_templates/verify_email.html") as file:
         html_content = file.read()
 
     html_content = Template(html_content).safe_substitute(
@@ -56,5 +55,4 @@ def send_email_verification_email(*, receiver: str, verification_token: str):
         recipients=[receiver],
         html=html_content,
     )
-    message.html
     mail.send(message)

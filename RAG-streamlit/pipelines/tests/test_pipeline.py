@@ -1,16 +1,18 @@
-import pytest # type: ignore
 from pathlib import Path
-from unittest.mock import patch, MagicMock
-import yaml
+from unittest.mock import MagicMock, patch
+
 import numpy as np
+import pytest  # type: ignore
+import yaml
+
 from pipeline import (
     Config,
     ConfigError,
-    ModelError,
-    MilvusConnector,
     MarkdownProcessor,
+    MilvusConnector,
+    ModelError,
     load_config,
-    process_documents
+    process_documents,
 )
 
 # Test data

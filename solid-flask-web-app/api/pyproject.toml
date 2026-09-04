@@ -23,16 +23,6 @@ select = [
     "B",
 ]
 
-ignore = [
-    # `create_app(config_object=ProdConfig())` builds one ProdConfig at import
-    # time and shares it across every call that does not pass its own. Whether
-    # that matters depends on what ProdConfig.__init__ reads, and moving the
-    # call inside the function is a behaviour change to the app factory, not a
-    # lint fix - so it is deferred rather than dismissed. Tracked in issue
-    # #1435; remove this entry when that closes.
-    "B008",
-]
-
 [tool.ruff.lint.per-file-ignores]
 "__init__.py" = [
     # Allow using star imports in __init__.py modules for giving easy access to

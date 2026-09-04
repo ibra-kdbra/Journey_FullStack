@@ -10,7 +10,12 @@ from app.errors import APIError, APIErrorEnum
 from app.extensions import api, db, login_manager, mail, migrate
 
 
-def create_app(config_object: DevConfig | ProdConfig | TestConfig = ProdConfig()):
+# B008: ProdConfig() is built once at import and shared by every call that does
+# not pass its own. Moving it into the body changes the factory's behaviour, not
+# just its style, so it is a decision of its own - see issue #1435.
+def create_app(
+    config_object: DevConfig | ProdConfig | TestConfig = ProdConfig(),  # noqa: B008
+):
     app = Flask(__name__)
     app.config.from_object(config_object)
 

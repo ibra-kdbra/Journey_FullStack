@@ -26,7 +26,7 @@ sentence-transformers = ">=2.5.1,<7.0.0"
 # succeeds and `import app` raises ImportError. langchain caps langgraph at
 # <1.1.0, so moving forward is not available either.
 langgraph = ">=0.3.26,<1.0.2"
-langgraph-prebuilt = "<1.0.2"
+langgraph-prebuilt = "<1.0.14"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^9.1.1"
@@ -36,7 +36,7 @@ httpx = "^0.28.1"
 black = ">=24.1.1,<27.0.0"
 mypy = ">=1.8,<3.0"
 pylint = ">=3.0.3,<5.0.0"
-ruff = "^0.15.5"
+ruff = ">=0.15.5,<0.17.0"
 
 [build-system]
 requires = ["poetry-core"]

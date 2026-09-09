@@ -9,7 +9,7 @@ help:  ## Display this help
 
 deps: ## Install all dependencies
 	rm -rf node_modules/
-	pnpm install
+	npm ci
 
 format: ## Format code with eslint and prettier
 	pnpm eslint $(LINT_FILES) --fix --no-warn-ignored
@@ -28,11 +28,14 @@ ts_watch: ## Run the typescript compiler in watch mode
 
 formatlint: format format_translations lint ## First format code, then run linters
 
-cypress: ## Open cypress for creating and running tests
-	pnpm cypress open
+cypress: ## Open cypress interactively (needs the dev server and the API - see README)
+	npm run cypress:open
+
+test_e2e: ## Run the cypress suite headless (needs the dev server and the API - see README)
+	npm run test:e2e
 
 server: ## Start the development server
-	pnpm run dev
+	npm run dev
 
 find_unused_translations: ## Finds translation keys in the 'en' locale that are not used in the application
 	node scripts/find_unused_translations.js

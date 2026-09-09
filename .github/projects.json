@@ -178,7 +178,7 @@
         "lint": false,
         "test": false
       },
-      "notes": "Frontend of the Flask app. The Python API alongside it is covered separately as solid-flask-web-app/api (install, ruff and 75 tests). No lint or test script is defined."
+      "notes": "Frontend of the Flask app. The Python API alongside it is covered separately as solid-flask-web-app/api (install, ruff and 75 tests). No lint or test script is defined - but cypress is a dependency and cypress/e2e holds four real specs (home_page, authentication, admin, locale). Nothing can run them: there is no npm script, `test` is off, and the env block above sets CYPRESS_INSTALL_BINARY=0 so CI does not even fetch the binary. A cypress bump is therefore verified only as far as npm resolving it and the vite build still passing - the suite itself is untouched by any check. Running it needs the vite dev server on :5173 plus the Flask API and its database, which is why it was never wired up."
     },
     {
       "path": "learning-doc",

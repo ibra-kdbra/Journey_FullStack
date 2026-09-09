@@ -13,20 +13,21 @@ uvicorn = ">=0.27.1,<0.53.0"
 pymilvus = ">=2.3.6,<4.0.0"
 pydantic = "^2.6.1"
 pydantic-settings = "^2.1.0"
-langchain = "^1.0.2"
+langchain = "^1.4.0"
 langchain-ollama = ">=0.3,<1.2" 
 langchain-community = ">=0.3.20,<0.5.0"
 python-multipart = ">=0.0.20,<0.0.33"
 sentence-transformers = ">=2.5.1,<7.0.0"
-# Pinned to the pairing that actually imports. PR #1416 moved langgraph
-# 1.0.1 -> 1.0.10 and langgraph-prebuilt 1.0.1 -> 1.0.13, and prebuilt >=1.0.11
-# does `from langgraph.runtime import ExecutionInfo`, which no langgraph in the
-# 1.0.x line exports. prebuilt's metadata names only langchain-core and
-# langgraph-checkpoint, so nothing stops the resolver pairing them: the install
-# succeeds and `import app` raises ImportError. langchain caps langgraph at
-# <1.1.0, so moving forward is not available either.
-langgraph = ">=0.3.26,<1.0.2"
-langgraph-prebuilt = "<1.0.2"
+# langgraph-prebuilt is deliberately absent. It used to be pinned <1.0.2,
+# because prebuilt >=1.0.11 does `from langgraph.runtime import ExecutionInfo`
+# while no langgraph in the 1.0.x line exported it, and prebuilt's metadata
+# named only langchain-core and langgraph-checkpoint - so nothing stopped the
+# resolver pairing them, the install succeeded and `import app` raised
+# ImportError (issue #1423). langgraph now declares the range itself
+# (1.2.11 requires langgraph-prebuilt >=1.1.0,<1.2.0), so the pairing is the
+# resolver's to get right rather than ours to police. Pinning it again would
+# re-freeze a constraint upstream has since taken over.
+langgraph = ">=1.2.11,<1.3.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^9.1.1"
@@ -36,7 +37,7 @@ httpx = "^0.28.1"
 black = ">=24.1.1,<27.0.0"
 mypy = ">=1.8,<3.0"
 pylint = ">=3.0.3,<5.0.0"
-ruff = "^0.15.5"
+ruff = "^0.16.0"
 
 [build-system]
 requires = ["poetry-core"]

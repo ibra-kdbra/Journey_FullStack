@@ -6,7 +6,9 @@
     "start": "vite --host",
     "dev": "vite --host",
     "build": "vite build",
-    "serve": "vite preview"
+    "serve": "vite preview",
+    "test:e2e": "cypress run",
+    "cypress:open": "cypress open"
   },
   "dependencies": {
     "@modular-forms/solid": "^0.25.1",

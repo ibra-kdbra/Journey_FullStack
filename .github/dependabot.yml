@@ -229,6 +229,13 @@ updates:
     schedule: { interval: "weekly" }
     open-pull-requests-limit: 5
     commit-message: { prefix: "deps(flask-ui)" }
+    # typescript majors are held. The source is TS 7 clean - tsc 7.0.2 reports
+    # zero errors over all 42 files - but typescript-eslint 8.69 peers
+    # `>=4.8.4 <6.1.0`, so a TS 7 bump takes the linter out. Same dependency as
+    # the hold in #1296, different reason. See docs/ENGINEERING.md.
+    ignore:
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
     groups:
       flask-ui-minor:
         patterns: ["*"]

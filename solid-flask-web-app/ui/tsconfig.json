@@ -1,9 +1,12 @@
 {
-  "include": ["*", "src/**/*"],
+  "include": [
+    "*",
+    "src/**/*"
+  ],
   "compilerOptions": {
     "target": "ESNext",
     "module": "ESNext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
@@ -11,7 +14,9 @@
     "jsx": "preserve",
     "strict": true,
     "jsxImportSource": "solid-js",
-    "types": ["vite/client"],
+    "types": [
+      "vite/client"
+    ],
     "noEmit": true,
     "isolatedModules": true
   }

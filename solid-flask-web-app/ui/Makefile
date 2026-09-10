@@ -12,19 +12,19 @@ deps: ## Install all dependencies
 	npm ci
 
 format: ## Format code with eslint and prettier
-	pnpm eslint $(LINT_FILES) --fix --no-warn-ignored
-	pnpm prettier --write $(LINT_FILES)
+	npx eslint $(LINT_FILES) --fix --no-warn-ignored
+	npx prettier --write $(LINT_FILES)
 
 lint: ## Run lint check with eslint, prettier and typescript
-	pnpm eslint $(LINT_FILES) --no-warn-ignored
-	pnpm prettier --check $(LINT_FILES)
-	pnpm tsc
+	npx eslint $(LINT_FILES) --no-warn-ignored
+	npx prettier --check $(LINT_FILES)
+	npm run typecheck
 
 ts_check: ## Run the typescript compiler
-	pnpm tsc
+	npm run typecheck
 
 ts_watch: ## Run the typescript compiler in watch mode
-	pnpm tsc --watch
+	npm run typecheck -- --watch
 
 formatlint: format format_translations lint ## First format code, then run linters
 

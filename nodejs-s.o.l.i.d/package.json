@@ -21,7 +21,7 @@
     "exceljs": "^4.3.0",
     "express": "^5.1.0",
     "joi": "^18.2.8",
-    "mysql2": "^3.24.3",
+    "mysql2": "^3.24.4",
     "nodemailer": "^9.1.1",
     "pdfmake": "^0.3.0",
     "reflect-metadata": "^0.2.2",
@@ -32,7 +32,7 @@
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.0",
-    "@types/node": "^26.4.1",
+    "@types/node": "^26.5.1",
     "@types/nodemailer": "^8.0.0",
     "@types/pdfmake": "^0.3.0",
     "nodemon": "^3.1.9",

@@ -8,10 +8,10 @@
     "dev": "vite",
     "lint": "eslint . --fix",
     "preview": "vite preview",
-    "test": "vitest run --environment jsdom --root src/",
+    "test": "vitest run",
     "test:e2e": "start-server-and-test preview :4173 'cypress run --e2e'",
     "test:e2e:dev": "start-server-and-test 'vite dev --port 4173' :4173 'cypress open --e2e'",
-    "test:unit": "vitest --environment jsdom --root src/",
+    "test:unit": "vitest",
     "type-check": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false"
   },
   "dependencies": {

@@ -17,9 +17,10 @@
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
     "format": "prettier --write .",
     "lint": "prettier --check . && eslint .",
-    "test:e2e": "pnpm db:clear && NODE_ENV=test playwright test",
-    "test:unit": "vitest",
-    "test": "pnpm test:e2e && pnpm test:unit",
+    "test:e2e": "npm run db:clear && NODE_ENV=test playwright test",
+    "test:unit": "vitest run",
+    "test:unit:watch": "vitest",
+    "test": "vitest run",
     "prepare": "husky"
   },
   "devDependencies": {
@@ -47,6 +48,7 @@
     "formsnap": "2.0.1",
     "globals": "^17.12.0",
     "husky": "^9.1.7",
+    "jsdom": "^30.0.1",
     "lint-staged": "^17.5.0",
     "mode-watcher": "^1.1.0",
     "paneforge": "1.0.2",

@@ -7,9 +7,13 @@
 
   interface Props {
     title: string;
-    description: string;
-    image: string;
-    url: string;
+    // Optional because each is defaulted below. They were typed as required,
+    // which no call site caught: the only one spreads an untyped object
+    // (`<SEO {...page.data.metadata} />`), so the types were never checked
+    // against reality until a spec passed props explicitly.
+    description?: string;
+    image?: string;
+    url?: string;
   }
 
   let {

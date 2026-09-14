@@ -94,14 +94,16 @@ updates:
     # issue #1296. Without this, Dependabot reopens the same red PR every week.
     #
     # jasmine majors are held. jasmine-core 6 made its env methods
-    # non-writable, and zone.js 0.16.2 - the version Angular 22 pins - patches
-    # them by assignment:
+    # non-writable, and zone.js - 0.16.3 as of this writing - still patches
+    # them by assignment in patchJasmine:
     #
     #   TypeError: Cannot assign to read only property 'describe'
     #     at zone.js/fesm2015/zone-testing.js:86
     #
     # The whole suite dies at load, so this is not a stylistic hold. It lifts
-    # when zone.js stops assigning. See issue #1407.
+    # when zone.js stops assigning, which is not the same thing as zone.js
+    # cutting a release - re-verified by hand on 0.16.3 + jasmine-core 7.0.2,
+    # where the identical error still fires. See issue #1407.
     ignore:
       - dependency-name: "typescript"
         update-types: ["version-update:semver-major"]

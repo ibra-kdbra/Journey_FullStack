@@ -18,6 +18,9 @@
  */
 
 import { execFile } from 'node:child_process'
+import { mkdtemp, rm } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { join } from 'node:path'
 import { promisify } from 'node:util'
 import { pathToFileURL } from 'node:url'
 
@@ -34,19 +37,39 @@ async function npmView(spec, field) {
   }
 }
 
+/**
+ * Reads one file out of a published package tarball.
+ *
+ * `npm view` only sees package.json fields, and some clearing conditions are
+ * facts about a dependency's *source*, not its metadata. Checking the metadata
+ * instead is how a hold ends up watched by a proxy that can go green while the
+ * thing it stands for is unchanged.
+ */
+async function npmPackFile(spec, fileInPackage) {
+  let dir
+  try {
+    dir = await mkdtemp(join(tmpdir(), 'holds-'))
+    const { stdout } = await run('npm', ['pack', spec, '--pack-destination', dir, '--json'], {
+      timeout: 180_000,
+    })
+    const filename = JSON.parse(stdout)?.[0]?.filename
+    if (!filename) return null
+    const { stdout: text } = await run(
+      'tar',
+      ['-xzOf', join(dir, filename), `package/${fileInPackage}`],
+      { timeout: 60_000, maxBuffer: 64 * 1024 * 1024 },
+    )
+    return text
+  } catch (err) {
+    console.error(`  ! could not read ${fileInPackage} from ${spec}: ${err.shortMessage ?? err.message}`)
+    return null
+  } finally {
+    if (dir) await rm(dir, { recursive: true, force: true })
+  }
+}
+
 const major = (v) => parseInt(String(v).split('.')[0], 10)
 const minor = (v) => parseInt(String(v).split('.')[1] ?? '0', 10)
-
-/** Numeric version compare. String compare puts 0.2.0 above 0.16.2; this does not. */
-const cmp = (a, b) => {
-  const pa = String(a).split('.').map(Number)
-  const pb = String(b).split('.').map(Number)
-  for (let i = 0; i < 3; i++) {
-    const d = (pa[i] ?? 0) - (pb[i] ?? 0)
-    if (d) return d
-  }
-  return 0
-}
 
 /** Does a semver range string mention the given major at all? */
 const rangeAdmitsMajor = (range, m) => new RegExp(`(^|[^\\d.])${m}\\.`).test(String(range ?? ''))
@@ -126,9 +149,12 @@ const HOLDS = [
     covers: ['jasmine-core', '@types/jasmine'],
     projects: ['angular-s.o.l.i.d-advanced'],
     why:
-      'jasmine 6 made its env methods non-writable. zone.js patches them by assignment, ' +
-      'so the suite dies at load before a single spec runs (issue #1407).',
-    clearsWhen: 'zone.js releases past 0.16.2 - the version that still patches by assignment.',
+      'jasmine 6 made its env methods non-writable. zone.js\'s patchJasmine patches them by ' +
+      'plain assignment - `jasmineEnv[methodName] = ...` - so the suite dies at load with ' +
+      '"Cannot assign to read only property \'describe\'" before a single spec runs (issue #1407).',
+    clearsWhen:
+      'zone.js stops assigning onto the object jasmine.getEnv() returns - by using ' +
+      'Object.defineProperty, or by patching somewhere else entirely.',
     async check() {
       const latestZone = await npmView('zone.js@latest', 'version')
       const latestJasmine = await npmView('jasmine-core@latest', 'version')
@@ -136,15 +162,41 @@ const HOLDS = [
         `zone.js@latest = ${latestZone ?? 'unknown'}`,
         `jasmine-core@latest = ${latestJasmine ?? 'unknown'} (held at 5.13.0)`,
       ]
-      if (!latestZone) {
-        notes.push('could not read zone.js - treating the hold as still justified')
+
+      // Read the patch itself rather than zone.js's version number. The previous
+      // form of this check asked whether zone.js had released past 0.16.2 and
+      // called the hold clearable when it had. 0.16.3 duly shipped, this check
+      // duly went green, and the Karma suite still died on the identical error:
+      // the release had nothing to do with jasmine. A version watermark is not
+      // the condition - the assignment is.
+      const src = await npmPackFile('zone.js@latest', 'fesm2015/zone-testing.js')
+      if (!src) {
+        notes.push('could not read zone-testing.js - treating the hold as still justified')
         return { clearable: false, notes }
       }
-      // Compare numerically: '0.2.0' > '0.16.2' as strings, which is how this
-      // check would silently never fire.
-      const moved = cmp(latestZone, '0.16.2') > 0
-      notes.push(`zone.js moved past 0.16.2: ${moved ? 'yes' : 'no'}`)
-      return { clearable: moved, notes }
+
+      const start = src.indexOf('function patchJasmine')
+      if (start === -1) {
+        notes.push('patchJasmine not found in zone-testing.js - shape changed, check by hand')
+        return { clearable: false, notes }
+      }
+      // Stop at the next bundled lib so `clock[methodName] =` and the jest/mocha
+      // patches further down the same file cannot answer for jasmine.
+      const nextLib = src.indexOf('// packages/zone.js/lib/', start + 1)
+      const region = src.slice(start, nextLib === -1 ? start + 12_000 : nextLib)
+
+      const envVar = region.match(/(?:const|let|var)\s+(\w+)\s*=\s*jasmine\.getEnv\(\)/)?.[1]
+      if (!envVar) {
+        notes.push('could not find where patchJasmine binds jasmine.getEnv() - check by hand')
+        return { clearable: false, notes }
+      }
+
+      const assigns = new RegExp(`${envVar}\\[methodName\\]\\s*=[^=]`).test(region)
+      notes.push(`patchJasmine assigns onto ${envVar}[methodName]: ${assigns ? 'yes' : 'no'}`)
+      if (assigns) return { clearable: false, notes }
+
+      notes.push('assignment is gone - run the Karma suite on jasmine 7 before lifting the hold')
+      return { clearable: true, notes }
     },
   },
 

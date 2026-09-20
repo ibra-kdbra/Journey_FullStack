@@ -30,8 +30,8 @@
     "@nuxt/test-utils": "^4.3.2",
     "@playwright/test": "^1.63.0",
     "@vitest/ui": "^4.0.18",
-    "@vue/test-utils": "^2.5.0",
-    "happy-dom": "^20.14.3",
+    "@vue/test-utils": "^2.5.1",
+    "happy-dom": "^20.14.5",
     "playwright-core": "^1.63.0",
     "typescript": "^6.0.3",
     "vitest": "^4.0.18"

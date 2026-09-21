@@ -9,6 +9,7 @@
     "serve": "vite preview",
     "test:e2e": "cypress run",
     "cypress:open": "cypress open",
+    "lint": "eslint src/** --no-warn-ignored --max-warnings 0",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

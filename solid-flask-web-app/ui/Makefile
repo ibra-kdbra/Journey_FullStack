@@ -11,13 +11,18 @@ deps: ## Install all dependencies
 	rm -rf node_modules/
 	npm ci
 
-format: ## Format code with eslint and prettier
+format: ## Format code with eslint
 	npx eslint $(LINT_FILES) --fix --no-warn-ignored
-	npx prettier --write $(LINT_FILES)
 
-lint: ## Run lint check with eslint, prettier and typescript
-	npx eslint $(LINT_FILES) --no-warn-ignored
-	npx prettier --check $(LINT_FILES)
+# prettier is deliberately absent from both targets. The project ships no
+# prettier config, so prettier applies its defaults - double quotes and
+# semicolons - to a codebase written single-quote and semicolon-free, and
+# `prettier --check` fails on all 43 files. Adopting it would be a style change
+# rather than a lint fix, and was declined; see the notes for this project in
+# .github/projects.json. `--write` is the one that mattered: left in `format`
+# it would have rewritten every file the moment anyone ran `make format`.
+lint: ## Run lint check with eslint and typescript
+	npm run lint
 	npm run typecheck
 
 ts_check: ## Run the typescript compiler

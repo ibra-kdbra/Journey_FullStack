@@ -5,6 +5,11 @@ import { useLocale, locales } from '../context/LocaleProvider'
 export function LanguageSelector(): JSXElement {
   const { locale, setLocale } = useLocale()
 
+  // `ref={detailsRef}` below is sugar. babel-preset-solid rewrites it to
+  //   var _ref$ = detailsRef;
+  //   typeof _ref$ === "function" ? _$use(_ref$, _el$) : detailsRef = _el$;
+  // so the assignment exists only in generated output, which ESLint never sees.
+  // eslint-disable-next-line no-unassigned-vars -- assigned by the Solid compiler
   let detailsRef: HTMLDetailsElement | undefined
 
   createEffect(() => {

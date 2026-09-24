@@ -58,11 +58,33 @@ Create a slot the way Realtime does, with the `wal2json` output plugin. A tempor
 
 ```text
 postgres=# select slot_name from pg_create_logical_replication_slot('course_realtime', 'wal2json', temporary => true);
+ERROR:  library "wal2json" may not be used as an output plugin
+HINT:  If it is safe for all REPLICATION users to use this library as an output plugin, add it to "output_plugin_libraries" and reload the server configuration.
+```
+
+Refused — and not for lack of privileges: this session is a superuser. Recent PostgreSQL minor releases (16.15 has it; 16.13 did not) only load output plugins named in the `output_plugin_libraries` setting, which lists the two plugins that ship with PostgreSQL:
+
+```text
+postgres=# show output_plugin_libraries;
+ output_plugin_libraries
+-------------------------
+ pgoutput, test_decoding
+(1 row)
+```
+
+An output plugin is a shared library loaded into the server process, so choosing which ones may be loaded is a server administrator's decision, not something any user with the `REPLICATION` attribute should get to make. Supabase runs Realtime on `wal2json`, so its servers have to allow it. Here, a superuser can allow it for this session. The value is a list, written **without** quotes — `'pgoutput, test_decoding, wal2json'` in quotes would be read as one library with a very odd name:
+
+```text
+postgres=# set output_plugin_libraries = pgoutput, test_decoding, wal2json;
+SET
+postgres=# select slot_name from pg_create_logical_replication_slot('course_realtime', 'wal2json', temporary => true);
     slot_name
 -----------------
  course_realtime
 (1 row)
 ```
+
+The list is checked every time the slot is read, not only when it is created, so the setting has to stay in place for as long as this session reads the slot. On a real server it belongs in `postgresql.conf` (`output_plugin_libraries = 'pgoutput, test_decoding, wal2json'` — in the configuration file, the quotes surround the whole list), followed by a configuration reload.
 
 Make a change, then look at what the slot produced. `peek` reads without consuming; `format-version 2` emits one JSON document per row change, and `include-transaction false` leaves out the begin/commit markers:
 

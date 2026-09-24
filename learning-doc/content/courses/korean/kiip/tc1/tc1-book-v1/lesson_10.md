@@ -422,7 +422,7 @@ Khi thêm các phụ âm **ㄱ, ㄷ, ㅂ, ㅅ, ㅈ** vào trước **ㄴ, ㄷ, �
 ```mermaid
 graph LR
     A[Gốc] --> B[+ ㄴ, ㄷ, ㅂ, ㅅ, ㅈ]
-    B --> C[Âm kép<br/>[ㄲ, ㄸ, ㅃ, ㅆ, ㅉ]]
+    B --> C["Âm kép<br/>[ㄲ, ㄸ, ㅃ, ㅆ, ㅉ]"]
 
     style A fill:#FFE5B4
     style B fill:#B4FFE5

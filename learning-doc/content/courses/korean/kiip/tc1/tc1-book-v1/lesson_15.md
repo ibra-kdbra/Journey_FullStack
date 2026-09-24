@@ -645,7 +645,7 @@ flowchart LR
 
 ```mermaid
 graph TB
-    A[Ngữ pháp so sánh] --> B[-(으)려던 참이다]
+    A[Ngữ pháp so sánh] --> B["-(으)려던 참이다"]
     A --> C[-자마자]
 
     B --> B1[Ý nghĩa: Đang định làm]

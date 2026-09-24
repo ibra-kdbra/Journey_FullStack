@@ -383,7 +383,7 @@ graph TD
 
     style A fill:#e1f5ff
     style B fill:#ffe1e1
-    style C:#e8ffe1
+    style C fill:#e8ffe1
 ```
 
 ### **3. Relationships in Communication**

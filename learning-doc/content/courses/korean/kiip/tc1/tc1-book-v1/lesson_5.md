@@ -239,9 +239,9 @@ graph LR
 ```mermaid
 graph TD
     A[Câu trực tiếp] --> B{Loại từ}
-    B -->|Động từ| C[Thêm -(으)ㄴ다고 하다]
+    B -->|Động từ| C["Thêm -(으)ㄴ다고 하다"]
     B -->|Tính từ| D[Thêm -다고 하다]
-    B -->|Danh từ| E[Thêm -(이)라고 하다]
+    B -->|Danh từ| E["Thêm -(이)라고 하다"]
 
     C --> F["저축하다 → 저축한다고 하다"]
     D --> G["싸다 → 싸다고 해요"]

@@ -47,7 +47,25 @@ npm install
 npm run dev        # http://localhost:3000
 npm run build
 npm run preview
+npm test           # replays the Redis course transcripts; needs redis-server on PATH
 ```
+
+## Course transcripts are tests
+
+Every fenced block in `content/courses/redis/` whose first line starts with the
+`127.0.0.1:6379> ` prompt is a test. `npm test` runs
+[`scripts/verify-redis-transcripts.mjs`](scripts/verify-redis-transcripts.mjs),
+which starts a throwaway `redis-server` on a unix socket, replays each lesson's
+commands in order on one connection, and fails if any reply differs from what the
+lesson prints. It never connects to a Redis you already run.
+
+- A line starting `# wait 1500ms` pauses, so expiry can be shown happening.
+- Any other `#` line is a comment for the reader.
+- There is no opt-out. Output that is not reproducible — timings, unordered
+  `SMEMBERS` replies, glob `CONFIG GET` — does not belong in a transcript.
+
+When a lesson fails, the verifier prints what the lesson shows next to what Redis
+returned. Fix the lesson, not the verifier.
 
 ## Adding an Atlas entry
 

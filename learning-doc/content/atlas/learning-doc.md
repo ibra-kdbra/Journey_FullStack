@@ -69,6 +69,7 @@ cd learning-doc
 npm install
 npm run dev          # http://localhost:3000
 npm run build
+npm test             # replays the Redis course's redis-cli transcripts; needs redis-server
 ```
 
 ## Read alongside

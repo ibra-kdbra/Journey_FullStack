@@ -191,11 +191,14 @@
         "install": true,
         "build": true,
         "lint": false,
-        "test": false
+        "test": true
       },
-      "notes": "The Engineering Atlas. Nuxt 4 + Nuxt Content. better-sqlite3 13 sits outside @nuxt/content's peerOptional ^12.5.0, so npm ci needs --legacy-peer-deps (recorded in installFlags). That combination was verified by running the built server, not just by building it - see docs/DEPENDENCIES.md. Tracked in issue #1289. No lint or test script is defined.",
+      "notes": "The Engineering Atlas. Nuxt 4 + Nuxt Content. better-sqlite3 13 sits outside @nuxt/content's peerOptional ^12.5.0, so npm ci needs --legacy-peer-deps (recorded in installFlags). That combination was verified by running the built server, not just by building it - see docs/DEPENDENCIES.md. Tracked in issue #1289. No lint script is defined. test replays every redis-cli transcript in the Redis course against a real redis-server: scripts/verify-redis-transcripts.mjs starts its own throwaway server on a unix socket (persistence off, no TCP port), runs each lesson on one connection against an empty database, and fails if any reply differs from what the lesson prints - 325 commands across 57 transcripts, last verified against Redis 7.0.15, the version Ubuntu 24.04 ships. Lessons are isolated from each other for keys, CONFIG SET changes and the script cache. There is no opt-out: a transcript that cannot be reproduced exactly (timings, unordered set replies) does not belong in a lesson. redis-server comes from systemPackages. The verifier covers transcripts only - the Node.js lab in lesson 6 was verified by running it, not in CI. Mermaid diagrams render client-side through MermaidDiagram.vue and are not gated here; all 105 were checked in Chromium when rendering was fixed.",
       "installFlags": [
         "--legacy-peer-deps"
+      ],
+      "systemPackages": [
+        "redis-server"
       ]
     },
     {

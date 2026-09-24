@@ -572,7 +572,7 @@ flowchart LR
 
 ```mermaid
 graph TB
-    A[Ngữ pháp so sánh] --> B[-(으)ㄹ 잖아요]
+    A[Ngữ pháp so sánh] --> B["-(으)ㄹ 잖아요"]
     A --> C[-아/어야 하다]
 
     B --> B1[Ý nghĩa: Nhắc nhở điều hiển nhiên]

@@ -66,7 +66,14 @@ const langIcon = computed(() => {
 </script>
 
 <template>
-  <div class="prose-pre-wrapper">
+  <!--
+    Mermaid fences are diagrams, not code: hand them to MermaidDiagram, which
+    renders them client-side. Without this branch every ```mermaid block on the
+    site was shown as its source text - the component existed but nothing
+    ever routed to it.
+  -->
+  <MermaidDiagram v-if="displayLanguage === 'mermaid'" :code="props.code" />
+  <div v-else class="prose-pre-wrapper">
     <!-- Header Bar -->
     <div class="prose-pre-header">
       <div class="prose-pre-info">

@@ -153,13 +153,17 @@ class Session {
   constructor(cluster) {
     const psql = join(cluster.bin, 'psql')
     // A very wide terminal so readline never wraps or scrolls a long line,
-    // and the pager off so result sets are printed rather than paged.
-    const cmd = `stty cols 4000 -echoctl; exec "${psql}" -X -P pager=off -h "${cluster.socketDir}" -d ${DB}`
+    // and the pager off so result sets are printed rather than paged. The
+    // user is named because initdb -U postgres created no role for whichever
+    // OS user runs this, and psql would otherwise log in as that user.
+    const cmd = `stty cols 4000 -echoctl; exec "${psql}" -X -P pager=off -h "${cluster.socketDir}" -U postgres -d ${DB}`
     this.proc = spawn('script', ['-q', '-c', cmd, '/dev/null'], {
       env: { ...process.env, TERM: 'dumb', PGTZ: 'UTC', PGCLIENTENCODING: 'UTF8', LC_ALL: 'C.UTF-8' },
     })
     this.raw = ''
+    this.exited = false
     this.proc.stdout.on('data', (d) => (this.raw += d.toString('utf8')))
+    this.proc.on('exit', () => (this.exited = true))
   }
 
   // Resolve with everything printed up to and including psql's next prompt.
@@ -171,6 +175,9 @@ class Session {
         if (PROMPT_AT_END.test(text)) {
           this.raw = ''
           return resolve(text)
+        }
+        if (this.exited) {
+          return reject(new Error(`psql exited before printing a prompt; last output:\n${text.slice(-500)}`))
         }
         if (Date.now() - started > timeoutMs) {
           return reject(new Error(`psql printed no prompt within ${timeoutMs} ms; last output:\n${text.slice(-500)}`))

@@ -36,7 +36,7 @@ $ curl -s --max-time 2 http://localhost:8000/index.html || echo "curl: nothing i
 curl: nothing is listening on the host's port 8000
 ```
 
-(`-w` sets the working directory, which `http.server` serves. `--bind 0.0.0.0` makes it listen on every IPv4 interface of the container; without it, Python 3.12 tries IPv6 first, and fails outright on hosts where Docker gives containers no IPv6 The broader rule: a server in a container must listen on `0.0.0.0`, never only on `127.0.0.1`, or nothing outside the container — not even a published port — can reach it.) A container that has *started* has not necessarily finished starting its server, so the `until` loop polls until the server answers — a detail that matters whenever a script starts a container and uses it straight away. From inside its own namespace, the server answers on `localhost:8000`. From the host, there is nothing there: the host's `localhost` is a different network stack.
+(`-w` sets the working directory, which `http.server` serves. `--bind 0.0.0.0` makes it listen on every IPv4 interface of the container; without it, Python 3.12 tries IPv6 first, and fails outright on hosts where Docker gives containers no IPv6. The broader rule: a server in a container must listen on `0.0.0.0`, never only on `127.0.0.1`, or nothing outside the container — not even a published port — can reach it.) A container that has *started* has not necessarily finished starting its server, so the `until` loop polls until the server answers — a detail that matters whenever a script starts a container and uses it straight away. From inside its own namespace, the server answers on `localhost:8000`. From the host, there is nothing there: the host's `localhost` is a different network stack.
 
 ### 2. Publishing Ports
 

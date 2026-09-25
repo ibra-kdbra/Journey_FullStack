@@ -152,7 +152,7 @@ class Shell {
     this.proc.stdin.write('set -o pipefail; __status=0\n')
   }
 
-  run(command, timeoutMs = 300000) {
+  run(command, timeoutMs = 120000) {
     // stdin is /dev/null so a command that reads input cannot hang the run;
     // `(exit $__status)` restores the previous command's status for `$?`.
     this.proc.stdin.write(
@@ -214,6 +214,18 @@ function restore(before) {
   // names instead, and nothing a lesson checks depends on an image's absence.
 }
 
+function diagnose(before) {
+  const lines = ['containers created by this lesson:']
+  for (const id of snapshot().containers) {
+    if (before.containers.has(id)) continue
+    const state = spawnSync('docker', ['inspect', '--format', '{{.Name}} {{.State.Status}} exit={{.State.ExitCode}} {{.State.Error}}', id], { env: ENV, encoding: 'utf8' })
+    lines.push(`  ${state.stdout.trim()}`)
+    const logs = spawnSync('docker', ['logs', '--tail', '20', id], { env: ENV, encoding: 'utf8' })
+    for (const l of (logs.stdout + logs.stderr).trim().split('\n')) if (l) lines.push(`    | ${l}`)
+  }
+  return lines.join('\n')
+}
+
 // Run one lesson and return, for every transcript, the text docker printed.
 async function runLesson(file) {
   const before = snapshot()
@@ -230,7 +242,15 @@ async function runLesson(file) {
       }
       const printed = []
       for (const cmd of commands(step.body)) {
-        const actual = await shell.run(cmd.text)
+        let actual
+        try {
+          actual = await shell.run(cmd.text)
+        } catch (e) {
+          // A command that never finishes - typically a readiness loop whose
+          // container has died - says nothing about why. Show the state and
+          // the last lines of output of every container this lesson created.
+          throw new Error(`${e.message}\n\n${diagnose(before)}`)
+        }
         printed.push({ cmd, actual: trimLines(actual.split('\n')) })
       }
       results.push({ step, printed })

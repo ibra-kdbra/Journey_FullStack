@@ -28,7 +28,7 @@ hello from inside a container
 ```
 
 ```console
-$ docker run -d --name web -v "$PWD/site:/srv:ro" -w /srv python:3.12.7-alpine3.20 python -m http.server 8000 >/dev/null
+$ docker run -d --name web -v "$PWD/site:/srv:ro" -w /srv python:3.12.7-alpine3.20 python -m http.server 8000 --bind 0.0.0.0 >/dev/null
 $ until docker exec web wget -qO- http://localhost:8000/ >/dev/null 2>&1; do sleep 0.2; done
 $ docker exec web wget -qO- http://localhost:8000/index.html
 hello from inside a container
@@ -36,7 +36,7 @@ $ curl -s --max-time 2 http://localhost:8000/index.html || echo "curl: nothing i
 curl: nothing is listening on the host's port 8000
 ```
 
-(`-w` sets the working directory, which `http.server` serves.) A container that has *started* has not necessarily finished starting its server, so the `until` loop polls until the server answers — a detail that matters whenever a script starts a container and uses it straight away. From inside its own namespace, the server answers on `localhost:8000`. From the host, there is nothing there: the host's `localhost` is a different network stack.
+(`-w` sets the working directory, which `http.server` serves. `--bind 0.0.0.0` makes it listen on every IPv4 interface of the container; without it, Python 3.12 tries IPv6 first, and fails outright on hosts where Docker gives containers no IPv6 The broader rule: a server in a container must listen on `0.0.0.0`, never only on `127.0.0.1`, or nothing outside the container — not even a published port — can reach it.) A container that has *started* has not necessarily finished starting its server, so the `until` loop polls until the server answers — a detail that matters whenever a script starts a container and uses it straight away. From inside its own namespace, the server answers on `localhost:8000`. From the host, there is nothing there: the host's `localhost` is a different network stack.
 
 ### 2. Publishing Ports
 
@@ -44,7 +44,7 @@ curl: nothing is listening on the host's port 8000
 
 ```console
 $ docker rm -f web >/dev/null
-$ docker run -d --name web -p 127.0.0.1:18080:8000 -v "$PWD/site:/srv:ro" -w /srv python:3.12.7-alpine3.20 python -m http.server 8000 >/dev/null
+$ docker run -d --name web -p 127.0.0.1:18080:8000 -v "$PWD/site:/srv:ro" -w /srv python:3.12.7-alpine3.20 python -m http.server 8000 --bind 0.0.0.0 >/dev/null
 $ until curl -s http://localhost:18080/ >/dev/null; do sleep 0.2; done
 $ curl -s http://localhost:18080/index.html
 hello from inside a container
@@ -63,7 +63,7 @@ An application is usually several containers — a web server, an API, a databas
 ```console
 $ docker network create shop
 [...]
-$ docker run -d --name api --network shop -v "$PWD/site:/srv:ro" -w /srv python:3.12.7-alpine3.20 python -m http.server 8000 >/dev/null
+$ docker run -d --name api --network shop -v "$PWD/site:/srv:ro" -w /srv python:3.12.7-alpine3.20 python -m http.server 8000 --bind 0.0.0.0 >/dev/null
 $ until docker exec api wget -qO- http://localhost:8000/ >/dev/null 2>&1; do sleep 0.2; done
 $ docker run --rm --network shop alpine:3.20.3 wget -qO- http://api:8000/index.html
 hello from inside a container
@@ -78,7 +78,7 @@ Addresses are assigned dynamically, and a replaced container usually gets a new 
 Containers started without `--network` join the **default bridge** network. They can reach each other by IP address, but Docker's DNS does not serve names there:
 
 ```console
-$ docker run -d --name lonely -v "$PWD/site:/srv:ro" -w /srv python:3.12.7-alpine3.20 python -m http.server 8000 >/dev/null
+$ docker run -d --name lonely -v "$PWD/site:/srv:ro" -w /srv python:3.12.7-alpine3.20 python -m http.server 8000 --bind 0.0.0.0 >/dev/null
 $ until docker exec lonely wget -qO- http://localhost:8000/ >/dev/null 2>&1; do sleep 0.2; done
 $ docker run --rm alpine:3.20.3 wget -qO- -T 2 http://lonely:8000/index.html
 wget: bad address 'lonely:8000'
@@ -121,8 +121,8 @@ Run an "API" and a "frontend" on a network called `app`. Only the frontend shoul
 ```console
 $ docker network create app
 [...]
-$ docker run -d --name app-api --network app -v "$PWD/api-data:/srv:ro" -w /srv python:3.12.7-alpine3.20 python -m http.server 8000 >/dev/null
-$ docker run -d --name app-frontend --network app -p 127.0.0.1:18081:8000 -v "$PWD/site:/srv:ro" -w /srv python:3.12.7-alpine3.20 python -m http.server 8000 >/dev/null
+$ docker run -d --name app-api --network app -v "$PWD/api-data:/srv:ro" -w /srv python:3.12.7-alpine3.20 python -m http.server 8000 --bind 0.0.0.0 >/dev/null
+$ docker run -d --name app-frontend --network app -p 127.0.0.1:18081:8000 -v "$PWD/site:/srv:ro" -w /srv python:3.12.7-alpine3.20 python -m http.server 8000 --bind 0.0.0.0 >/dev/null
 $ until curl -s http://localhost:18081/ >/dev/null && docker exec app-api wget -qO- http://localhost:8000/ >/dev/null 2>&1; do sleep 0.2; done
 $ curl -s http://localhost:18081/index.html
 hello from inside a container

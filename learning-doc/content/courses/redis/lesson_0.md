@@ -17,7 +17,7 @@ OK
 
 The line after the prompt is what you type; everything up to the next prompt is exactly what Redis prints back. Type them yourself — the point is to watch the server answer, not to read the answers.
 
-**These transcripts are tested, not illustrative.** `learning-doc/scripts/verify-redis-transcripts.mjs` replays every transcript in this course against a real `redis-server` and fails if a single reply differs from what is printed here. They were last verified against **Redis 7.0.15**, and the course relies on commands added in 6.2 and 7.0 (`SET ... GET`, `ZRANGE ... BYSCORE`, `EXPIRE ... GT`, `EXPIRETIME`), so use **Redis 7.0 or later**.
+**These transcripts are tested, not illustrative.** A verifier replays every transcript in this course against a real `redis-server` and fails if a single reply differs from what is printed here. They were last verified against **Redis 7.0.15**, and the course relies on commands added in 6.2 and 7.0 (`SET ... GET`, `ZRANGE ... BYSCORE`, `EXPIRE ... GT`, `EXPIRETIME`), so use **Redis 7.0 or later**.
 
 ### Running Redis locally
 

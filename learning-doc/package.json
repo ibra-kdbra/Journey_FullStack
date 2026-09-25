@@ -6,8 +6,7 @@
     "build": "nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",
-    "preview": "nuxt preview",
-    "test": "node scripts/verify-redis-transcripts.mjs && node scripts/verify-psql-transcripts.mjs && node scripts/verify-docker-transcripts.mjs && node scripts/verify-go-transcripts.mjs"
+    "preview": "nuxt preview"
   },
   "dependencies": {
     "@lucide/vue": "^1.46.0",

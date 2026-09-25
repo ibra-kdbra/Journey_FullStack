@@ -23,7 +23,7 @@ Every arrow ends at the same database, and every server identifies the caller to
 
 ## What this course verifies, and what it does not
 
-**Every `psql` transcript in this course is tested.** `learning-doc/scripts/verify-psql-transcripts.mjs` types each lesson's lines into a real, interactive `psql` connected to a throwaway **PostgreSQL 16** server, in lesson order, and fails if a single character differs from what is printed here — results, errors, notices and the prompts themselves. They were last verified against **PostgreSQL 16.15**.
+**Every `psql` transcript in this course is tested.** A verifier types each lesson's lines into a real, interactive `psql` connected to a throwaway **PostgreSQL 16** server, in lesson order, and fails if a single character differs from what is printed here — results, errors, notices and the prompts themselves. They were last verified against **PostgreSQL 16.15**.
 
 What is *not* run is everything outside the database: the Auth server, PostgREST, the Realtime server, Storage and the dashboard. Where a lesson depends on how one of those behaves, it says so, and it points at the source it relies on rather than asking you to take it on trust. Lesson 1 builds a small, clearly labelled stand-in for the parts of a Supabase database those servers depend on — the roles, the `auth` schema and `auth.uid()` — copied from Supabase's own open-source migrations, so that everything after it runs on plain PostgreSQL exactly as it would on a project.
 

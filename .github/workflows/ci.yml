@@ -120,14 +120,6 @@ jobs:
         with:
           python-version: ${{ matrix.project.python }}
 
-      # learning-doc's Go course runs every program in it, against the one Go
-      # release its transcripts were produced with (the manifest's `go`).
-      - uses: actions/setup-go@v7
-        if: matrix.project.go != ''
-        with:
-          go-version: ${{ matrix.project.go }}
-          cache: false
-
       - uses: actions/setup-java@v6
         if: matrix.project.ecosystem == 'maven'
         with:

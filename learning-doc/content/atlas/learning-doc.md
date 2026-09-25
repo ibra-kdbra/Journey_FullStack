@@ -69,10 +69,11 @@ cd learning-doc
 npm install
 npm run dev          # http://localhost:3000
 npm run build
-npm test             # replays the Redis, Supabase, Docker and Go courses' transcripts; needs
-                     # redis-server, PostgreSQL 16 with wal2json, a non-root user, Docker,
-                     # and Go 1.24
 ```
+
+There is no `npm test`. The Redis, Supabase, Docker and Go courses' transcripts
+are tests, but the verifiers that replay them live in a separate private
+repository, which checks out `content/courses/` and runs every lesson.
 
 ## Read alongside
 

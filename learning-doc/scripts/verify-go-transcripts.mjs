@@ -30,7 +30,7 @@
  *   fails reliably, rather than being shown from one lucky run.
  *
  * Usage: node scripts/verify-go-transcripts.mjs [lesson.md ...]
- * Needs Go 1.24 on PATH (or GO=/path/to/go), and gcc for the race detector.
+ * Needs Go 1.24 as `go` on PATH, and gcc for the race detector.
  * Exits 0 when every transcript matches.
  */
 

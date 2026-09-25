@@ -222,6 +222,10 @@ function diagnose(before) {
     lines.push(`  ${state.stdout.trim()}`)
     const logs = spawnSync('docker', ['logs', '--tail', '20', id], { env: ENV, encoding: 'utf8' })
     for (const l of (logs.stdout + logs.stderr).trim().split('\n')) if (l) lines.push(`    | ${l}`)
+    // For a container that is running but not answering, what it resolves
+    // and what it listens on usually explains why.
+    const inside = spawnSync('docker', ['exec', id, 'sh', '-c', 'echo "/etc/hosts:"; cat /etc/hosts; echo "listening:"; netstat -ltn 2>/dev/null || cat /proc/net/tcp /proc/net/tcp6 2>/dev/null'], { env: ENV, encoding: 'utf8' })
+    if (inside.status === 0) for (const l of inside.stdout.trim().split('\n')) if (l) lines.push(`    : ${l}`)
   }
   return lines.join('\n')
 }

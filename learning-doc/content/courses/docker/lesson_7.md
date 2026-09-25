@@ -136,7 +136,7 @@ services:
       redis:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health')"]
       interval: 1s
       timeout: 3s
       retries: 30
@@ -260,7 +260,7 @@ counter-redis-1
 counter-web-1
 counter-web-2
 counter-web-3
-$ for n in 1 2 3; do docker compose exec --index $n web python -c "import urllib.request; print(urllib.request.urlopen('http://localhost:8000/').read().decode(), end='')"; done
+$ for n in 1 2 3; do docker compose exec --index $n web python -c "import urllib.request; print(urllib.request.urlopen('http://127.0.0.1:8000/').read().decode(), end='')"; done
 visits: 1
 visits: 2
 visits: 3

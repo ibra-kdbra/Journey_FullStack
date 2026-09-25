@@ -1,642 +1,123 @@
-# Golang Course Curriculum from Basic to Advanced
+# Go: Concurrency, Interfaces and Tooling
 
-## Part 1: Golang Fundamentals (Lessons 1-10)
+Go is a small language with a large standard library and an opinionated toolchain. It is easy to learn the syntax in an afternoon and then write Go that looks like another language — Java with `if err != nil`, Python with braces. This course skips the syntax tour you can find anywhere and concentrates on the parts that make Go *Go*: the tool that builds, formats, vets and tests everything; values, slices and maps, and when they share memory; interfaces satisfied without being declared; errors as ordinary values; and goroutines and channels — and what it takes to make concurrent code correct.
 
-### Lesson 1: Introduction to Golang
+The course runs in one direction: tooling first, because every lesson uses it; then the type system; then errors; then concurrency, first with channels and then with shared memory; and finally a capstone that combines all of it, with tests.
 
-**Content:**
+## How to use this course
 
-- History and philosophy of Golang
-- Strengths and common applications
-- Installing Go and setting up the development environment
-- Structure of a simple Go program
+Every lesson is built around shell transcripts and the files they use. A file is shown with its path in the block header, like `hello/main.go`: create it at that path, relative to an empty working directory for the lesson. A transcript looks like this:
 
-**Activities:**
+```console
+$ go env GOVERSION
+go1.24.7
+```
 
-- Install Go on your computer
-- Write and run a "Hello World" program
-- Explore the Go Playground
+The line after `$ ` is what you type; everything up to the next `$ ` is what it prints. Even this example is checked: it prints the Go release the course was verified with. Output that is genuinely different on every run — how long a test took, one deliberately racy result — is shown as `[...]`, and the lesson says why at that point.
 
-### Lesson 2: Variables and Basic Data Types
+**These transcripts are tested, not illustrative.** `learning-doc/scripts/verify-go-transcripts.mjs` runs every lesson — writing its files, typing its commands into one shell, in order — and fails if any command prints something different. That includes the compiler's error messages, `go vet`'s findings, panics, the race detector and failing tests: when a lesson says "this does not compile" or "this deadlocks", it was run and it did. The transcripts were last verified with **Go 1.24.7** on Linux. Compiler messages and `go.mod` contents vary slightly between releases (a module created with Go 1.24.7 records `go 1.24.7`), so use Go 1.24 to match them exactly. Every program uses only the standard library: nothing is downloaded.
 
-**Content:**
+### Setting up
 
-- Declaring variables and constants
-- Basic data types: int, float, bool, string
-- Zero values
-- Type conversion and type inference
+Install Go 1.24 from [go.dev/dl](https://go.dev/dl/) or your package manager, and check it with `go version`. Lesson 6's race detector needs a C compiler (`gcc` or `clang`) on Linux; on macOS and Windows it works out of the box. Any editor with the Go extension (gopls) will format on save and show `go vet` findings as you type.
 
-**Activities:**
+## Part 1: Foundations
 
-- Practice declaring and using variables with different data types
-- Write a simple calculation program
-- Exercises on data type conversion
-
-### Lesson 3: Operators and Expressions
+### Lesson 1: Modules, Packages and the Toolchain
 
 **Content:**
 
-- Arithmetic operators
-- Comparison operators
-- Logical operators
-- Assignment operators
-- Operator precedence
+- `go mod init`, `go run`, `go build`, and cross-compiling with `GOOS`/`GOARCH`
+- A strict compiler: unused variables and imports are errors
+- `gofmt` and `go vet`
+- Packages, exported names, `internal/`, and `go doc`
 
 **Activities:**
 
-- Write programs using various types of operators
-- Solve complex calculation problems with multiple operators
-- Build a simple calculator
+- Build one program for three platforms
+- Find out what `go vet` catches — and what it does not
 
-### Lesson 4: Control Structures - Branching
+### Lesson 2: Values, Slices and Maps
 
 **Content:**
 
-- if-else statements
-- switch-case statements
-- Short-form conditional expressions
+- Zero values, and types that are ready to use without a constructor
+- Assignment copies; pointers share
+- Slices as views onto arrays, and the `append` aliasing trap
+- Maps: missing keys, nil maps, and deliberately random iteration order
 
 **Activities:**
 
-- Write a program to check for even/odd numbers
-- Create a day-of-the-week converter program
-- Build an application to calculate average scores and grade students
+- Fix a function that leaks its caller's buffer
+- Count words and print them in a stable order
 
-### Lesson 5: Control Structures - Loops
+### Lesson 3: Methods and Interfaces
 
 **Content:**
 
-- The for loop
-- for loop used as a while loop
-- Infinite loops
-- break and continue
-- Range iteration
+- Value and pointer receivers
+- Implicit interface satisfaction, and method sets
+- The typed-nil trap
+- Type switches, `fmt.Stringer`, and composing `io.Reader`s
 
 **Activities:**
 
-- Write a program to calculate the sum of numbers from 1 to n
-- Create a program to print multiplication tables
-- Build a simple number guessing game
+- A type that prints itself, checked at compile time
+- A counting `io.Writer`
 
-### Lesson 6: Arrays and Slices
+### Lesson 4: Errors Are Values
 
 **Content:**
 
-- Arrays in Go
-- Slices - dynamic arrays
-- Working with slices: append, copy, len, cap
-- Slice tricks and patterns
+- Returning and checking errors
+- Wrapping with `%w`; `errors.Is` and `errors.As`
+- Sentinel errors, error types, `errors.Join`
+- `defer`, and when `panic` and `recover` belong
 
 **Activities:**
 
-- Practice creating and manipulating arrays and slices
-- Write a program to find the maximum/minimum value in a slice
-- Build an exercise for processing student data
+- Report which file failed, without losing the cause
+- Decide when to wrap and when to hide
 
-### Lesson 7: Maps and Structs
+## Part 2: Concurrency
+
+### Lesson 5: Goroutines and Channels
 
 **Content:**
 
-- Maps - hash tables
-- Initializing and manipulating maps
-- Structs - custom data structures
-- Defining and using structs
+- Goroutines, and waiting for them with `sync.WaitGroup`
+- Unbuffered and buffered channels, closing, and `range`
+- Deadlock, and what the runtime tells you
+- `select`, timeouts, and a worker pool with deterministic output
 
 **Activities:**
 
-- Create a simple dictionary using a map
-- Build a contact management program
-- Model a student object using a struct
+- First answer wins, without leaking goroutines
+- Merge two channels into one
 
-### Lesson 8: Functions in Go
+### Lesson 6: Sharing Memory Safely
 
 **Content:**
 
-- Defining and calling functions
-- Parameters and return values
-- Multiple return values
-- Named return values
-- Variadic functions
+- Data races, and the race detector
+- `sync.Mutex`, `sync.RWMutex` and `sync/atomic`
+- Cancellation and deadlines with `context`
+- Choosing between channels and mutexes
 
 **Activities:**
 
-- Write simple calculation functions
-- Build a library of utility functions
-- Create an income tax calculation program
+- Find and fix a race in a cache
+- Cancel the losing goroutines
 
-### Lesson 9: Pointers and Values
+### Lesson 7: Capstone — A Tested, Concurrent Word Counter
 
 **Content:**
 
-- Introduction to pointers
-- Pass-by-reference vs. Pass-by-value
-- When to use pointers
-- Common pitfalls with pointers
+- A library, its tests, its test data and a command in one module
+- Table-driven tests, failing tests, cached results
+- Example tests, coverage, `-race`, and benchmarks with `b.Loop`
 
 **Activities:**
 
-- Write programs using pointers
-- Compare results when passing parameters by reference vs. value
-- Build an inventory management program
-
-### Lesson 10: Error Handling
-
-**Content:**
-
-- Error handling model in Go
-- The error interface
-- Creating and returning errors
-- Error handling patterns
-- panic and recover
-
-**Activities:**
-
-- Write a program to validate user input
-- Create custom error types
-- Build a file read/write application with proper error handling
-
-## Part 2: Advanced Programming with Go (Lessons 11-20)
-
-### Lesson 11: Methods and Interfaces
-
-**Content:**
-
-- Methods in Go
-- Receiver types: value vs. pointer
-- What is an Interface?
-- Declaring and implementing interfaces
-- Empty interfaces and type assertion
-
-**Activities:**
-
-- Create structs and methods
-- Implement interfaces for multiple object types
-- Build a geometry management system
-
-### Lesson 12: Packages and Modules
-
-**Content:**
-
-- Organizing code with packages
-- Imports and exports
-- Creating and using modules
-- Go modules and dependency management
-- Versioning
-
-**Activities:**
-
-- Create your own package
-- Build a simple module
-- Use third-party packages
-
-### Lesson 13: File I/O and Serialization
-
-**Content:**
-
-- Reading and writing files
-- Working with directories
-- JSON encoding/decoding
-- XML processing
-- Protocol buffers
-
-**Activities:**
-
-- Create a text file read/write program
-- Build a simple application to save JSON configuration
-- Create a simple API client
-
-### Lesson 14: Concurrency - Goroutines
-
-**Content:**
-
-- Concurrency vs. Parallelism
-- What are Goroutines?
-- Creating and managing goroutines
-- WaitGroups
-- Goroutine leaks and patterns
-
-**Activities:**
-
-- Write a simple program using goroutines
-- Build a worker pool
-- Create a simple web crawler
-
-### Lesson 15: Concurrency - Channels
-
-**Content:**
-
-- What are Channels?
-- Buffered vs. unbuffered channels
-- Blocking and communication
-- The select statement
-- Fan-in, fan-out patterns
-
-**Activities:**
-
-- Create a program using channels
-- Build a data processing pipeline
-- Create a parallel calculation application
-
-### Lesson 16: Concurrency Patterns
-
-**Content:**
-
-- Generator pattern
-- Worker pools
-- Pipeline pattern
-- Fan-in, fan-out
-- Timeout and cancellation
-
-**Activities:**
-
-- Build a batch processing system
-- Create a service handler with a timeout
-- Implement a simple image processing pipeline
-
-### Lesson 17: Context Package
-
-**Content:**
-
-- Overview of the context package
-- Context values
-- Cancellation
-- Deadlines and timeouts
-- Using context in HTTP requests
-
-**Activities:**
-
-- Write an API client with context timeout
-- Build a service with cancellation
-- Create a cancelable long-running process
-
-### Lesson 18: Basic Testing
-
-**Content:**
-
-- Writing unit tests
-- Table-driven tests
-- Test coverage
-- Benchmarking
-- Testable code design
-
-**Activities:**
-
-- Write test cases for functions and methods
-- Create a test suite for a package
-- Perform benchmark functions
-
-### Lesson 19: Advanced Testing
-
-**Content:**
-
-- Mocking in Go
-- Dependency injection
-- Testing HTTP handlers
-- Testify and other testing libraries
-- Integration tests
-
-**Activities:**
-
-- Write tests with mocks
-- Create an integration test for a database
-- Testing an HTTP API
-
-### Lesson 20: Reflection and Metaprogramming
-
-**Content:**
-
-- Reflection API
-- Type introspection
-- When to use reflection
-- Code generation
-- Disadvantages of reflection
-
-**Activities:**
-
-- Write a program using reflection
-- Create a simple validation framework
-- Build a generic caching solution
-
-## Part 3: Building Real-world Applications (Lessons 21-30)
-
-### Lesson 21: Web Development - HTTP Basics
-
-**Content:**
-
-- HTTP in Go
-- net/http package
-- Handlers and ServeMux
-- Middleware
-- Static file serving
-
-**Activities:**
-
-- Create a simple web server
-- Build a logging middleware
-- Implement a static file server
-
-### Lesson 22: Web Development - RESTful APIs
-
-**Content:**
-
-- RESTful principles
-- API design
-- JSON responses
-- Content negotiation
-- API versioning
-
-**Activities:**
-
-- Build a simple CRUD API
-- Create API documentation
-- Implement an API with versioning
-
-### Lesson 23: Web Development - Templates
-
-**Content:**
-
-- HTML templates
-- Template functions
-- Layouts and partials
-- Data passing
-- XSS prevention
-
-**Activities:**
-
-- Create a simple website with templates
-- Build a layout system
-- Implement a form with validation
-
-### Lesson 24: Web Frameworks
-
-**Content:**
-
-- Comparison: standard library vs. frameworks
-- Introduction to Gin
-- Routing and middleware
-- Validation
-- Dependency injection
-
-**Activities:**
-
-- Create an API with Gin
-- Implement middleware
-- Build a service layer
-
-### Lesson 25: Database - SQL
-
-**Content:**
-
-- database/sql package
-- Connecting to databases
-- CRUD operations
-- Transactions
-- Prepared statements
-
-**Activities:**
-
-- Connect to MySQL/PostgreSQL
-- Build a repository layer
-- Create a service with transaction support
-
-### Lesson 26: Database - ORMs
-
-**Content:**
-
-- GORM overview
-- Models and migrations
-- Relationships
-- Query building
-- Hooks and callbacks
-
-**Activities:**
-
-- Build an application with GORM
-- Implement relationships
-- Create a migration system
-
-### Lesson 27: Authentication and Authorization
-
-**Content:**
-
-- JWT authentication
-- OAuth 2.0
-- User management
-- Role-based access control
-- Security best practices
-
-**Activities:**
-
-- Build an authentication system
-- Implement JWT middleware
-- Create an RBAC system
-
-### Lesson 28: Caching
-
-**Content:**
-
-- In-memory caching
-- Redis integration
-- Cache strategies
-- Cache invalidation
-- Distributed caching
-
-**Activities:**
-
-- Build an in-memory cache layer
-- Integrate Redis
-- Create a caching middleware
-
-### Lesson 29: Microservices - Part 1
-
-**Content:**
-
-- Microservices principles
-- Service boundaries
-- Communication patterns
-- Service discovery
-- Configuration management
-
-**Activities:**
-
-- Design a microservice architecture
-- Build a simple service
-- Implement service discovery
-
-### Lesson 30: Microservices - Part 2
-
-**Content:**
-
-- gRPC introduction
-- Protocol Buffers
-- Streaming
-- Service-to-Service communication
-- Error handling
-
-**Activities:**
-
-- Create a gRPC service
-- Build a client/server
-- Implement bidirectional streaming
-
-## Part 4: Advanced Skills and Specialization (Lessons 31-40)
-
-### Lesson 31: Distributed Systems
-
-**Content:**
-
-- CAP theorem
-- Consistency patterns
-- Distributed transactions
-- Leader election
-- Consensus algorithms
-
-**Activities:**
-
-- Build a distributed cache
-- Implement distributed locking
-- Create a consensus simulation
-
-### Lesson 32: Messaging and Event Streaming
-
-**Content:**
-
-- Message queues
-- Pub/Sub patterns
-- Kafka integration
-- RabbitMQ
-- Event-driven architecture
-
-**Activities:**
-
-- Integrate with a message broker
-- Build an event-driven system
-- Implement retry mechanisms
-
-### Lesson 33: Monitoring and Observability
-
-**Content:**
-
-- Logging best practices
-- Metrics collection
-- Distributed tracing
-- Prometheus integration
-- OpenTelemetry
-
-**Activities:**
-
-- Build a logging infrastructure
-- Integrate Prometheus
-- Implement tracing
-
-### Lesson 34: Performance Optimization
-
-**Content:**
-
-- Profiling
-- Memory optimization
-- CPU profiling
-- pprof usage
-- Benchmarking
-
-**Activities:**
-
-- Analyze performance bottlenecks
-- Optimize memory usage
-- Create benchmarks for code
-
-### Lesson 35: Security Best Practices
-
-**Content:**
-
-- Input validation
-- SQL injection prevention
-- XSS protection
-- CSRF protection
-- Security headers
-
-**Activities:**
-
-- Code review for security
-- Implement security middleware
-- Create a security checklist
-
-### Lesson 36: Containerization and Docker
-
-**Content:**
-
-- Docker basics
-- Containerizing Go applications
-- Multi-stage builds
-- Docker Compose
-- Best practices
-
-**Activities:**
-
-- Create a Dockerfile for a Go app
-- Build a multi-container system
-- Implement a CI pipeline
-
-### Lesson 37: Kubernetes with Go
-
-**Content:**
-
-- Kubernetes basics
-- Client-go library
-- Custom controllers
-- Operators
-- Kubernetes patterns
-
-**Activities:**
-
-- Deploy a Go app on Kubernetes
-- Create a simple operator
-- Build an autoscaling service
-
-### Lesson 38: Serverless Go
-
-**Content:**
-
-- Serverless architecture
-- AWS Lambda with Go
-- Google Cloud Functions
-- Cold starts
-- Serverless patterns
-
-**Activities:**
-
-- Build a serverless function
-- Create an event-driven lambda
-- Implement an API Gateway
-
-### Lesson 39: Blockchain Development with Go
-
-**Content:**
-
-- Blockchain fundamentals
-- Cryptography in Go
-- Simple blockchain implementation
-- Smart contracts
-- Ethereum integration
-
-**Activities:**
-
-- Create a simple blockchain
-- Build a cryptocurrency wallet
-- Implement a smart contract client
-
-### Lesson 40: Capstone Project
-
-**Content:**
-
-- Project planning
-- System design
-- Best practices implementation
-- Deployment strategies
-- Production readiness
-
-**Activities:**
-
-- Design a full-stack application
-- Build a CI/CD pipeline
-- Deploy a production-ready system
+- A test for a rule, not an accident
+- Fuzzing the word counter

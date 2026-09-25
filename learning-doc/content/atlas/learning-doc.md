@@ -69,8 +69,8 @@ cd learning-doc
 npm install
 npm run dev          # http://localhost:3000
 npm run build
-npm test             # replays the Redis and Supabase courses' transcripts; needs redis-server,
-                     # PostgreSQL 16 with wal2json, and a non-root user
+npm test             # replays the Redis, Supabase and Docker courses' transcripts; needs
+                     # redis-server, PostgreSQL 16 with wal2json, a non-root user, and Docker
 ```
 
 ## Read alongside

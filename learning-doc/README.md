@@ -47,7 +47,7 @@ npm install
 npm run dev        # http://localhost:3000
 npm run build
 npm run preview
-npm test           # replays the Redis course transcripts; needs redis-server on PATH
+npm test           # replays the Redis and Supabase course transcripts (see below)
 ```
 
 ## Course transcripts are tests
@@ -66,6 +66,24 @@ lesson prints. It never connects to a Redis you already run.
 
 When a lesson fails, the verifier prints what the lesson shows next to what Redis
 returned. Fix the lesson, not the verifier.
+
+The Supabase course works the same way for `psql`. Every fenced block in
+`content/courses/supabase/` whose first line starts with a psql prompt
+(`postgres=# `, `postgres=> `, `postgres=*# `, ...) is a test.
+[`scripts/verify-psql-transcripts.mjs`](scripts/verify-psql-transcripts.mjs)
+creates a throwaway PostgreSQL 16 cluster with `initdb` in a temp directory
+(unix socket only), types each prompted line into a real interactive `psql`
+running under `script(1)`, and compares the whole transcript — prompts included,
+since `=*#`, `=!#` and `=>` tell the reader about transactions and roles.
+
+- Lessons run in order against one database: the course builds one schema, so
+  a later lesson relies on what an earlier one created.
+- It needs PostgreSQL 16's server binaries (`/usr/lib/postgresql/16/bin`, or set
+  `PG_BINDIR`), the `wal2json` plugin (`postgresql-16-wal2json`) and `script`
+  from util-linux, and it must run as a non-root user, because `initdb` refuses
+  to run as root.
+- There is no opt-out here either. Clock times, random UUIDs and unordered rows
+  do not belong in a transcript: select other columns, use fixed IDs, `order by`.
 
 ## Adding an Atlas entry
 

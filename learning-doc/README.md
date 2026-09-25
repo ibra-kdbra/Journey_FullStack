@@ -47,7 +47,7 @@ npm install
 npm run dev        # http://localhost:3000
 npm run build
 npm run preview
-npm test           # replays the Redis and Supabase course transcripts (see below)
+npm test           # replays the Redis, Supabase and Docker course transcripts (see below)
 ```
 
 ## Course transcripts are tests
@@ -84,6 +84,24 @@ since `=*#`, `=!#` and `=>` tell the reader about transactions and roles.
   to run as root.
 - There is no opt-out here either. Clock times, random UUIDs and unordered rows
   do not belong in a transcript: select other columns, use fixed IDs, `order by`.
+
+The Docker course is checked by
+[`scripts/verify-docker-transcripts.mjs`](scripts/verify-docker-transcripts.mjs)
+against a real Docker daemon. A block starting with `$ ` is a transcript; a block
+whose info string names a path (```` ```dockerfile [hello/Dockerfile] ````) is a
+file the lesson creates, written before the commands after it run. Each lesson
+runs in its own temporary directory, in one `bash` session, so `cd`, variables
+and `$?` carry between commands.
+
+- `[...]` in expected output matches any text within one line. It is for values
+  Docker generates at random — new container, network and image IDs — and
+  nothing else. Use `--format`, `-q` and `docker pull -q` to keep everything
+  else exact.
+- Containers, volumes and networks a lesson creates are removed afterwards.
+  Images are kept: each image is pulled once, in the lesson that introduces it,
+  so lessons run in order, and Docker Hub's rate limit on anonymous pulls is not
+  spent on every run.
+- It needs a Docker daemon, the Compose plugin, `curl` and `python3`.
 
 ## Adding an Atlas entry
 

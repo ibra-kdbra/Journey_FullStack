@@ -78,7 +78,7 @@ const langIcon = computed(() => {
     <div class="prose-pre-header">
       <div class="prose-pre-info">
         <Icon v-if="langIcon" :name="langIcon" class="prose-pre-lang-icon" />
-        <span class="prose-pre-lang">{{ displayFileName || 'text' }}</span>
+        <span class="prose-pre-lang" :class="{ 'prose-pre-lang--filename': props.filename }">{{ displayFileName || 'text' }}</span>
       </div>
       <button 
         @click="copyCode"
@@ -147,6 +147,12 @@ const langIcon = computed(() => {
   font-weight: 600;
   color: #8b949e;
   text-transform: lowercase;
+}
+
+/* A filename is shown exactly as written: `Dockerfile` and `dockerfile` are
+   different files on a case-sensitive filesystem. */
+.prose-pre-lang--filename {
+  text-transform: none;
 }
 
 /* --- Copy Button --- */

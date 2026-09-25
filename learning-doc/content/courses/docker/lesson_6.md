@@ -135,12 +135,12 @@ $ docker port app-api
 
 ### Exercise 2: What Does a Container See as Its Name?
 
-Inside a container on a user-defined network, look up your own name and another container's name with `nslookup`. Where does the answer come from?
+Inside a container on a user-defined network, look up your own name and another container's name with `getent hosts`, which resolves a name the way any program in the container would. Where does the answer come from?
 
 **Solution:**
 
 ```console
-$ docker run --rm --network app --name curious alpine:3.20.3 sh -c 'grep nameserver /etc/resolv.conf; nslookup app-api >/dev/null && echo "app-api resolves"; nslookup curious >/dev/null && echo "curious resolves"'
+$ docker run --rm --network app --name curious alpine:3.20.3 sh -c 'grep nameserver /etc/resolv.conf; getent hosts app-api >/dev/null && echo "app-api resolves"; getent hosts curious >/dev/null && echo "curious resolves"'
 nameserver 127.0.0.11
 app-api resolves
 curious resolves

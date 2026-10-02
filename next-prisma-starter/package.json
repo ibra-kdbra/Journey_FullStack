@@ -20,11 +20,11 @@
     "@prisma/adapter-pg": "^7.10.0",
     "@prisma/client": "^7.10.0",
     "@reduxjs/toolkit": "^2.5.0",
-    "@types/node": "26.6.1",
+    "@types/node": "26.6.3",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "autoprefixer": "10.6.1",
-    "eslint": "10.10.0",
+    "eslint": "10.11.0",
     "eslint-config-next": "16.3.6",
     "next": "16.3.6",
     "pg": "^8.23.0",
@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.3.3",
-    "prettier": "^3.9.7",
+    "prettier": "^3.9.9",
     "prisma": "^7.10.0",
     "ts-node": "^10.9.1"
   }

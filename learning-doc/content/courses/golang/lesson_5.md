@@ -1,160 +1,414 @@
-# Lesson 5: Control Structures - Loops in Golang
+# Lesson 5: Goroutines and Channels
 
 ## 🎯 Lesson Objectives
 
-- Understand and master the different types of loops in Golang.
-- Be proficient in the syntax and usage of `for` loops.
-- Explore advanced loop control techniques.
+After this lesson, you will be able to:
+
+- Start goroutines, and wait for them with `sync.WaitGroup`
+- Pass values between goroutines with channels, and close channels to signal "no more"
+- Recognise the deadlock error and what causes it
+- Wait on several channels at once, with a timeout, using `select`
+- Build a worker pool whose output is deterministic, however the goroutines are scheduled
 
 ## 📝 Detailed Content
 
-### 1. The Basic `for` Loop
+### 1. Goroutines
 
-#### 1.1 Classical Syntax
+`go f()` starts `f` running concurrently, in a **goroutine** — a function executing independently, scheduled by the Go runtime onto operating-system threads. Goroutines are cheap: a few kilobytes of stack to start with, so a program can run hundreds of thousands of them.
 
-Golang uses the `for` keyword to perform loops with a flexible and powerful syntax. The full syntax consists of three parts:
+The first thing to learn about them is that `main` does not wait:
 
-```go
-for initialization; condition; post {
-    // block of code
+```console
+$ mkdir conc && cd conc
+$ go mod init example.com/conc
+go: creating new go.mod: module example.com/conc
+```
+
+```go [conc/nowait/main.go]
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+func main() {
+	go func() {
+		time.Sleep(100 * time.Millisecond)
+		fmt.Println("from the goroutine")
+	}()
+	fmt.Println("main is done")
 }
 ```
 
-#### 1.2 While-style Loop
+```console
+$ go run ./nowait
+main is done
+```
 
-Golang does not have a separate `while` keyword. Instead, you use `for` with only a condition:
+When `main` returns, the program exits, and every goroutine still running is abandoned mid-flight. The goroutine never got to print.
 
-```go
-count := 0
-for count < 5 {
-    fmt.Println("Count:", count)
-    count++
+### 2. Waiting with `sync.WaitGroup`
+
+A `WaitGroup` counts outstanding goroutines: `Add` before starting each one, `Done` when it finishes, `Wait` to block until the count reaches zero. To keep results in a predictable order, give each goroutine its own slot to write:
+
+```go [conc/waitgroup/main.go]
+package main
+
+import (
+	"fmt"
+	"strings"
+	"sync"
+)
+
+func main() {
+	words := []string{"alpha", "beta", "gamma", "delta"}
+	results := make([]string, len(words))
+
+	var wg sync.WaitGroup
+	for i, w := range words {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			results[i] = strings.ToUpper(w)
+		}()
+	}
+	wg.Wait()
+	fmt.Println(results)
 }
 ```
 
-#### 1.3 Infinite Loop
+```console
+$ go run ./waitgroup
+[ALPHA BETA GAMMA DELTA]
+```
 
-Infinite loops are very useful in special cases like servers, games, or applications that continuously process data:
+The goroutines run in whatever order the scheduler chooses, but each writes only its own element, so the result is always in input order — and because no two goroutines touch the same memory, this is safe (lesson 6 shows what happens when they do).
 
-```go
-for {
-    if condition {
-        break
-    }
+Each goroutine uses `i` and `w` from its own loop iteration. Since Go 1.22, every iteration of a `for` loop has fresh variables; in older versions all the goroutines would have shared one `i` and one `w`, a classic bug that `go vet`'s `loopclosure` check still looks for in older modules.
+
+### 3. Channels
+
+A channel is a typed pipe between goroutines. `ch <- v` sends, `v := <-ch` receives. On an **unbuffered** channel, a send waits until a receiver takes the value — so a send and its receive are also a synchronisation point:
+
+```go [conc/pingpong/main.go]
+package main
+
+import "fmt"
+
+func main() {
+	ping := make(chan int)
+	pong := make(chan int)
+
+	go func() {
+		for n := range ping { // receives until ping is closed
+			pong <- n * 10
+		}
+		close(pong)
+	}()
+
+	for i := 1; i <= 3; i++ {
+		ping <- i
+		fmt.Println("sent", i, "got", <-pong)
+	}
+	close(ping)
+
+	_, ok := <-pong
+	fmt.Println("pong still open:", ok)
 }
 ```
 
-### 2. Loop Control Keywords
+```console
+$ go run ./pingpong
+sent 1 got 10
+sent 2 got 20
+sent 3 got 30
+pong still open: false
+```
 
-#### 2.1 The `break` Keyword
+`close(ch)` says "no more values". `for v := range ch` receives until the channel is closed and drained, and a receive from a closed channel returns the zero value with `ok == false`. Only the sender should close a channel, and only once: sending on a closed channel panics.
 
-The `break` keyword allows you to exit a loop completely and immediately:
+A **buffered** channel, `make(chan T, n)`, holds up to `n` values, so sends only block when it is full:
 
-```go
-for i := 0; i < 10; i++ {
-    if i == 5 {
-        fmt.Println("Found number 5, stopping the loop")
-        break
-    }
-    fmt.Println(i)
+```go [conc/buffered/main.go]
+package main
+
+import "fmt"
+
+func main() {
+	queue := make(chan string, 3)
+	queue <- "a"
+	queue <- "b"
+	fmt.Println(len(queue), cap(queue))
+	close(queue)
+	for item := range queue {
+		fmt.Println(item)
+	}
 }
 ```
 
-#### 2.2 The `continue` Keyword
+```console
+$ go run ./buffered
+2 3
+a
+b
+```
 
-The `continue` keyword skips the rest of the current iteration and proceeds to the next one:
+No goroutine was needed: the buffer had room for both sends.
 
-```go
-for i := 0; i < 10; i++ {
-    if i % 2 == 0 {
-        continue
-    }
-    fmt.Println(i) // Prints only odd numbers
+### 4. Deadlock
+
+If every goroutine is blocked — waiting on a channel nobody will ever send to or receive from — the program can never make progress, and the runtime says so:
+
+```go [conc/deadlock/main.go]
+package main
+
+import "fmt"
+
+func main() {
+	results := make(chan int)
+	results <- 42 // blocks forever: nobody is receiving
+	fmt.Println(<-results)
 }
 ```
 
-**Applications:**
+```console
+$ go run ./deadlock 2>&1 | grep -E '^(fatal error|goroutine 1|exit status)'
+fatal error: all goroutines are asleep - deadlock!
+goroutine 1 [chan send]:
+exit status 2
+```
 
-- Skipping unwanted elements.
-- Optimizing processing logic within a loop.
+(The full message continues with a stack trace containing a temporary path; the transcript keeps the lines that do not change.) `goroutine 1 [chan send]` says what `main` was stuck on. An unbuffered send needs a receiver running *at the same time*, in another goroutine. The runtime can only detect a deadlock when *every* goroutine is stuck; a program with one healthy goroutine and ten deadlocked ones just hangs, which is why lesson 6's timeouts matter.
 
-### 3. Iterating Over Data Structures
+### 5. `select` and Timeouts
 
-#### 3.1 The `range` Loop with Slices
+`select` waits on several channel operations and proceeds with whichever is ready first. With `time.After`, which delivers a value after a delay, it gives any operation a timeout:
 
-The `range` keyword provides an easy way to iterate through the elements of a slice:
+```go [conc/timeout/main.go]
+package main
 
-```go
-numbers := []int{1, 2, 3, 4, 5}
-for index, value := range numbers {
-    fmt.Printf("Index %d: Value %d\n", index, value)
+import (
+	"fmt"
+	"time"
+)
+
+func slowSquare(n int, delay time.Duration) <-chan int {
+	out := make(chan int, 1) // buffered, so the goroutine can finish even if nobody waits
+	go func() {
+		time.Sleep(delay)
+		out <- n * n
+	}()
+	return out
 }
 
-// Using the blank identifier if index is not needed
-for _, value := range numbers {
-    fmt.Println("Value:", value)
+func main() {
+	for _, delay := range []time.Duration{10 * time.Millisecond, 500 * time.Millisecond} {
+		select {
+		case v := <-slowSquare(7, delay):
+			fmt.Println("result:", v)
+		case <-time.After(100 * time.Millisecond):
+			fmt.Println("gave up after 100ms")
+		}
+	}
 }
 ```
 
-#### 3.2 The `range` Loop with Maps
+```console
+$ go run ./timeout
+result: 49
+gave up after 100ms
+```
 
-Iterating through key-value pairs in a map:
+`<-chan int` is a receive-only channel type: callers of `slowSquare` can only read from it. The one-element buffer matters: when the caller gives up, the goroutine can still complete its send and exit, instead of blocking forever on a channel nobody reads — a **goroutine leak**.
 
-```go
-student := map[string]int{
-    "Alice": 90,
-    "Bob":   85,
-    "Carol": 92,
+### 6. A Worker Pool
+
+The standard shape for concurrent work: a channel of jobs, a fixed number of workers reading from it, a channel of results. Which worker handles which job, and in which order results arrive, varies from run to run — so the results carry what they belong to, and the collector sorts them:
+
+```go [conc/pool/main.go]
+package main
+
+import (
+	"fmt"
+	"slices"
+	"strings"
+	"sync"
+)
+
+type result struct {
+	word   string
+	vowels int
 }
 
-for key, value := range student {
-    fmt.Printf("Name: %s, Score: %d\n", key, value)
+func countVowels(s string) int {
+	return strings.Count(s, "a") + strings.Count(s, "e") + strings.Count(s, "i") +
+		strings.Count(s, "o") + strings.Count(s, "u")
 }
 
-// Only keys
-for key := range student {
-    fmt.Println("Student Name:", key)
+func main() {
+	words := strings.Fields("concurrency is not parallelism but it enables parallelism")
+	jobs := make(chan string)
+	results := make(chan result)
+
+	var wg sync.WaitGroup
+	for w := 0; w < 3; w++ {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for word := range jobs {
+				results <- result{word, countVowels(word)}
+			}
+		}()
+	}
+
+	go func() {
+		for _, word := range words {
+			jobs <- word
+		}
+		close(jobs) // workers' range loops end
+	}()
+
+	go func() {
+		wg.Wait()
+		close(results) // the collector's range loop ends
+	}()
+
+	var all []result
+	for r := range results {
+		all = append(all, r)
+	}
+	slices.SortFunc(all, func(a, b result) int { return strings.Compare(a.word, b.word) })
+	for _, r := range slices.CompactFunc(all, func(a, b result) bool { return a.word == b.word }) {
+		fmt.Printf("%-12s %d\n", r.word, r.vowels)
+	}
 }
 ```
 
-**Characteristics:**
+```console
+$ go run ./pool
+but          1
+concurrency  3
+enables      3
+is           1
+it           1
+not          1
+parallelism  4
+```
 
-- Iteration order over maps is not guaranteed.
+Three details make this correct rather than lucky:
 
-## 🏆 Hands-on Exercise
+- The producer closes `jobs` when it has sent everything, which ends each worker's `range` loop.
+- A separate goroutine closes `results` only after **all** workers are done (`wg.Wait()`); closing it any earlier would make a late worker's send panic.
+- The collector sorts before printing (and drops the duplicate "parallelism"), so the output does not depend on scheduling.
 
-### Exercise 1: Sum of Integers
+## 🏆 Hands-on Exercise with Detailed Solutions
 
-**Task:** Write a program to calculate the sum of integers from 1 to n (where n is input by the user).
+### Exercise 1: First Answer Wins
 
-### Exercise 2: Multiplication Table
+Query three "mirrors" concurrently, each with a different delay, and use the first answer. Make sure the slower goroutines do not leak.
 
-**Task:** Create a program that prints the multiplication table from 1 to 10.
+**Solution:**
 
-### Exercise 3: Prime Number Check
+```go [conc/first/main.go]
+package main
 
-**Task:** Write a function that checks if a given number is a prime number.
+import (
+	"fmt"
+	"time"
+)
+
+func query(name string, delay time.Duration, out chan<- string) {
+	time.Sleep(delay)
+	out <- name
+}
+
+func main() {
+	out := make(chan string, 3) // room for every answer: nobody blocks
+	go query("mirror-slow", 400*time.Millisecond, out)
+	go query("mirror-fast", 10*time.Millisecond, out)
+	go query("mirror-medium", 200*time.Millisecond, out)
+	fmt.Println("first answer from", <-out)
+}
+```
+
+```console
+$ go run ./first
+first answer from mirror-fast
+```
+
+The buffer has room for all three answers, so the two losers can deliver theirs and exit even though nobody reads them. With an unbuffered channel they would block forever — harmless in a program about to exit, a steady memory leak in a long-running server. (Lesson 6's `context` is the tool for telling them to stop early instead.)
+
+### Exercise 2: Fan In
+
+Merge two channels into one, closing the output when both inputs are closed.
+
+**Solution:**
+
+```go [conc/merge/main.go]
+package main
+
+import (
+	"fmt"
+	"slices"
+	"sync"
+)
+
+func merge(a, b <-chan int) <-chan int {
+	out := make(chan int)
+	var wg sync.WaitGroup
+	for _, in := range []<-chan int{a, b} {
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
+			for v := range in {
+				out <- v
+			}
+		}()
+	}
+	go func() { wg.Wait(); close(out) }()
+	return out
+}
+
+func emit(values ...int) <-chan int {
+	ch := make(chan int)
+	go func() {
+		for _, v := range values {
+			ch <- v
+		}
+		close(ch)
+	}()
+	return ch
+}
+
+func main() {
+	var got []int
+	for v := range merge(emit(1, 3, 5), emit(2, 4)) {
+		got = append(got, v)
+	}
+	slices.Sort(got)
+	fmt.Println(got)
+}
+```
+
+```console
+$ go run ./merge
+[1 2 3 4 5]
+```
+
+The same close-after-`Wait` pattern as the worker pool: `out` is closed by the one goroutine that knows every sender has finished.
 
 ## 🔑 Key Points to Remember
 
-- Golang lacks a traditional `while` loop; use `for` instead.
-- `break` and `continue` keywords help control the loop flow.
-- Use `range` to iterate through slices, maps, and channels.
+- `go f()` starts a goroutine; `main` returning ends the program without waiting.
+- `sync.WaitGroup` waits for a group of goroutines; give each its own result slot to keep order.
+- Unbuffered channels synchronise sender and receiver; buffered channels decouple them up to their capacity.
+- The sender closes a channel, once; `range` over a channel ends at close. Close a shared results channel only after all senders finish.
+- `select` waits on several operations; `time.After` adds a timeout. Buffer or cancel so that abandoned goroutines can exit.
+- Concurrent output is only deterministic if the program makes it so: collect, then sort.
 
 ## 📝 Homework
 
-### Task 1: Count Characters
-
-Write a program to count the number of characters in a string without using the `len()` function.
-
-### Task 2: Find Maximum Number
-
-Create a program to find the largest number in an array of integers using a loop.
-
-### Task 3: Binary Conversion
-
-Write a function to convert a positive integer to its binary representation.
-
-### Task 4: Draw a Star Triangle
-
-Create a program that prints a triangle pattern made of stars (\*) with a height entered by the user.
+1. Remove the `wg.Wait()` goroutine from the worker pool and close `results` right after starting the workers. What happens, and why?
+2. Rewrite the worker pool so that each result carries the index of its word, and rebuild the output in input order without sorting.
+3. Measure how many goroutines a program can start that each block on a channel receive, using `runtime.NumGoroutine()`. Stop at a million.

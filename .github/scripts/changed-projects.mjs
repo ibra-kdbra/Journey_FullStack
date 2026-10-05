@@ -59,6 +59,9 @@ const toMatrixEntry = (p) => ({
   installFlags: p.installFlags ?? [],
   // Name of a database to create before the checks run, or '' for none.
   postgres: p.postgres ?? '',
+  // A Go release to install alongside the project's own toolchain, or '' for
+  // none - for a project whose checks run Go without being a Go module.
+  go: p.go ?? '',
 });
 
 // Any ecosystem the workflow knows how to run. This filter previously admitted

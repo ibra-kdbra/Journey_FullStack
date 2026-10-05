@@ -47,7 +47,7 @@ function lessonRoutes(dir = COURSES, out = []) {
 }
 
 if (!existsSync(COURSES)) {
-  console.error('content/courses does not exist — nothing to check.')
+  console.error('content/courses does not exist — nothing to check. The lessons are not in git: run learning-doc/scripts/fetch-courses.mjs first.')
   process.exit(1)
 }
 

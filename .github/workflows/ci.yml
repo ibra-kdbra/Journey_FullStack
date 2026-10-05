@@ -266,6 +266,11 @@ jobs:
 
       - name: Build
         if: matrix.project.build
+        # learning-doc's lessons live in a private GitLab repository and its
+        # prebuild step fetches them (learning-doc/scripts/fetch-courses.mjs).
+        # The token is passed to that one project's build and no other.
+        env:
+          COURSES_TOKEN: ${{ matrix.project.path == 'learning-doc' && secrets.LEARNING_DOC_COURSES_TOKEN || '' }}
         run: |
           if [ "${{ matrix.project.ecosystem }}" = "maven" ]; then
             mvn -B -DskipTests package

@@ -21,7 +21,7 @@ lie. See [ADR-0003](../docs/decisions/0003-atlas-replaces-course-site.md).
 ```
 content/
   atlas/            one entry per project — the schema in content.config.ts is enforced
-  courses/          long-form course material
+  courses/          the course lessons - not in git; fetched before a build (see Courses)
 components/
   ui/  common/  content/  course/  docs/  custom/
 composables/        useTheme  useCodeInputAnalysis
@@ -44,35 +44,32 @@ runtime configuration to supply.
 
 ```bash
 npm install
+export COURSES_TOKEN=...   # read access to the lessons (see Courses), or COURSES_SKIP=1
 npm run dev        # http://localhost:3000
 npm run build
 npm run preview
 ```
 
-## Course transcripts are tests
+## Courses
 
-In the Redis, Supabase, Docker and Go courses, every transcript is a test: each
-command is really run, and the lesson must show exactly what it prints. The
-verifiers that do this live in a separate private repository, not here. They
-check out `content/courses/` and replay every lesson against a real
-`redis-server`, a throwaway PostgreSQL 16 cluster, a Docker daemon and Go 1.24.
-That is why this project's manifest entry has `test: false`: the lessons are
-tested, just not by this repository's CI.
+The course lessons are not in this repository. They live in a private GitLab
+repository together with the tooling that runs them: in the Redis, Supabase,
+Docker and Go courses every transcript is a test, replayed against the real
+tools, and a lesson must show exactly what its commands print. That is why
+this project's manifest entry has `test: false` - the lessons are tested
+there, not here.
 
-What a lesson author needs to know:
+[`scripts/fetch-courses.mjs`](scripts/fetch-courses.mjs) copies the lessons
+into `content/courses/` (ignored by git). npm runs it before `dev`, `build` and
+`generate`, and CI runs it before `check-courses.mjs`.
 
-- **Redis** transcripts start with the `127.0.0.1:6379> ` prompt, and **Supabase**
-  transcripts with a psql prompt (`postgres=# `, `postgres=*# `, ...). Prompts
-  are compared too, since `=*#` and `=!#` tell the reader about transactions.
-- **Docker** and **Go** transcripts are `console` blocks whose lines start with
-  `$ `. A block whose info string names a path (```` ```go [hello/main.go] ````)
-  is a file the lesson creates. Each lesson runs top to bottom in one shell.
-- `[...]` matches any text within one line, and only stands for values that
-  are random by design: generated IDs, measured timings, one deliberately
-  racy result. Nothing else that varies belongs in a transcript: sort it,
-  `order by` it, or format it away.
-- Versions are pinned (listed in each course's `lesson_0.md`), because compiler
-  messages and CLI output change between releases.
+- `COURSES_TOKEN` - a GitLab token with `read_repository` on the lessons'
+  repository. CI reads it from the `LEARNING_DOC_COURSES_TOKEN` secret.
+- Without a token, a `content/courses/` fetched earlier is reused. With
+  neither, the build fails rather than producing a site without its courses;
+  `COURSES_SKIP=1` builds without them on purpose.
+- `COURSES_REF` fetches another branch or tag, to preview lessons before they
+  are merged there.
 
 ## Adding an Atlas entry
 

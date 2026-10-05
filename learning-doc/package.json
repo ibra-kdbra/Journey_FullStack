@@ -3,8 +3,11 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "prebuild": "node scripts/fetch-courses.mjs",
     "build": "nuxt build",
+    "predev": "node scripts/fetch-courses.mjs",
     "dev": "nuxt dev",
+    "pregenerate": "node scripts/fetch-courses.mjs",
     "generate": "nuxt generate",
     "preview": "nuxt preview"
   },

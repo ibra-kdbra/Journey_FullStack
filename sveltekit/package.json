@@ -58,7 +58,7 @@
     "svelte": "5.57.2",
     "svelte-check": "^4.3.5",
     "svelte-sonner": "^1.0.7",
-    "sveltekit-flash-message": "^2.4.6",
+    "sveltekit-flash-message": "^3.0.0",
     "sveltekit-rate-limiter": "^0.8.0",
     "sveltekit-superforms": "^2.31.0",
     "tailwind-merge": "^3.7.0",

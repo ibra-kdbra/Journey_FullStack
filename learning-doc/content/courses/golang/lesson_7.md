@@ -238,6 +238,7 @@ The ... sleeps!
 ```
 
 ```console
+$ sleep 2
 $ go test ./...
 ok  	example.com/wordfreq	[...]
 $ go test ./...
@@ -245,6 +246,8 @@ ok  	example.com/wordfreq	(cached)
 ```
 
 `ok` with the package and the time taken (shown as `[...]`, since it varies). The second run says `(cached)`: Go remembers that nothing the tests depend on has changed — source, test data, environment — and reuses the result. `-count=1` forces a real run.
+
+The `sleep 2` is there because Go will not cache a result that read a file modified in the last two seconds: a file that new might still be changing. Typed by hand, you would never notice; run straight after saving `testdata/`, as a script does, the second run would test again instead of saying `(cached)`.
 
 `-v` lists every test and subtest; `-run` selects them by a regular expression, `/` separating a test from its subtests:
 

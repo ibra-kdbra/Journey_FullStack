@@ -10,14 +10,14 @@
     },
     "dependencies": {
         "@astrojs/check": "^0.9.4",
-        "@astrojs/react": "^7.0.0",
+        "@astrojs/react": "^7.0.1",
         "@astrojs/sitemap": "^3.7.4",
         "@hookform/resolvers": "^5.1.1",
         "@tailwindcss/typography": "^0.5.16",
         "@tailwindcss/vite": "^4.0.8",
         "@types/react": "^19.3.0",
-        "astro": "^7.3.5",
-        "lucide-react": "^1.49.0",
+        "astro": "^7.3.7",
+        "lucide-react": "^1.52.0",
         "react": "^19.3.0",
         "react-device-detect": "^2.2.3",
         "react-dom": "^19.3.0",
@@ -35,5 +35,8 @@
         "@types/react-dom": "^19.3.0",
         "npm-run-all": "^4.1.5",
         "vite-plugin-svgr": "^5.0.0"
+    },
+    "overrides": {
+        "rolldown": "1.2.12"
     }
 }

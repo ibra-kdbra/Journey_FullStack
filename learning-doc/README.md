@@ -47,7 +47,7 @@ npm install
 npm run dev        # http://localhost:3000
 npm run build
 npm run preview
-npm test           # replays the Redis, Supabase and Docker course transcripts (see below)
+npm test           # replays the Redis, Supabase, Docker and Go course transcripts (see below)
 ```
 
 ## Course transcripts are tests
@@ -102,6 +102,19 @@ and `$?` carry between commands.
   so lessons run in order, and Docker Hub's rate limit on anonymous pulls is not
   spent on every run.
 - It needs a Docker daemon, the Compose plugin, `curl` and `python3`.
+
+The Go course is checked by
+[`scripts/verify-go-transcripts.mjs`](scripts/verify-go-transcripts.mjs), which
+shares that engine ([`scripts/lib/shell-transcripts.mjs`](scripts/lib/shell-transcripts.mjs))
+and runs every file and command in each lesson.
+
+- It refuses any Go release other than 1.24 (compiler messages change between
+  releases), and sets `GOTOOLCHAIN=local` and `GOPROXY=off`: every program uses
+  only the standard library, so nothing is downloaded.
+- `[...]` is used only for test and benchmark timings and one deliberately racy
+  result. Panic and race reports are filtered with `grep` to their fixed lines,
+  and a bug that shows only some of the time is run with `go test -count=N`.
+- It needs Go 1.24 and, for the race detector, a C compiler.
 
 ## Adding an Atlas entry
 

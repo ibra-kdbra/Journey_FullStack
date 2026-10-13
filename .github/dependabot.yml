@@ -158,10 +158,23 @@ updates:
     # mjml 5 is held: sailkit is the only consumer and its latest release,
     # 0.3.5, peers `mjml: "^4.0.0"`. The project imports mjml nowhere itself,
     # so this is purely sailkit's constraint to widen. See issue #1360.
+    #
+    # SvelteKit 3 is held, with adapter-auto 8 and sveltekit-superforms 3
+    # (closed as #1586, #1583, #1582). Kit 3 and adapter-auto 8 each require
+    # the other, and three dependencies have no release that accepts them:
+    # runed 0.37.1 and sailkit 0.3.5 peer `@sveltejs/kit` ^2, and formsnap
+    # 2.0.1 peers `sveltekit-superforms` ^2.19.0. npm ci refuses both
+    # combinations. Lift these when those three widen their ranges.
     ignore:
       - dependency-name: "typescript"
         versions: [">=7.0.0"]
       - dependency-name: "mjml"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@sveltejs/kit"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@sveltejs/adapter-auto"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "sveltekit-superforms"
         update-types: ["version-update:semver-major"]
     groups:
       sveltekit-minor:

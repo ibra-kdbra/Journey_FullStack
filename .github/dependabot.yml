@@ -165,17 +165,21 @@ updates:
     # runed 0.37.1 and sailkit 0.3.5 peer `@sveltejs/kit` ^2, and formsnap
     # 2.0.1 peers `sveltekit-superforms` ^2.19.0. npm ci refuses both
     # combinations. Lift these when those three widen their ranges.
+    #
+    # They are `versions` bounds, like typescript's: the semver-major form
+    # first used here did not stop Dependabot opening #1618 (kit 2.70.3 ->
+    # 3.1.0) a week later, with no change upstream.
     ignore:
       - dependency-name: "typescript"
         versions: [">=7.0.0"]
       - dependency-name: "mjml"
         update-types: ["version-update:semver-major"]
       - dependency-name: "@sveltejs/kit"
-        update-types: ["version-update:semver-major"]
+        versions: [">=3.0.0"]
       - dependency-name: "@sveltejs/adapter-auto"
-        update-types: ["version-update:semver-major"]
+        versions: [">=8.0.0"]
       - dependency-name: "sveltekit-superforms"
-        update-types: ["version-update:semver-major"]
+        versions: [">=3.0.0"]
     groups:
       sveltekit-minor:
         patterns: ["*"]

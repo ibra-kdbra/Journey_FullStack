@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@hookform/resolvers": "^5.0.1",
+    "@hookform/resolvers": "^6.0.0",
     "@tanstack/react-query": "^5.104.2",
     "@tanstack/react-query-devtools": "^5.104.2",
     "axios": "^1.7.9",

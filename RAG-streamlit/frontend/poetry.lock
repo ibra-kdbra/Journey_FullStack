@@ -1485,14 +1485,14 @@ testing = ["process-tests", "pytest-xdist", "virtualenv"]
 
 [[package]]
 name = "pytest-mock"
-version = "3.16.0"
+version = "3.17.0"
 description = "Thin-wrapper around the mock package for easier use with pytest"
 optional = false
 python-versions = ">=3.10"
 groups = ["dev"]
 files = [
-    {file = "pytest_mock-3.16.0-py3-none-any.whl", hash = "sha256:007cfeb257801d88d9c0b2a7b5a15a15e73b71968dfd72e7bf8c4a2f8393aec8"},
-    {file = "pytest_mock-3.16.0.tar.gz", hash = "sha256:5a8395528b8f498205f3718f575228d0edaed7425fff638f87d1a6c3e0383636"},
+    {file = "pytest_mock-3.17.0-py3-none-any.whl", hash = "sha256:1b82aa4b37137248bd687055e109723debeb07b489de1565297dc9589c5f2d6b"},
+    {file = "pytest_mock-3.17.0.tar.gz", hash = "sha256:e36576e0985e01027e999891e7a966c67822d40c89ef1b4c8b6e22737e3590b4"},
 ]
 
 [package.dependencies]
@@ -1751,14 +1751,14 @@ full = ["httpx (>=0.27.0,<0.29.0)", "httpx2 (>=2.0.0)", "itsdangerous", "jinja2"
 
 [[package]]
 name = "streamlit"
-version = "1.66.0"
+version = "1.66.1"
 description = "A faster way to build and share data apps"
 optional = false
 python-versions = ">=3.11"
 groups = ["main"]
 files = [
-    {file = "streamlit-1.66.0-py3-none-any.whl", hash = "sha256:bae7c746f868c09431177df5ee7929839efe7d8fb2cedd553d2bb3c2e969822a"},
-    {file = "streamlit-1.66.0.tar.gz", hash = "sha256:8b79761394664035ff5d691b4502b70385a39123e6d78a051c79e8ae28c29f8c"},
+    {file = "streamlit-1.66.1-py3-none-any.whl", hash = "sha256:29607190a589fe1fa9bd7e154635d335d47dc09b4010c6cc273daa6e4430ee31"},
+    {file = "streamlit-1.66.1.tar.gz", hash = "sha256:7710a8b67469da7af7bf3503c9b68afca5676f832f62f9bda1221e0ce11941d1"},
 ]
 
 [package.dependencies]
@@ -1769,7 +1769,7 @@ itsdangerous = ">=2.1.2,<3"
 numpy = ">=1.25.0,<3"
 packaging = ">=20"
 pandas = ">=1.5.3,<4"
-pillow = ">=9.2.0,<13"
+pillow = ">=9.2.0,<14"
 protobuf = ">=5.26.1,<8"
 pyarrow = ">=10.0.1,!=25.0.0,<27"
 pydeck = ">=0.8.0b4,<1"
@@ -2170,4 +2170,4 @@ propcache = ">=0.2.1"
 [metadata]
 lock-version = "2.1"
 python-versions = ">=3.12,<3.13"
-content-hash = "799ca5201cb87c08a54f4cf397bde0281101ea73d2f176286e551e99e8701f4f"
+content-hash = "0ff8720370cc6715cc342d79f234b2105259d01dc566d4ede770d2bfa1a1baad"

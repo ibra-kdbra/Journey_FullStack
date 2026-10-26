@@ -59,6 +59,8 @@ const toMatrixEntry = (p) => ({
   installFlags: p.installFlags ?? [],
   // Name of a database to create before the checks run, or '' for none.
   postgres: p.postgres ?? '',
+  // The runner image, ubuntu-latest unless the manifest pins one.
+  runner: p.runner ?? 'ubuntu-latest',
   // A Go release to install alongside the project's own toolchain, or '' for
   // none - for a project whose checks run Go without being a Go module.
   go: p.go ?? '',

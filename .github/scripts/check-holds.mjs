@@ -84,6 +84,7 @@ const HOLDS = [
       'angular-s.o.l.i.d-advanced',
       'API_s.o.l.i.d_TS',
       'solid-flask-web-app/ui',
+      'nuxt-clean-architecture',
     ],
     why:
       'TS 7.0 removed the programmatic compiler API that the Nest CLI, vue-tsc and ts-node all need. ' +
@@ -91,7 +92,8 @@ const HOLDS = [
       'typescript >=6.0 <6.1 peer range. solid-flask-web-app/ui is a third and unrelated one: its ' +
       'source is TS 7 clean - tsc 7.0.2 reports zero errors over all 42 files - but ' +
       'typescript-eslint 8.69 peers >=4.8.4 <6.1.0, so TS 7 would cost it the linter. That leg ' +
-      'clears when typescript-eslint ships TS 7 support, which is the same upstream wait as #1430.',
+      'clears when typescript-eslint ships TS 7 support, which is the same upstream wait as #1430. ' +
+      'nuxt-clean-architecture is held for that same linter reason (#1649).',
     clearsWhen: 'TS 7.1+ restores the compiler API AND @angular/compiler-cli widens its peer range.',
     async check() {
       const latestTs = await npmView('typescript@latest', 'version')

@@ -77,6 +77,12 @@ updates:
     schedule: { interval: "weekly" }
     open-pull-requests-limit: 5
     commit-message: { prefix: "deps(nuxt-clean)" }
+    # typescript majors are held: typescript-eslint 8.68 refuses to run
+    # under TS 7 ("typescript-eslint does not support TS 7.0"), so a TS 7
+    # bump takes `eslint .` out (#1649). Same wait as solid-flask-web-app/ui.
+    ignore:
+      - dependency-name: "typescript"
+        versions: [">=7.0.0"]
     groups:
       nuxt-clean-minor:
         patterns: ["*"]

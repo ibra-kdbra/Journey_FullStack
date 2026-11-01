@@ -31,17 +31,17 @@
         "ts-jest": "^29.4.15",
         "ts-node-dev": "^2.0.0",
         "typescript": "^6.0.0",
-        "typescript-eslint": "^8.72.0"
+        "typescript-eslint": "^8.72.1"
     },
     "dependencies": {
         "@types/multer": "^2.3.0",
         "bcrypt": "^6.0.0",
         "csv-parse": "^7.0.3",
         "dayjs": "^1.11.10",
-        "dotenv": "^18.0.8",
+        "dotenv": "^18.0.9",
         "express": "^5.3.0",
         "jsonwebtoken": "^9.0.2",
-        "multer": "^2.4.0",
+        "multer": "^2.5.0",
         "pg": "^8.23.1",
         "reflect-metadata": "^0.2.2",
         "swagger-ui-express": "^5.0.0",

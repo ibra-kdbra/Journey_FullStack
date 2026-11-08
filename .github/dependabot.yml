@@ -165,12 +165,11 @@ updates:
     # 0.3.5, peers `mjml: "^4.0.0"`. The project imports mjml nowhere itself,
     # so this is purely sailkit's constraint to widen. See issue #1360.
     #
-    # SvelteKit 3 is held, with adapter-auto 8 and sveltekit-superforms 3
-    # (closed as #1586, #1583, #1582). Kit 3 and adapter-auto 8 each require
-    # the other, and three dependencies have no release that accepts them:
-    # runed 0.37.1 and sailkit 0.3.5 peer `@sveltejs/kit` ^2, and formsnap
-    # 2.0.1 peers `sveltekit-superforms` ^2.19.0. npm ci refuses both
-    # combinations. Lift these when those three widen their ranges.
+    # SvelteKit 3 is held, with adapter-auto 8 (closed as #1586, #1583). Kit 3
+    # and adapter-auto 8 each require the other, and runed 0.37.1 and sailkit
+    # 0.3.5 peer `@sveltejs/kit` ^2, so npm ci refuses the upgrade. Lift these
+    # when both widen their ranges. (sveltekit-superforms 3 was held with them
+    # until formsnap 2.1.0 admitted it.)
     #
     # They are `versions` bounds, like typescript's: the semver-major form
     # first used here did not stop Dependabot opening #1618 (kit 2.70.3 ->
@@ -184,8 +183,6 @@ updates:
         versions: [">=3.0.0"]
       - dependency-name: "@sveltejs/adapter-auto"
         versions: [">=8.0.0"]
-      - dependency-name: "sveltekit-superforms"
-        versions: [">=3.0.0"]
     groups:
       sveltekit-minor:
         patterns: ["*"]

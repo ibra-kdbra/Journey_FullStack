@@ -169,30 +169,6 @@ const HOLDS = [
   },
 
   {
-    name: 'sveltekit-superforms held at 2 (sveltekit)',
-    covers: ['sveltekit-superforms'],
-    projects: ['sveltekit'],
-    why:
-      'formsnap peers sveltekit-superforms ^2.19.0, so npm ci refuses superforms 3 ' +
-      '(closed as #1582).',
-    clearsWhen: 'formsnap widens its sveltekit-superforms peer range to admit 3.x.',
-    async check() {
-      const range = (await npmView('formsnap@latest', 'peerDependencies'))?.['sveltekit-superforms'] ?? null
-      const notes = [
-        `sveltekit-superforms@latest = ${(await npmView('sveltekit-superforms@latest', 'version')) ?? 'unknown'}`,
-        `formsnap@latest peer sveltekit-superforms = ${range ?? 'unknown'}`,
-      ]
-      if (!range) {
-        notes.push('could not read formsnap\'s peer range - treating the hold as still justified')
-        return { clearable: false, notes }
-      }
-      const widened = rangeAdmitsMajor(range, 3)
-      notes.push(`formsnap admits superforms 3.x: ${widened ? 'yes' : 'no'}`)
-      return { clearable: widened, notes }
-    },
-  },
-
-  {
     name: 'jasmine held at 5.x (angular)',
     covers: ['jasmine-core', '@types/jasmine'],
     projects: ['angular-s.o.l.i.d-advanced'],

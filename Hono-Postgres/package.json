@@ -24,7 +24,7 @@
     "drizzle-orm": "^0.45.4",
     "hono": "^4.13.16",
     "http-status-codes": "^2.3.0",
-    "postgres": "^3.4.9",
+    "postgres": "^4.0.0",
     "winston": "^3.19.0"
   },
   "devDependencies": {

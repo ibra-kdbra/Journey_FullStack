@@ -16,7 +16,7 @@ pydantic-settings = "^2.1.0"
 langchain = "^1.4.0"
 langchain-ollama = ">=0.3,<1.2" 
 langchain-community = ">=0.3.20,<0.5.0"
-python-multipart = ">=0.0.20,<0.0.33"
+python-multipart = ">=0.0.20,<0.0.34"
 sentence-transformers = ">=2.5.1,<7.0.0"
 # langgraph-prebuilt is deliberately absent. It used to be pinned <1.0.2,
 # because prebuilt >=1.0.11 does `from langgraph.runtime import ExecutionInfo`

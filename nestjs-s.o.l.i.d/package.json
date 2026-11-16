@@ -22,9 +22,9 @@
     "lint:fix": "eslint \"src/**/*.ts\" --fix"
   },
   "dependencies": {
-    "@nestjs/common": "^12.3.3",
-    "@nestjs/core": "^12.3.3",
-    "@nestjs/platform-express": "^12.3.3",
+    "@nestjs/common": "^12.4.2",
+    "@nestjs/core": "^12.4.2",
+    "@nestjs/platform-express": "^12.4.2",
     "@prisma/adapter-better-sqlite3": "^7.10.1",
     "@prisma/client": "^7.10.1",
     "better-sqlite3": "^13.1.1",
@@ -34,9 +34,9 @@
     "rxjs": "^7.2.0"
   },
   "devDependencies": {
-    "@nestjs/cli": "^12.0.11",
+    "@nestjs/cli": "^12.0.12",
     "@nestjs/schematics": "^12.0.12",
-    "@nestjs/testing": "^12.3.3",
+    "@nestjs/testing": "^12.4.2",
     "@types/express": "^5.0.0",
     "@types/jest": "30.0.0",
     "@types/node": "26.6.6",

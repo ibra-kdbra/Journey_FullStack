@@ -32,12 +32,12 @@
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "react-redux": "^9.3.1",
-    "tailwindcss": "4.3.4",
+    "tailwindcss": "4.3.5",
     "typescript": "7.0.2"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4.3.4",
-    "prettier": "^3.9.10",
+    "@tailwindcss/postcss": "^4.3.5",
+    "prettier": "^3.10.1",
     "prisma": "^7.10.1",
     "ts-node": "^10.9.1"
   }

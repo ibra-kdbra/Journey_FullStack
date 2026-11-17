@@ -59,6 +59,8 @@ const toMatrixEntry = (p) => ({
   installFlags: p.installFlags ?? [],
   // Name of a database to create before the checks run, or '' for none.
   postgres: p.postgres ?? '',
+  // The runner image, ubuntu-latest unless the manifest pins one.
+  runner: p.runner ?? 'ubuntu-latest',
 });
 
 // Any ecosystem the workflow knows how to run. This filter previously admitted

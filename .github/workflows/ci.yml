@@ -86,7 +86,9 @@ jobs:
     name: ${{ matrix.project.name }}
     needs: discover
     if: needs.discover.outputs.count != '0'
-    runs-on: ubuntu-latest
+    # ubuntu-latest unless the manifest pins a project to another image
+    # (`runner`), for a project whose checks depend on what an image packages.
+    runs-on: ${{ matrix.project.runner }}
     timeout-minutes: 25
     strategy:
       fail-fast: false

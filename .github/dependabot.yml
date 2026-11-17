@@ -39,7 +39,7 @@ updates:
         update-types: ["minor", "patch"]
       react-solid-major:
         patterns: ["*"]
-        update-types: ["version-update:semver-major"]
+        update-types: ["major"]
 
   - package-ecosystem: "npm"
     directory: "/vue.js-s.o.l.i.d"
@@ -52,7 +52,7 @@ updates:
         update-types: ["minor", "patch"]
       vue-solid-major:
         patterns: ["*"]
-        update-types: ["version-update:semver-major"]
+        update-types: ["major"]
 
   - package-ecosystem: "npm"
     directory: "/vue3-clean-architecture"
@@ -70,20 +70,26 @@ updates:
         update-types: ["minor", "patch"]
       vue3-clean-major:
         patterns: ["*"]
-        update-types: ["version-update:semver-major"]
+        update-types: ["major"]
 
   - package-ecosystem: "npm"
     directory: "/nuxt-clean-architecture"
     schedule: { interval: "weekly" }
     open-pull-requests-limit: 5
     commit-message: { prefix: "deps(nuxt-clean)" }
+    # typescript majors are held: typescript-eslint 8.68 refuses to run
+    # under TS 7 ("typescript-eslint does not support TS 7.0"), so a TS 7
+    # bump takes `eslint .` out (#1649). Same wait as solid-flask-web-app/ui.
+    ignore:
+      - dependency-name: "typescript"
+        versions: [">=7.0.0"]
     groups:
       nuxt-clean-minor:
         patterns: ["*"]
         update-types: ["minor", "patch"]
       nuxt-clean-major:
         patterns: ["*"]
-        update-types: ["version-update:semver-major"]
+        update-types: ["major"]
 
   - package-ecosystem: "npm"
     directory: "/angular-s.o.l.i.d-advanced"
@@ -121,7 +127,7 @@ updates:
       angular-solid-major:
         patterns: ["*"]
         exclude-patterns: ["@angular/*", "@angular-devkit/*"]
-        update-types: ["version-update:semver-major"]
+        update-types: ["major"]
 
   - package-ecosystem: "npm"
     directory: "/astro-starter"
@@ -134,7 +140,7 @@ updates:
         update-types: ["minor", "patch"]
       astro-major:
         patterns: ["*"]
-        update-types: ["version-update:semver-major"]
+        update-types: ["major"]
 
   - package-ecosystem: "npm"
     directory: "/sveltekit"
@@ -158,18 +164,32 @@ updates:
     # mjml 5 is held: sailkit is the only consumer and its latest release,
     # 0.3.5, peers `mjml: "^4.0.0"`. The project imports mjml nowhere itself,
     # so this is purely sailkit's constraint to widen. See issue #1360.
+    #
+    # SvelteKit 3 is held, with adapter-auto 8 (closed as #1586, #1583). Kit 3
+    # and adapter-auto 8 each require the other, and runed 0.37.1 and sailkit
+    # 0.3.5 peer `@sveltejs/kit` ^2, so npm ci refuses the upgrade. Lift these
+    # when both widen their ranges. (sveltekit-superforms 3 was held with them
+    # until formsnap 2.1.0 admitted it.)
+    #
+    # They are `versions` bounds, like typescript's: the semver-major form
+    # first used here did not stop Dependabot opening #1618 (kit 2.70.3 ->
+    # 3.1.0) a week later, with no change upstream.
     ignore:
       - dependency-name: "typescript"
         versions: [">=7.0.0"]
       - dependency-name: "mjml"
         update-types: ["version-update:semver-major"]
+      - dependency-name: "@sveltejs/kit"
+        versions: [">=3.0.0"]
+      - dependency-name: "@sveltejs/adapter-auto"
+        versions: [">=8.0.0"]
     groups:
       sveltekit-minor:
         patterns: ["*"]
         update-types: ["minor", "patch"]
       sveltekit-major:
         patterns: ["*"]
-        update-types: ["version-update:semver-major"]
+        update-types: ["major"]
 
   - package-ecosystem: "npm"
     directory: "/next-prisma-starter"
@@ -186,7 +206,7 @@ updates:
       next-prisma-major:
         patterns: ["*"]
         exclude-patterns: ["next", "eslint-config-next", "@next/*"]
-        update-types: ["version-update:semver-major"]
+        update-types: ["major"]
 
   - package-ecosystem: "npm"
     directory: "/rn_clean_architecture"
@@ -224,7 +244,7 @@ updates:
       rn-clean-major:
         patterns: ["*"]
         exclude-patterns: ["react-native", "@react-native/*"]
-        update-types: ["version-update:semver-major"]
+        update-types: ["major"]
 
   - package-ecosystem: "npm"
     directory: "/solid-flask-web-app/ui"
@@ -244,7 +264,7 @@ updates:
         update-types: ["minor", "patch"]
       flask-ui-major:
         patterns: ["*"]
-        update-types: ["version-update:semver-major"]
+        update-types: ["major"]
 
   - package-ecosystem: "npm"
     directory: "/learning-doc"
@@ -261,7 +281,7 @@ updates:
       atlas-major:
         patterns: ["*"]
         exclude-patterns: ["nuxt", "@nuxt/*", "@nuxtjs/*"]
-        update-types: ["version-update:semver-major"]
+        update-types: ["major"]
 
   # ------------------------------------------------------------- backend: js
   - package-ecosystem: "npm"
@@ -275,7 +295,7 @@ updates:
         update-types: ["minor", "patch"]
       node-solid-major:
         patterns: ["*"]
-        update-types: ["version-update:semver-major"]
+        update-types: ["major"]
 
   - package-ecosystem: "npm"
     directory: "/nestjs-s.o.l.i.d"
@@ -297,7 +317,7 @@ updates:
       nest-solid-major:
         patterns: ["*"]
         exclude-patterns: ["@nestjs/*"]
-        update-types: ["version-update:semver-major"]
+        update-types: ["major"]
 
   - package-ecosystem: "npm"
     directory: "/API_s.o.l.i.d_TS"
@@ -316,7 +336,7 @@ updates:
         update-types: ["minor", "patch"]
       api-solid-major:
         patterns: ["*"]
-        update-types: ["version-update:semver-major"]
+        update-types: ["major"]
 
   # Bun, not npm: the npm ecosystem updates package.json but never writes
   # bun.lock, so `bun install --frozen-lockfile` in CI rejected every update.
@@ -331,7 +351,7 @@ updates:
         update-types: ["minor", "patch"]
       hono-major:
         patterns: ["*"]
-        update-types: ["version-update:semver-major"]
+        update-types: ["major"]
 
   - package-ecosystem: "npm"
     directory: "/vercel-cleaner"
@@ -344,7 +364,7 @@ updates:
         update-types: ["minor", "patch"]
       vercel-cleaner-major:
         patterns: ["*"]
-        update-types: ["version-update:semver-major"]
+        update-types: ["major"]
 
   # --------------------------------------------------------------- python
   # `pip` is the ecosystem that reads Poetry's pyproject.toml + poetry.lock.
@@ -359,7 +379,7 @@ updates:
         update-types: ["minor", "patch"]
       flask-api-major:
         patterns: ["*"]
-        update-types: ["version-update:semver-major"]
+        update-types: ["major"]
 
   - package-ecosystem: "pip"
     directory: "/RAG-streamlit/backend"
@@ -372,7 +392,7 @@ updates:
         update-types: ["minor", "patch"]
       rag-backend-major:
         patterns: ["*"]
-        update-types: ["version-update:semver-major"]
+        update-types: ["major"]
 
   - package-ecosystem: "pip"
     directory: "/RAG-streamlit/frontend"
@@ -385,7 +405,7 @@ updates:
         update-types: ["minor", "patch"]
       rag-frontend-major:
         patterns: ["*"]
-        update-types: ["version-update:semver-major"]
+        update-types: ["major"]
 
   - package-ecosystem: "pip"
     directory: "/RAG-streamlit/pipelines"
@@ -398,7 +418,7 @@ updates:
         update-types: ["minor", "patch"]
       rag-pipelines-major:
         patterns: ["*"]
-        update-types: ["version-update:semver-major"]
+        update-types: ["major"]
 
   # ------------------------------------------------------------------ java
   # hospital-management has no aggregator POM, so each service is its own entry.

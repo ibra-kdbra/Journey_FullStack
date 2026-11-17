@@ -28,3 +28,7 @@ pnpm-lock.yaml
 # Custom Scripts and Logs
 changelog.md
 git-commit.sh
+
+# The course lessons live in a private GitLab repository; scripts/fetch-courses.mjs
+# copies them here before a build.
+content/courses/

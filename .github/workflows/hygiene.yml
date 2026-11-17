@@ -39,6 +39,14 @@ jobs:
       - name: Validate repository structure
         run: node .github/scripts/check-manifest.mjs
 
+      # The lessons live in a private GitLab repository; this copies them to
+      # learning-doc/content/courses, and fails without the token rather than
+      # letting check-courses.mjs run against nothing.
+      - name: Fetch the course lessons
+        run: node learning-doc/scripts/fetch-courses.mjs
+        env:
+          COURSES_TOKEN: ${{ secrets.LEARNING_DOC_COURSES_TOKEN }}
+
       - name: Validate Atlas course registry against the content tree
         run: node .github/scripts/check-courses.mjs
 

@@ -23,14 +23,14 @@ class Rental {
     carId: string;
     @Column()
     userId: string;
-    @Column()
+    @Column({ type: "timestamp" })
     startDate: Date;
-    @Column()
-    endDate: Date;
+    @Column({ type: "timestamp", nullable: true })
+    endDate: Date | null;
     @Column()
     expectedReturnDate: Date;
-    @Column()
-    total: number;
+    @Column({ type: "numeric", nullable: true })
+    total: number | null;
     @CreateDateColumn()
     created_at: Date;
     @UpdateDateColumn()

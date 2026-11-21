@@ -20,6 +20,9 @@ const createClient = () =>
 
 export const prisma = global.prisma || createClient()
 
+// Cache on globalThis outside production so dev hot reloads reuse one client/pool.
+if (!isProduction) global.prisma = prisma
+
 const connectDatabase = async () => {
 	try {
 		await prisma.$connect()

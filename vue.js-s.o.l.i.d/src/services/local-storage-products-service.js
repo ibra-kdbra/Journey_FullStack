@@ -9,7 +9,7 @@ export default class LocalStorageProductsService {
   }
 
   getAll() {
-    return JSON.parse(localStorage.getItem('products'));
+    return JSON.parse(localStorage.getItem('products')) ?? [];
   }
 
   deleteAll() {

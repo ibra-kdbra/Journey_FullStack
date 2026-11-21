@@ -10,18 +10,14 @@ import {Hit} from 'domain/entities/photo';
 export function useBloc() {
   const [isLoading, setLoading] = useState<boolean>(false);
   const [photos, setPhotos] = useState<Array<Hit>>([]);
+  const [error, setError] = useState<string | null>(null);
   const [keyword, setKeyword] = useState<string>();
   const [canLoadMore, setLoadMore] = useState<boolean>(false);
   const getPhotoUseCase = container.get<GetPhotoUseCase>(TYPES.GetPhotoUseCase);
   let currentPageRef = useRef<number>(1);
-  let appendPhotoRef = useRef<Array<any>>([]);
 
   useEffect(() => {
-    appendPhotoRef.current = [];
     getPhotoPixabay(1);
-    return () => {
-      appendPhotoRef.current = [];
-    };
   }, []);
 
   const getPhotoPixabay = (page: number, query?: string) => {
@@ -32,18 +28,20 @@ export function useBloc() {
     resultPhoto.subscribe({
       next: (result: any) => {
         if (result.status === 'success') {
+          const hits: Hit[] = result?.result?.hits ?? [];
+          setError(null);
           if (page === 1) {
-            appendPhotoRef.current = result?.result?.hits;
-            setPhotos(result?.result?.hits);
+            setPhotos(hits);
           } else {
-            appendPhotoRef.current.push(...result?.result?.hits);
-            setPhotos(appendPhotoRef.current);
+            setPhotos(prev => [...prev, ...hits]);
           }
-          if (result?.result?.hits.length < 20) {
-            setLoadMore(false);
-          } else {
-            setLoadMore(true);
-          }
+          setLoadMore(hits.length >= 20);
+        } else {
+          setLoadMore(false);
+          const err = Array.isArray(result?.errors)
+            ? result.errors[0]
+            : result?.errors;
+          setError(err?.message ?? 'Failed to load photos');
         }
       },
       complete: () => {
@@ -72,6 +70,7 @@ export function useBloc() {
 
   return {
     isLoading,
+    error,
     photos,
     onLastValueChange,
     onEndReached,

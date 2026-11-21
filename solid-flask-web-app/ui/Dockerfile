@@ -1,17 +1,15 @@
 FROM node:26-slim AS build
 
-ENV PNPM_HOME="/pnpm"
-ENV PATH="$PNPM_HOME:$PATH"
-RUN corepack enable
+# The Cypress binary is only needed for e2e tests, not for the production build.
+ENV CYPRESS_INSTALL_BINARY=0
 
 WORKDIR /app
-COPY package.json package.json
-COPY pnpm-lock.yaml pnpm-lock.yaml
-RUN pnpm install
+COPY package.json package-lock.json ./
+RUN npm ci
 
 COPY . .
 
-RUN pnpm run build
+RUN npm run build
 
 
 FROM nginx:1

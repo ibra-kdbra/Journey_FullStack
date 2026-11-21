@@ -17,6 +17,6 @@ export default class LocalStorageProductsService {
   }
 
   search(searchQuery) {
-    return this.getAll().filter(product => product.name.match(searchQuery));
+    return this.getAll().filter(product => product.name.toLowerCase().includes(String(searchQuery).toLowerCase()));
   }
 }

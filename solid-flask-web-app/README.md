@@ -56,7 +56,6 @@ The template can be cloned into a new repository with the 'Use this template' bu
 In order to run the project locally you need to:
 
 - [Install Node v20](https://nodejs.org/en/download/package-manager)
-- [Install pnpm](https://pnpm.io/installation)
 - [Install Python 3.12](https://www.python.org/downloads/)
 - [Install docker](https://docs.docker.com/engine/install/) together with [docker compose](https://docs.docker.com/compose/)
 

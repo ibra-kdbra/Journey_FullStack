@@ -1,5 +1,5 @@
 // sms.controller.ts
-import { Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { NotificationService } from './notification.service';
 import { SMSNotification } from './notification.interfaces';
 
@@ -8,7 +8,7 @@ export class SMSController {
   constructor(private readonly notificationService: NotificationService) {}
 
   @Post()
-  sendSMS(notification: SMSNotification): void {
+  sendSMS(@Body() notification: SMSNotification): void {
     this.notificationService.sendSMS(notification);
   }
 }

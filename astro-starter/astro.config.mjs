@@ -14,7 +14,6 @@ export default defineConfig({
 
     integrations: [
         react(),
-        svgr(),
         sitemap({
             serialize(item) {
                 // Default values for pages
@@ -42,12 +41,7 @@ export default defineConfig({
             },
         }),
     ],
-    renderers: ["@astrojs/renderer-react"],
-    prerender: true,
     vite: {
         plugins: [tailwind(), CompressionPlugin(), svgr()],
-    },
-    buildOptions: {
-        minify: true,
     },
 });

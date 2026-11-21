@@ -42,4 +42,11 @@ describe("Create Category", () => {
             expect(error).toBeInstanceOf(AppError);
         }
     });
+
+    it("Should propagate repository errors from create", async () => {
+        jest.spyOn(categoryReposityInMemory, "create").mockRejectedValueOnce(new Error("db down"));
+        await expect(
+            createCategoryUseCase.execute({ name: "x", description: "y" }),
+        ).rejects.toThrow("db down");
+    });
 });

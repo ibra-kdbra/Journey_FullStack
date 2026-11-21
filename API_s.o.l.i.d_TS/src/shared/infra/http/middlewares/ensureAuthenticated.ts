@@ -1,7 +1,8 @@
 import { Response, Request, NextFunction } from "express";
 import { verify } from "jsonwebtoken";
+import { container } from "tsyringe";
 
-import { UserRepository } from "../../../../modules/accounts/infra/typeorm/repositories/UserRepository";
+import { IUserRepository } from "../../../../modules/accounts/repositories/IUserRepository";
 import { AppError } from "../../../errors/AppError";
 
 interface IPayload {
@@ -12,25 +13,27 @@ export async function ensureAuthenticated(req: Request, res: Response, next: Nex
     const authHeader = req.headers.authorization;
 
     if (!authHeader) {
-        throw new Error("Token missing");
+        throw new AppError("Token missing", 401);
     }
 
     const [, token] = authHeader.split(" ");
+
+    let userID: string;
     try {
-        const { sub: userID } = verify(token, "923aea88786448f4a8840c30f0327f8f") as IPayload;
-
-        const userRepository = new UserRepository();
-        const user = userRepository.findById(userID);
-        if (!user) {
-            throw new AppError("User does not exists", 401);
-        }
-
-        req.user = {
-            id: userID,
-        };
-
-        next();
+        ({ sub: userID } = verify(token, "923aea88786448f4a8840c30f0327f8f") as IPayload);
     } catch {
         throw new AppError("Invalid token", 401);
     }
+
+    const userRepository = container.resolve<IUserRepository>("UserRepository");
+    const user = await userRepository.findById(userID);
+    if (!user) {
+        throw new AppError("User does not exists", 401);
+    }
+
+    req.user = {
+        id: userID,
+    };
+
+    next();
 }

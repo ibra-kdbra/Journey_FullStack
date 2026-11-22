@@ -122,6 +122,19 @@ class TestUsersAPI:
 
         assert response.status_code == 403
 
+    def test_create_user_not_logged_in(self, client, db):
+        response = client.post(
+            "/users",
+            json={
+                "email": "newuser@test.com",
+                "password": "newpassword123",
+                "is_admin": False,
+            },
+        )
+
+        assert response.status_code == 401
+        assert User.query.count() == 0
+
 
 class TestUserAPI:
     def test_delete_user_as_admin(self, client, db, logged_in_admin, user):
@@ -150,6 +163,14 @@ class TestUserAPI:
         response = client.delete(f"/user/{user_id}")
 
         assert response.status_code == 403
+        assert db.session.get(User, user_id) is not None
+
+    def test_delete_user_not_logged_in(self, client, db, user):
+        user_id = user.id
+
+        response = client.delete(f"/user/{user_id}")
+
+        assert response.status_code == 401
         assert db.session.get(User, user_id) is not None
 
 

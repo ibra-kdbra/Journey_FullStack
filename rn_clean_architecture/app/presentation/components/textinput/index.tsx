@@ -1,8 +1,8 @@
-import React, {useEffect, useRef} from 'react';
+import React, {useEffect, useMemo, useRef} from 'react';
 import {Text, TouchableOpacity, TextInput} from 'react-native';
 
 import {BehaviorSubject} from 'rxjs';
-import {debounceTime, distinctUntilChanged, switchMap} from 'rxjs/operators';
+import {debounceTime, distinctUntilChanged, tap} from 'rxjs/operators';
 
 import {IProps} from 'presentation/components/textinput/AppTextInput';
 import {ViewContainer} from 'presentation/components/styles/styles.css';
@@ -12,28 +12,32 @@ import styles, {
 
 const AppTextInput = (props: IProps) => {
   const {isClear, onLastValueChange} = props;
-  const textChange$ = new BehaviorSubject('');
+  // One subject for the lifetime of the component; re-creating it per render
+  // would hand debounce/distinctUntilChanged a single value every time.
+  const textChange$ = useMemo(() => new BehaviorSubject(''), []);
   // React 19 + RN 0.87: TextInput is the component type, and the instance
   // type - the one carrying .clear() - is what a ref actually holds.
   const textChangeRef = useRef<React.ComponentRef<typeof TextInput>>(null);
-  let subscription = textChange$
-    .pipe(
-      debounceTime(400),
-      distinctUntilChanged(),
-      switchMap((text: string) => {
-        if (onLastValueChange && text.length > 0) {
-          onLastValueChange(text);
-        }
-        return text;
-      }),
-    )
-    .subscribe();
+  // Keep the latest callback without re-subscribing on every render.
+  const onLastValueChangeRef = useRef(onLastValueChange);
+  onLastValueChangeRef.current = onLastValueChange;
 
   useEffect(() => {
+    const subscription = textChange$
+      .pipe(
+        debounceTime(400),
+        distinctUntilChanged(),
+        tap((text: string) => {
+          if (onLastValueChangeRef.current && text.length > 0) {
+            onLastValueChangeRef.current(text);
+          }
+        }),
+      )
+      .subscribe();
     return () => {
       subscription.unsubscribe();
     };
-  }, []);
+  }, [textChange$]);
 
   const onChangeText = (text: string) => {
     if (text.length === 0) {

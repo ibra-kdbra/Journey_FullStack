@@ -1,7 +1,9 @@
-import { TestBed } from '@angular/core/testing';
+import { fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { By } from '@angular/platform-browser';
 import { AppModule } from './app.module';
 
 import { AppComponent } from './app.component';
+import { TableComponent } from './shared/components/table/table.component';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
@@ -33,4 +35,19 @@ describe('AppComponent', () => {
       'Principles SOLID And Advanced Angular'
     );
   });
+
+  it('shows the runtime row in every table', fakeAsync(() => {
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+    const tables = fixture.debugElement.queryAll(By.directive(TableComponent));
+    expect(tables.length).toBe(7);
+
+    tick(1000);
+    fixture.detectChanges();
+
+    for (const t of tables) {
+      const rows: any[] = (t.componentInstance as TableComponent).dataSource.data;
+      expect(rows.some(r => r.name === 'Gonzalo')).toBeTrue();
+    }
+  }));
 });

@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker'
 import { randomInt } from 'crypto';
+import { Prisma } from '@prisma/client'
 import { prisma } from '../src/utils/client'
 import config from '../src/config/default'
 
@@ -10,13 +11,13 @@ import config from '../src/config/default'
  */
 const feedSomeData = async (length: number) => {
 	try {
-		const createRandomUsers = () => {
+		const createRandomUsers = (): Prisma.UserCreateManyInput => {
 			return {
 				name: faker.person.fullName(),
 				email: faker.internet.email(),
 				avatar: faker.image.avatar(),
 				role: 'user',
-			} as unknown as any
+			}
 		}
 
 		// create users
@@ -34,17 +35,14 @@ const feedSomeData = async (length: number) => {
 			},
 		})
 
-		const getRandomUserId = () => {
-			const index = randomInt(0, 11)
-
-			if (users.at(index) !== undefined) {
-				return users[index].id
-			}
-
-			return ''
+		if (users.length === 0) {
+			console.log('🚀 ~ file: seed.ts ~ no users found, skipping posts.')
+			return
 		}
 
-		const createRandomPosts = () => {
+		const getRandomUserId = () => users[randomInt(0, users.length)].id
+
+		const createRandomPosts = (): Prisma.PostCreateManyInput => {
 			return {
 				name: faker.lorem.slug(),
 				image: faker.image.url(),
@@ -58,10 +56,11 @@ const feedSomeData = async (length: number) => {
 			skipDuplicates: true,
 		})
 
-		console.log('🚀 ~ file: seed.ts:45 ~ data feeded successfully.')
+		console.log('🚀 ~ file: seed.ts ~ data feeded successfully.')
 	} catch (error) {
-		console.log('🚀 ~ file: seed.ts:44 ~ feedSomeData ~ error:', error)
+		console.error('🚀 ~ file: seed.ts ~ feedSomeData ~ error:', error)
+		process.exitCode = 1
 	}
 }
 
-feedSomeData(config.dummyDataLength)
+feedSomeData(config.dummyDataLength).finally(() => prisma.$disconnect())

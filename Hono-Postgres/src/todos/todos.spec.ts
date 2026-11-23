@@ -14,7 +14,7 @@ const app = testClient(todoRouter);
 describe(ApplicationRoutes.TODOS, () => {
   /// Database connection
   beforeAll(async () => {
-    execSync("NODE_ENV=test bun run db:push");
+    execSync("NODE_ENV=test bun run db:migrate");
   });
   beforeEach(async () => {
     await database.delete(todos);

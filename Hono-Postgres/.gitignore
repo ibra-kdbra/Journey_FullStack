@@ -129,4 +129,3 @@ dist
 .pnp.*
 
 docker/data
-migrations

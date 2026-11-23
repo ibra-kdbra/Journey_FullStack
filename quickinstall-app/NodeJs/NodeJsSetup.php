@@ -5,6 +5,7 @@ namespace Hestia\WebApp\Installers\NodeJs;
 use \Hestia\WebApp\Installers\BaseSetup as BaseSetup;
 use \Hestia\WebApp\Installers\NodeJs\NodeJsUtils\NodeJsPaths as NodeJsPaths;
 use \Hestia\WebApp\Installers\NodeJs\NodeJsUtils\NodeJsUtil as NodeJsUtil;
+use \Hestia\WebApp\Installers\NodeJs\NodeJsUtils\NodeJsValidator as NodeJsValidator;
 use Hestia\System\HestiaApp;
 
 class NodeJsSetup extends BaseSetup {
@@ -47,6 +48,9 @@ class NodeJsSetup extends BaseSetup {
 	}
 	
     public function install(array $options = null) {
+		// Validate before anything is written to disk (entrypoint, nginx conf, .env, config)
+		$options = NodeJsValidator::validateOptions($options);
+
 		$this->createAppDir();
 		$this->createConfDir();
 		$this->createAppEntryPoint($options);
@@ -61,6 +65,7 @@ class NodeJsSetup extends BaseSetup {
     }
 
 	public function createAppEntryPoint(array $options = null) {
+		$options = NodeJsValidator::validateOptions($options);
 		$templateReplaceVars = [$this->domain, trim($options['start_script']), $this->nodeJsPaths->getAppDir($this->domain)];
 		
 		$data = $this->nodeJsUtils->parseTemplate($this->nodeJsPaths->getAppEntrypointTemplate(), self::TEMPLATE_ENTRYPOINT_VARS, $templateReplaceVars);
@@ -73,6 +78,7 @@ class NodeJsSetup extends BaseSetup {
 	}
 
 	public function createAppNvmVersion($options) {
+		$options = NodeJsValidator::validateOptions($options);
 		$tmpFile = $this->saveTempFile($options['node_version']);
 
 		return $this->nodeJsUtils->moveFile(
@@ -82,6 +88,7 @@ class NodeJsSetup extends BaseSetup {
 	}
 
 	public function createAppEnv($options) {
+		$options = NodeJsValidator::validateOptions($options);
 		$data = 'PORT="'. trim($options['port']) . '"';
 		
 		$tmpFile = $this->saveTempFile($data);
@@ -93,6 +100,7 @@ class NodeJsSetup extends BaseSetup {
 	}
 
 	public function createAppProxyTemplates(array $options = null) {
+		$options = NodeJsValidator::validateOptions($options);
 		$tplReplace = [trim($options['port'])];
 
 		$proxyData = $this->nodeJsUtils->parseTemplate(
@@ -120,6 +128,7 @@ class NodeJsSetup extends BaseSetup {
 	}
 
 	public function createAppConfig(array $options = null) {
+		$options = NodeJsValidator::validateOptions($options);
 		$config = 'PORT=' . trim($options['port']) . '|START_SCRIPT="' . trim($options['start_script']) . '"|NODE_VERSION=' . trim($options['node_version']);
 		$file = $this->saveTempFile($config);
 

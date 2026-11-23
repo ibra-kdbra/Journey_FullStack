@@ -61,9 +61,6 @@ const toMatrixEntry = (p) => ({
   postgres: p.postgres ?? '',
   // The runner image, ubuntu-latest unless the manifest pins one.
   runner: p.runner ?? 'ubuntu-latest',
-  // A Go release to install alongside the project's own toolchain, or '' for
-  // none - for a project whose checks run Go without being a Go module.
-  go: p.go ?? '',
 });
 
 // Any ecosystem the workflow knows how to run. This filter previously admitted

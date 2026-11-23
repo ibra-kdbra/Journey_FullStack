@@ -3,11 +3,13 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "prebuild": "node scripts/fetch-courses.mjs",
     "build": "nuxt build",
+    "predev": "node scripts/fetch-courses.mjs",
     "dev": "nuxt dev",
+    "pregenerate": "node scripts/fetch-courses.mjs",
     "generate": "nuxt generate",
-    "preview": "nuxt preview",
-    "test": "node scripts/verify-redis-transcripts.mjs && node scripts/verify-psql-transcripts.mjs && node scripts/verify-docker-transcripts.mjs && node scripts/verify-go-transcripts.mjs"
+    "preview": "nuxt preview"
   },
   "dependencies": {
     "@lucide/vue": "^1.77.0",

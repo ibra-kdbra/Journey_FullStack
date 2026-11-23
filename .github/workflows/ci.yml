@@ -122,14 +122,6 @@ jobs:
         with:
           python-version: ${{ matrix.project.python }}
 
-      # learning-doc's Go course runs every program in it, against the one Go
-      # release its transcripts were produced with (the manifest's `go`).
-      - uses: actions/setup-go@v7
-        if: matrix.project.go != ''
-        with:
-          go-version: ${{ matrix.project.go }}
-          cache: false
-
       - uses: actions/setup-java@v6
         if: matrix.project.ecosystem == 'maven'
         with:
@@ -276,6 +268,11 @@ jobs:
 
       - name: Build
         if: matrix.project.build
+        # learning-doc's lessons live in a private GitLab repository and its
+        # prebuild step fetches them (learning-doc/scripts/fetch-courses.mjs).
+        # The token is passed to that one project's build and no other.
+        env:
+          COURSES_TOKEN: ${{ matrix.project.path == 'learning-doc' && secrets.LEARNING_DOC_COURSES_TOKEN || '' }}
         run: |
           if [ "${{ matrix.project.ecosystem }}" = "maven" ]; then
             mvn -B -DskipTests package

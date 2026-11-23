@@ -24,7 +24,8 @@ and where every page is servable as static output with no backend behind it.
 content/
   atlas/          one entry per project in this monorepo
   courses/        rust, golang, redis, fastapi, docker, flutter, gin,
-                  supabase, raspberry, nextjs, korean
+                  supabase, raspberry, nextjs, korean - fetched at build time
+                  from a private repository, not kept in git
 components/
   ui/  common/  content/  course/  docs/  custom/
 composables/      useTheme  useCodeInputAnalysis
@@ -69,10 +70,13 @@ cd learning-doc
 npm install
 npm run dev          # http://localhost:3000
 npm run build
-npm test             # replays the Redis, Supabase, Docker and Go courses' transcripts; needs
-                     # redis-server, PostgreSQL 16 with wal2json, a non-root user, Docker,
-                     # and Go 1.24
 ```
+
+The course lessons live in a private repository, with the verifiers that
+replay the Redis, Supabase, Docker and Go courses' transcripts against the real
+tools. `npm run dev` and `npm run build` fetch them first, which needs
+`COURSES_TOKEN` (or `COURSES_SKIP=1` to build without them). There is no
+`npm test`: the lessons are tested where they live.
 
 ## Read alongside
 

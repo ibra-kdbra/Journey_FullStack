@@ -16,6 +16,7 @@ class APIErrorEnum(IntEnum):
     already_2fa_disabled = 11
     user_not_found = 12
     unknown_error = 13
+    too_many_requests = 14
 
 
 class APIError(Exception):

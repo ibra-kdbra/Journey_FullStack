@@ -10,11 +10,24 @@ from marshmallow import Schema, fields
 from app.config import MY_SOLID_APP_PASSWORD_RESET_TOKEN_EXPIRE_HOURS
 from app.db.user import User, UserSchema
 from app.errors import APIError, APIErrorEnum
-from app.extensions import api, db, login_manager
+from app.extensions import account_key, api, db, limiter, login_manager
 from app.tasks.mail_tasks import (
     send_email_verification_email,
     send_forgot_password_email,
 )
+
+
+def _config_limit(name: str):
+    """Limit string read from app config at request time."""
+    return lambda: current_app.config[name]
+
+
+def rate_limits(ip_limit: str, account_limit: str) -> list:
+    """Per-client-address and per-account limits for a sensitive endpoint."""
+    return [
+        limiter.limit(_config_limit(ip_limit)),
+        limiter.limit(_config_limit(account_limit), key_func=account_key),
+    ]
 
 
 @login_manager.user_loader
@@ -67,6 +80,8 @@ class LoginSchema(Schema):
 
 @api.route("/login")
 class Login(Resource):
+    decorators = rate_limits("LOGIN_RATE_LIMIT", "LOGIN_ACCOUNT_RATE_LIMIT")
+
     def post(self):
         data: dict = LoginSchema().load(request.get_json())
 
@@ -81,6 +96,7 @@ class Login(Resource):
         if user.two_factor_enabled:
             session.pop("partially_authenticated_user", None)
             session["partially_authenticated_user"] = user.id
+            session["totp_failed_attempts"] = 0
             current_app.logger.info("User with id %d partially logged in", user.id)
         else:
             current_app.logger.info(
@@ -98,6 +114,8 @@ class Login2FASchema(Schema):
 
 @api.route("/login_2fa")
 class Login2FA(Resource):
+    decorators = rate_limits("LOGIN_RATE_LIMIT", "LOGIN_ACCOUNT_RATE_LIMIT")
+
     def post(self):
         data: dict = Login2FASchema().load(request.get_json())
         totp_code: str = data.get("totp_code")
@@ -118,6 +136,20 @@ class Login2FA(Resource):
 
         totp = pyotp.TOTP(user.totp_secret)
         if not totp.verify(totp_code):
+            failed_attempts = session.get("totp_failed_attempts", 0) + 1
+            if failed_attempts >= current_app.config["MAX_2FA_ATTEMPTS"]:
+                # Too many wrong codes: drop the password-verified state so the
+                # caller must authenticate with the password again.
+                session.pop("partially_authenticated_user", None)
+                session.pop("totp_failed_attempts", None)
+                current_app.logger.warning(
+                    "Partial login for user with id %d cleared after %d failed "
+                    "2FA attempts",
+                    user.id,
+                    failed_attempts,
+                )
+            else:
+                session["totp_failed_attempts"] = failed_attempts
             raise APIError(
                 APIErrorEnum.wrong_email_totp_code,
                 "Could not login with the given email and code",
@@ -125,6 +157,7 @@ class Login2FA(Resource):
             )
 
         session.pop("partially_authenticated_user", None)
+        session.pop("totp_failed_attempts", None)
 
         login_user(user)
 
@@ -183,6 +216,8 @@ class ForgotPasswordSchema(Schema):
 
 @api.route("/forgot_password")
 class ForgotPassword(Resource):
+    decorators = rate_limits("PASSWORD_RESET_RATE_LIMIT", "PASSWORD_RESET_RATE_LIMIT")
+
     def post(self):
         data: dict = ForgotPasswordSchema().load(request.get_json())
 
@@ -207,6 +242,8 @@ class ResetPasswordSchema(Schema):
 
 @api.route("/reset_password")
 class ResetPassword(Resource):
+    decorators = rate_limits("PASSWORD_RESET_RATE_LIMIT", "PASSWORD_RESET_RATE_LIMIT")
+
     def post(self):
         data: dict = ResetPasswordSchema().load(request.get_json())
 

@@ -3,11 +3,13 @@ from logging.handlers import RotatingFileHandler
 
 from celery import Celery, Task
 from flask import Flask, request
+from flask_limiter import RateLimitExceeded
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from app.commands import register_commands
 from app.config import DevConfig, ProdConfig, TestConfig
 from app.errors import APIError, APIErrorEnum
-from app.extensions import api, db, login_manager, mail, migrate
+from app.extensions import api, db, limiter, login_manager, mail, migrate
 
 
 def create_app(config_object: DevConfig | ProdConfig | TestConfig | None = None):
@@ -24,12 +26,17 @@ def create_app(config_object: DevConfig | ProdConfig | TestConfig | None = None)
 
     app = Flask(__name__)
     app.config.from_object(config_object)
+    if app.config["TRUSTED_PROXY_COUNT"] > 0:
+        # Behind nginx the client address is in X-Forwarded-For; without this
+        # every client would share the proxy's address for rate limiting.
+        app.wsgi_app = ProxyFix(app.wsgi_app, x_for=app.config["TRUSTED_PROXY_COUNT"])
 
     db.init_app(app)
     login_manager.init_app(app)
     api.init_app(app)
     migrate.init_app(app, db)
     mail.init_app(app)
+    limiter.init_app(app)
     init_celery_app(app)
 
     register_commands(app)
@@ -45,6 +52,18 @@ def create_app(config_object: DevConfig | ProdConfig | TestConfig | None = None)
             error.code.name,
         )
         return error.to_response()
+
+    @app.errorhandler(RateLimitExceeded)
+    @api.errorhandler(RateLimitExceeded)
+    def handle_rate_limit(error):
+        app.logger.warning(
+            "%s %s - rate limit exceeded: %s", request.method, request.path, error
+        )
+        return APIError(
+            APIErrorEnum.too_many_requests,
+            "Too many requests, please try again later",
+            429,
+        ).to_response()
 
     @app.errorhandler(Exception)
     def handle_generic_error(error):

@@ -11,6 +11,10 @@ from dotenv import load_dotenv
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+class APIClientError(Exception):
+    """A failure that retrying cannot fix (4xx response, or a stream that already produced output)."""
+
+
 class APIClientInterface(ABC):
     @abstractmethod
     def get_response(self, user_input: str) -> str:
@@ -52,6 +56,8 @@ class RAGAPIClient(APIClientInterface):
                             return data.get("response", "")
                         else:
                             await self._log_and_retry(response, attempt)
+            except APIClientError:
+                raise
             except Exception as e:
                 if attempt < self.max_retries - 1:
                     logger.error(f"Request error (attempt {attempt+1}): {str(e)}")
@@ -63,17 +69,25 @@ class RAGAPIClient(APIClientInterface):
         url = f"{self.base_url}/chat/stream"
         payload = {"user_prompt": user_input}
 
+        yielded_any = False
         for attempt in range(self.max_retries):
             try:
                 async with aiohttp.ClientSession() as session:
                     async with session.post(url, json=payload) as response:
                         if response.status == 200:
                             async for chunk in self._handle_response_stream(response, callback):
+                                yielded_any = True
                                 yield chunk
                             return
                         else:
                             await self._log_and_retry(response, attempt)
+            except APIClientError:
+                raise
             except Exception as e:
+                if yielded_any:
+                    # Re-POSTing would replay chunks the caller already has.
+                    logger.error(f"Streaming request failed after partial output: {str(e)}")
+                    raise APIClientError(f"Streaming response failed after partial output: {str(e)}") from e
                 if attempt < self.max_retries - 1:
                     logger.error(f"Streaming request error (attempt {attempt+1}): {str(e)}")
                     await asyncio.sleep(self.retry_delay)
@@ -109,6 +123,9 @@ class RAGAPIClient(APIClientInterface):
     async def _log_and_retry(self, response: aiohttp.ClientResponse, attempt: int):
         error_text = await response.text()
         logger.error(f"API error (attempt {attempt+1}/{self.max_retries}): {response.status} - {error_text}")
+        if 400 <= response.status < 500:
+            # Client errors (e.g. 422 validation) will not succeed on retry.
+            raise APIClientError(f"API error: {response.status} - {error_text}")
         if attempt < self.max_retries - 1:
             await asyncio.sleep(self.retry_delay)
         else:

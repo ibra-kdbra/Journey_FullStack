@@ -10,8 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
-import os, random, string, inspect
+import os, inspect
 from pathlib import Path
+from django.core.exceptions import ImproperlyConfigured
 from dotenv import load_dotenv
 from str2bool import str2bool
 
@@ -25,24 +26,38 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
+# Enable/Disable DEBUG Mode (defaults to False: opt in explicitly for development)
+DEBUG = str2bool(os.environ.get('DEBUG', 'False'))
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get('SECRET_KEY')
 if not SECRET_KEY:
-    SECRET_KEY = ''.join(random.choice( string.ascii_lowercase  ) for i in range( 32 ))
+    if DEBUG:
+        # Clearly fake, development-only key. Never used when DEBUG is False.
+        SECRET_KEY = 'insecure-dev-only-key-do-not-use-in-production'
+    else:
+        raise ImproperlyConfigured(
+            'The SECRET_KEY environment variable is required when DEBUG is False.'
+        )
 
-# Enable/Disable DEBUG Mode
-DEBUG = str2bool(os.environ.get('DEBUG'))
-#print(' DEBUG -> ' + str(DEBUG) ) 
 
-ALLOWED_HOSTS = ['*']
+def _env_list(name, default=''):
+    return [item.strip() for item in os.environ.get(name, default).split(',') if item.strip()]
 
-# Add here your deployment HOSTS
-CSRF_TRUSTED_ORIGINS = ['http://localhost:8000', 'http://localhost:5085', 'http://127.0.0.1:8000', 'http://127.0.0.1:5085']
+
+# Comma separated list of hosts served by this app, e.g. "example.com,www.example.com"
+ALLOWED_HOSTS = _env_list('ALLOWED_HOSTS', 'localhost,127.0.0.1,[::1]')
+
+# Add here your deployment HOSTS (comma separated origins, incl. scheme)
+CSRF_TRUSTED_ORIGINS = _env_list(
+    'CSRF_TRUSTED_ORIGINS',
+    'http://localhost:8000,http://localhost:5085,http://127.0.0.1:8000,http://127.0.0.1:5085',
+)
 
 X_FRAME_OPTIONS = "SAMEORIGIN"
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
-if RENDER_EXTERNAL_HOSTNAME:    
+if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
 
 # Application definition

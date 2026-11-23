@@ -14,10 +14,13 @@ Visit `http://localhost:5085` in your browser. The app should be up & running.
 
 ## Environment
 
-Create a new `.env` file using sample `env.sample`. The meaning of each variable can be found below: 
+Create a new `.env` file using sample `.env.sample` (`.env` is git-ignored; docker-compose reads it). The meaning of each variable can be found below: 
 
-- `DEBUG`: if `True` the app runs in development mode
+- `DEBUG`: if `True` the app runs in development mode (default `False`)
   - For production value `False` should be used
+- `SECRET_KEY`: required when `DEBUG=False`; the app refuses to start without it
+- `ALLOWED_HOSTS`: comma separated host names (default `localhost,127.0.0.1,[::1]`)
+- `CSRF_TRUSTED_ORIGINS`: comma separated origins including scheme
 - For `MySql` persistence
   - Install the DB Driver: `pip install mysqlclient` 
   - Create DB and assign a new user (full rights) 

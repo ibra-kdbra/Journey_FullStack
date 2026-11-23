@@ -4,6 +4,8 @@ services:
     container_name: appseed_app
     restart: always
     build: .
+    env_file:
+      - .env # copy .env.sample to .env and set SECRET_KEY
     networks:
       - db_network
       - web_network

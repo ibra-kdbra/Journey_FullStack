@@ -258,6 +258,15 @@ updates:
     ignore:
       - dependency-name: "typescript"
         update-types: ["version-update:semver-major"]
+      # Solid 2 is held: @modular-forms/solid (latest 0.25.1) peers
+      # solid-js ^1.3.1, so npm ci fails with ERESOLVE (#2154). The router and
+      # i18n majors target Solid 2 too. See docs/ENGINEERING.md.
+      - dependency-name: "solid-js"
+        versions: [">=2.0.0"]
+      - dependency-name: "@solidjs/router"
+        versions: [">=2.0.0"]
+      - dependency-name: "@solid-primitives/i18n"
+        versions: [">=3.0.0"]
     groups:
       flask-ui-minor:
         patterns: ["*"]

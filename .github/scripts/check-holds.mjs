@@ -225,6 +225,33 @@ const HOLDS = [
   },
 
   {
+    name: 'Solid 2 held (solid-flask-web-app/ui)',
+    covers: ['solid-js', '@solidjs/router', '@solid-primitives/i18n'],
+    projects: ['solid-flask-web-app/ui'],
+    why:
+      '@modular-forms/solid@0.25.1 (latest) peers solid-js ^1.3.1, so solid-js 2 makes npm ci fail ' +
+      'with ERESOLVE (#2154). @solidjs/router 2 and @solid-primitives/i18n 3 are the Solid 2 ' +
+      'releases of the surrounding ecosystem and move with it.',
+    clearsWhen: '@modular-forms/solid publishes a release whose solid-js peer range admits 2.x.',
+    async check() {
+      const peers = await npmView('@modular-forms/solid@latest', 'peerDependencies')
+      const range = peers?.['solid-js'] ?? null
+      const latest = await npmView('@modular-forms/solid@latest', 'version')
+      const notes = [
+        `@modular-forms/solid@latest = ${latest ?? 'unknown'}`,
+        `@modular-forms/solid@latest peer solid-js = ${range ?? 'unknown'}`,
+      ]
+      if (!range) {
+        notes.push('could not read the peer range - treating the hold as still justified')
+        return { clearable: false, notes }
+      }
+      const widened = rangeAdmitsMajor(range, 2)
+      notes.push(`@modular-forms/solid admits solid-js 2.x: ${widened ? 'yes' : 'no'}`)
+      return { clearable: widened, notes }
+    },
+  },
+
+  {
     name: '@babel/* majors held at 7 (rn_clean_architecture)',
     covers: ['@babel/*'],
     projects: ['rn_clean_architecture'],

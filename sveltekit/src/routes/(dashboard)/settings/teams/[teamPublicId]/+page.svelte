@@ -128,9 +128,9 @@
           {#if member.user.avatar}
             <Avatar.Image src={`${PUBLIC_R2_BUCKET_URL}/avatars/${member.user.avatar}`} alt={member.user.email} />
           {/if}
-          <Avatar.Fallback class="text-xs uppercase"
-            >{`${member.user.firstName.charAt(0)}${member.user.lastName.charAt(0)}`}</Avatar.Fallback
-          >
+          <Avatar.Fallback class="text-xs uppercase">
+            {`${member.user.firstName.charAt(0)}${member.user.lastName.charAt(0)}`}
+          </Avatar.Fallback>
         </Avatar.Root>
         {#if member.role === 'admin'}
           <p class="mt-1 text-xs font-light">{member.role}</p>

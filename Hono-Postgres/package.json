@@ -2,7 +2,7 @@
   "name": "hono-app",
   "type": "module",
   "scripts": {
-    "start": "bun dist/index.js",
+    "start": "bun src/app/production.ts",
     "dev": "NODE_ENV=development bun run --hot src/app/development.ts",
     "test": "bun test",
     "prepare": "husky",

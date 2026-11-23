@@ -15,11 +15,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install pnpm
-      uses: pnpm/action-setup@v4
-      with:
-        version: 9
-
     - name: Setup npm
       uses: actions/setup-node@v4
       with:
@@ -152,11 +147,6 @@ jobs:
         with:
           node-version: 23
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9
-
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
@@ -176,7 +166,7 @@ jobs:
         with:
           install-command: make deps
           working-directory: ui
-          start: pnpm run dev
+          start: npm run dev
           wait-on: 'http://localhost:5173'
           wait-on-timeout: 10
           browser: chrome

@@ -49,7 +49,10 @@ interface CountryFlagProps {
 }
 
 function resolveCountryCode(code: string): string {
-  return code.toUpperCase() === 'EN' ? 'GB' : code.toUpperCase()
+  const upper = code.toUpperCase()
+  if (upper === 'EN') return 'GB'
+  if (upper === 'JA') return 'JP'
+  return upper
 }
 
 function CountryFlag(props: CountryFlagProps): JSXElement {

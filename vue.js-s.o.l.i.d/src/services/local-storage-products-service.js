@@ -9,7 +9,7 @@ export default class LocalStorageProductsService {
   }
 
   getAll() {
-    return JSON.parse(localStorage.getItem('products'));
+    return JSON.parse(localStorage.getItem('products')) ?? [];
   }
 
   deleteAll() {
@@ -17,6 +17,6 @@ export default class LocalStorageProductsService {
   }
 
   search(searchQuery) {
-    return this.getAll().filter(product => product.name.match(searchQuery));
+    return this.getAll().filter(product => product.name.toLowerCase().includes(String(searchQuery).toLowerCase()));
   }
 }

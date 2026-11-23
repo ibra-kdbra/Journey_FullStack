@@ -13,11 +13,24 @@ import * as i18n from '@solid-primitives/i18n'
 import type * as en from '../locales/en'
 import { dict as defaultDict } from '../locales/en'
 
-export const locales = ['en', 'nl'] as const
+export const locales = ['en', 'ja'] as const
 export type Locale = (typeof locales)[number]
 export type TranslationKeys = typeof en.dict
 export type TranslationKey = keyof TranslationKeys
 export type Translations = i18n.Flatten<TranslationKeys>
+
+export function isLocale(value: unknown): value is Locale {
+  return (locales as readonly unknown[]).includes(value)
+}
+
+function readStoredLocale(): Locale {
+  try {
+    const stored = localStorage.getItem('locale')
+    return isLocale(stored) ? stored : 'en'
+  } catch {
+    return 'en'
+  }
+}
 
 export async function fetchDictionary(locale: Locale): Promise<Translations> {
   const dict: Translations = (await import(`../locales/${locale}.ts`)).dict
@@ -34,13 +47,16 @@ type LocaleContextType = {
 const LocaleContext = createContext<LocaleContextType>()
 
 export function LocaleProvider(props: { children: JSXElement }) {
-  const [locale, setLocale] = createSignal<Locale>(
-    (localStorage.getItem('locale') as Locale) ?? 'en'
-  )
+  const [locale, setLocale] = createSignal<Locale>(readStoredLocale())
 
   const [translations, { mutate }] = createResource(locale, async (locale) => {
     if (locale === 'en') return defaultDict
-    return await fetchDictionary(locale)
+    try {
+      return await fetchDictionary(locale)
+    } catch (error) {
+      console.error(`Could not load locale '${locale}', using 'en'`, error)
+      return defaultDict
+    }
   })
 
   const translationsAccessor = () => translations() ?? defaultDict

@@ -1,7 +1,6 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {IItemForm} from "./shared/components/table-filter/table-filter.interface";
 import {MatTable} from "@angular/material/table";
-import {TableComponent} from "./shared/components/table/table.component";
 
 @Component({
   standalone: false,
@@ -10,7 +9,6 @@ import {TableComponent} from "./shared/components/table/table.component";
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  @ViewChild ('tableExportFilter') appTable!: TableComponent;
   title = 'app';
   public dataSource: any[] = [];
   public itemsForm: IItemForm[] = [
@@ -147,13 +145,13 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     setTimeout(() => {
-      this.dataSource.push({
+      // Reassign (don't mutate) so every <app-table [data]> sees the change.
+      this.dataSource = [...this.dataSource, {
         "name": "Gonzalo",
         "age": 23,
         "email": "gofalfan@duocuc.",
         "status":"inactive"
-      })
-      this.appTable.load(this.dataSource);
+      }];
     }, 1000);
   }
 

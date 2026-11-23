@@ -2,6 +2,7 @@ import FileExporter from "../../interfaces/FileExporter";
 import { Workbook } from 'exceljs';
 import { User } from "../../models/User";
 import path from "path";
+import fs from "fs";
 
 export default class ExcelExporter implements FileExporter {
 
@@ -19,8 +20,11 @@ export default class ExcelExporter implements FileExporter {
             worksheet.addRow([row.name, row.email]);
         });
 
-        const filePath = path.join(__dirname, '../../public/excel/export.xlsx');
+        // public/ lives at the project root, not next to the compiled sources
+        const folderPath = path.join(process.cwd(), 'public/excel');
+        await fs.promises.mkdir(folderPath, { recursive: true });
+        const filePath = path.join(folderPath, 'export.xlsx');
 
-        workbook.xlsx.writeFile(filePath);
+        await workbook.xlsx.writeFile(filePath);
     }
 }

@@ -1,4 +1,4 @@
-import {AfterViewInit, Component, Input, OnInit, Optional, ViewChild} from '@angular/core';
+import {AfterViewInit, Component, Input, OnChanges, OnInit, Optional, SimpleChanges, ViewChild} from '@angular/core';
 import {MatTableDataSource} from "@angular/material/table";
 import {MatSort} from "@angular/material/sort";
 import {MatPaginator} from "@angular/material/paginator";
@@ -7,7 +7,7 @@ import {MatPaginator} from "@angular/material/paginator";
   standalone: false,
   selector: 'app-table',
   templateUrl: './table.component.html'})
-export class TableComponent implements OnInit, AfterViewInit{
+export class TableComponent implements OnInit, OnChanges, AfterViewInit{
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @Input() displayedColumns: Array<string> = [];
@@ -23,6 +23,12 @@ export class TableComponent implements OnInit, AfterViewInit{
 
   ngOnInit(): void {
     this.dataSource.data = this.data;
+  }
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['data'] && !changes['data'].firstChange) {
+      this.load(this.data);
+    }
   }
 
   ngAfterViewInit(): void {

@@ -1,7 +1,7 @@
 from functools import wraps
 
 from flask import request
-from flask_login import current_user
+from flask_login import current_user, login_required
 
 from app.errors import APIError, APIErrorEnum
 
@@ -21,7 +21,10 @@ def insert_pagination_parameters(func):
 
 
 def admin_required(func):
+    # login_required runs first, so anonymous callers get 401 instead of an
+    # AttributeError (AnonymousUserMixin has no is_admin) surfacing as a 500.
     @wraps(func)
+    @login_required
     def wrapper(*args, **kwargs):
         if not current_user.is_admin:
             raise APIError(

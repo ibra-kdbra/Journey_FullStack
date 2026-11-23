@@ -2,14 +2,17 @@ import path from "path";
 import FileExporter from "../../interfaces/FileExporter";
 import { User } from "../../models/User";
 import fs from "fs";
-import PdfPrinter = require("pdfmake/src/printer");
+import pdfmake = require("pdfmake");
 
 export default class PdfExporter implements FileExporter {
    
     async exportFile(data: User[]) {
 
-        const folderPath = path.join(__dirname, '../../public');
-        const filePath = path.join(folderPath, '/pdf/export.pdf');
+        // public/ lives at the project root, not next to the compiled sources
+        const folderPath = path.join(process.cwd(), 'public');
+        const pdfFolder = path.join(folderPath, 'pdf');
+        const filePath = path.join(pdfFolder, 'export.pdf');
+        await fs.promises.mkdir(pdfFolder, { recursive: true });
 
         var fonts = {
             Roboto: {
@@ -20,7 +23,8 @@ export default class PdfExporter implements FileExporter {
             }
         };
 
-        var printer = new PdfPrinter(fonts)
+        // pdfmake 0.3 no longer ships pdfmake/src/printer; use the server-side API
+        pdfmake.setFonts(fonts);
 
         var docDefinition = {
             content: [
@@ -52,8 +56,7 @@ export default class PdfExporter implements FileExporter {
            
         };
 
-        var pdfDoc = printer.createPdfKitDocument(docDefinition);
-        pdfDoc.pipe(fs.createWriteStream(filePath));
-        pdfDoc.end();
+        const pdfDoc = pdfmake.createPdf(docDefinition);
+        await pdfDoc.write(filePath);
     }
 }

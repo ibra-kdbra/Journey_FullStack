@@ -20,9 +20,9 @@ export class FeedbackService {
 
       await axios.post(this.feedbackEndpoints.SUBMIT, data);
     } catch (err) {
-      if (err && err instanceof Error)
-        console.log("Error: ", err.message);
-      else if (err instanceof AxiosError) handleAxiosError(err);
+      // AxiosError extends Error, so it must be tested first.
+      if (err instanceof AxiosError) handleAxiosError(err);
+      else if (err instanceof Error) console.error("Error: ", err.message);
     }
   }
 }

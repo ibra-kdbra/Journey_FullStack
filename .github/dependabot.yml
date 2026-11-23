@@ -495,6 +495,12 @@ updates:
     schedule: { interval: "monthly" }
     open-pull-requests-limit: 3
     commit-message: { prefix: "deps(docker)" }
+    ignore:
+      # The RAG images are held at the Python the projects are tested on
+      # (python: "3.12" in .github/projects.json). Dependabot moved the frontend
+      # to 3.15-slim (#2214), which undid #1927. See docs/ENGINEERING.md.
+      - dependency-name: "python"
+        versions: [">=3.13"]
     groups:
       base-images:
         patterns: ["*"]

@@ -252,6 +252,32 @@ const HOLDS = [
   },
 
   {
+    name: 'python base image held at 3.12 (RAG-streamlit backend/frontend)',
+    covers: ['python'],
+    projects: ['RAG-streamlit/backend', 'RAG-streamlit/frontend'],
+    why:
+      'The RAG Dockerfiles must run the Python the projects are tested on, which is ' +
+      'python: "3.12" in .github/projects.json. Dependabot proposed python:3.15-slim for the ' +
+      'frontend (#2214), undoing #1927. The image follows the manifest, not the other way round.',
+    clearsWhen: 'the manifest moves RAG-streamlit/backend and RAG-streamlit/frontend past Python 3.12.',
+    async check() {
+      const { readFile } = await import('node:fs/promises')
+      const url = new URL('../projects.json', import.meta.url)
+      const manifest = JSON.parse(await readFile(url, 'utf8'))
+      const wanted = ['RAG-streamlit/backend', 'RAG-streamlit/frontend']
+      const versions = wanted.map((p) => manifest.projects.find((e) => e.path === p)?.python ?? null)
+      const notes = wanted.map((p, i) => `${p} python = ${versions[i] ?? 'unknown'}`)
+      if (versions.some((v) => !v)) {
+        notes.push('could not read both projects from the manifest - treating the hold as still justified')
+        return { clearable: false, notes }
+      }
+      const moved = versions.every((v) => major(v) > 3 || (major(v) === 3 && minor(v) > 12))
+      notes.push(`manifest has moved past 3.12: ${moved ? 'yes' : 'no'}`)
+      return { clearable: moved, notes }
+    },
+  },
+
+  {
     name: '@babel/* majors held at 7 (rn_clean_architecture)',
     covers: ['@babel/*'],
     projects: ['rn_clean_architecture'],

@@ -46,7 +46,9 @@ const getTeamByPublicIdWithRelations = db.query.Team.findFirst({
   with: {
     members: {
       with: {
-        user: true
+        user: {
+          columns: { id: true, publicId: true, firstName: true, lastName: true, email: true, avatar: true }
+        }
       },
       orderBy: (members, { desc }) => [desc(members.joinedAt)]
     },
@@ -71,7 +73,9 @@ export const getTeamsByUserId = db.query.User.findFirst({
           with: {
             members: {
               with: {
-                user: true
+                user: {
+                  columns: { id: true, publicId: true, firstName: true, lastName: true, email: true, avatar: true }
+                }
               }
             },
             invites: true

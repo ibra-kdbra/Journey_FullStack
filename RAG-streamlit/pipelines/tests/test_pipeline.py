@@ -278,3 +278,35 @@ def test_process_markdown_strips_front_matter(tmp_path):
     # The heading is lifted out of the body into the chunk's header hierarchy.
     assert chunks[0]["metadata"]["headers"] == {"1": "Heading"}
     assert chunks[0]["metadata"]["source"] == str(doc)
+
+
+def _overlap(a: str, b: str) -> int:
+    """Length of the longest suffix of a that is also a prefix of b."""
+    return max((k for k in range(1, min(len(a), len(b)) + 1) if b.startswith(a[-k:])), default=0)
+
+
+def test_long_single_line_respects_chunk_size_and_overlap(tmp_path):
+    """A 5000-char line used to become one oversized chunk with no overlap."""
+    doc = tmp_path / "long.md"
+    doc.write_text("# Title\n\n" + " ".join(f"word{i:04d}" for i in range(556)) + "\n")  # ~5000 chars, one line
+
+    chunks = MarkdownProcessor(chunk_size=500, chunk_overlap=100).process_markdown(str(doc))
+
+    assert len(chunks) > 1
+    assert all(len(c["content"]) <= 500 for c in chunks)
+    for prev, nxt in zip(chunks, chunks[1:]):
+        assert 0 < _overlap(prev["content"], nxt["content"]) <= 100
+        assert _overlap(prev["content"], nxt["content"]) >= 80
+    assert all(c["metadata"]["headers"] == {"1": "Title"} for c in chunks)
+
+
+def test_sections_keep_their_own_headers(tmp_path):
+    doc = tmp_path / "sections.md"
+    doc.write_text("# A\n\nfirst body\n\n## B\n\nsecond body\n")
+
+    chunks = MarkdownProcessor(chunk_size=500, chunk_overlap=100).process_markdown(str(doc))
+
+    assert [(c["content"], c["metadata"]["headers"]) for c in chunks] == [
+        ("first body", {"1": "A"}),
+        ("second body", {"1": "A", "2": "B"}),
+    ]

@@ -47,7 +47,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
   const email = claimsParser.getString('email');
 
   const existingUser = await db.query.User.findFirst({
-    where: or(eq(User.googleId, Number(googleId)), eq(User.email, email)),
+    where: or(eq(User.googleId, googleId), eq(User.email, email)),
     columns: {
       id: true,
       googleId: true,
@@ -57,10 +57,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
 
   if (existingUser) {
     if (!existingUser.googleId) {
-      await db
-        .update(User)
-        .set({ googleId: Number(googleId) })
-        .where(eq(User.id, existingUser.id));
+      await db.update(User).set({ googleId: googleId }).where(eq(User.id, existingUser.id));
     }
 
     const sessionToken = generateSessionToken();
@@ -87,7 +84,7 @@ export async function GET(event: RequestEvent): Promise<Response> {
         .values({
           publicId: userPublicId,
           email,
-          googleId: Number(googleId),
+          googleId: googleId,
           firstName,
           lastName
         })

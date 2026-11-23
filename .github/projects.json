@@ -260,20 +260,6 @@
       }
     },
     {
-      "path": "vercel-cleaner",
-      "ecosystem": "node",
-      "packageManager": "npm",
-      "node": "22",
-      "track": "tooling",
-      "checks": {
-        "install": true,
-        "build": false,
-        "lint": false,
-        "test": false
-      },
-      "notes": "Single-file operational script; no build step. No lint script is defined, and test is npm's placeholder, `echo \"Error: no test specified\" && exit 1`, so it can only fail."
-    },
-    {
       "path": "RAG-streamlit",
       "ecosystem": "python",
       "packageManager": "poetry",

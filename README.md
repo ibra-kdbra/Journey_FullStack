@@ -42,7 +42,6 @@ ways and read them side by side.
 | SOLID where the framework does help | [`nestjs-s.o.l.i.d`](nestjs-s.o.l.i.d/) |
 | A domain with real business rules | [`API_s.o.l.i.d_TS`](API_s.o.l.i.d_TS/) |
 | Service decomposition across deployables | [`hospital-management`](hospital-management/) |
-| A counter-example — knowing when *not* to abstract | [`vercel-cleaner`](vercel-cleaner/) |
 
 Each project has an [Atlas entry](learning-doc/content/atlas/) answering the same
 five questions: what problem shape it is for, what its layer map actually looks
@@ -103,7 +102,6 @@ see [`.github/projects.json`](.github/projects.json).
 |:---|:---|:---|:---|
 | [`astro-starter`](astro-starter/) | Astro 7, React, Tailwind v4 | Islands as dependency inversion for the browser | reference |
 | [`learning-doc`](learning-doc/) | Nuxt 4, Nuxt Content, PocketBase | The Engineering Atlas itself — content as a validated collection | reference |
-| [`vercel-cleaner`](vercel-cleaner/) | Node.js | Knowing when *not* to apply the patterns in the rest of this repository | reference |
 
 ---
 

@@ -34,7 +34,6 @@ Flutter, Gin, Supabase, Raspberry Pi, Next.js, and Korean.
 | SOLID where the framework does help | [`nestjs-s.o.l.i.d`](/atlas/nestjs-solid) |
 | A domain with real business rules | [`API_s.o.l.i.d_TS`](/atlas/api-solid-ts) |
 | Service decomposition across deployables | [`hospital-management`](/atlas/hospital-management) |
-| A counter-example — knowing when not to abstract | [`vercel-cleaner`](/atlas/vercel-cleaner) |
 
 ## On honesty
 

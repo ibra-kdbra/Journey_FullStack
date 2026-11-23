@@ -38,9 +38,11 @@ export async function getUsers(
   page: number,
   perPage: number
 ): Promise<PaginationResult<UserAttributes>> {
-  return await get(`api/users?page=${page}&per_page=${perPage}`).then(
-    (response) => response.json()
-  )
+  const response = await get(`api/users?page=${page}&per_page=${perPage}`)
+  if (!response.ok) {
+    throw new Error(`Failed to load users (HTTP ${response.status})`)
+  }
+  return await response.json()
 }
 
 export type ResetPasswordData = {

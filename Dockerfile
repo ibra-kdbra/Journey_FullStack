@@ -12,12 +12,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-# Running Migrations
-RUN python manage.py makemigrations
-RUN python manage.py migrate
+# Build-time only placeholder so management commands can import settings;
+# not persisted in the image. The real SECRET_KEY comes from the runtime env.
+RUN SECRET_KEY=build-time-placeholder python manage.py makemigrations \
+ && SECRET_KEY=build-time-placeholder python manage.py generate-api -f
 
-# Generate API
-RUN python manage.py generate-api -f
-
-# gunicorn
-CMD ["gunicorn", "--config", "gunicorn-cfg.py", "core.wsgi"]
+# The database is created at start-up (not baked into the image), then gunicorn
+CMD ["sh", "-c", "python manage.py migrate --noinput && exec gunicorn --config gunicorn-cfg.py core.wsgi"]

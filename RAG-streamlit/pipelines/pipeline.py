@@ -268,51 +268,45 @@ class MarkdownProcessor:
         with open(file_path, encoding='utf-8') as f:
             post = frontmatter.load(f)
 
-        # Split content into lines for processing
-        lines = post.content.split('\n')
-        chunks = []
-        current_chunk = []
-        current_headers = {}  # Track current header hierarchy
+        splitter = RecursiveCharacterTextSplitter(
+            chunk_size=self.chunk_size,
+            chunk_overlap=self.chunk_overlap,
+        )
+        chunks: list[dict] = []
+        current_lines: list[str] = []
+        current_headers: dict[str, str] = {}  # Current header hierarchy
 
-        for line in lines:
-            # Check for headers
+        def flush_section() -> None:
+            # Split the section under the headers in effect when it started,
+            # so every chunk is at most chunk_size and neighbours overlap by
+            # up to chunk_overlap.
+            section = '\n'.join(current_lines).strip()
+            if section:
+                for piece in splitter.split_text(section):
+                    piece = piece.strip()
+                    if piece:
+                        chunks.append({
+                            'content': piece,
+                            'metadata': {
+                                'source': file_path,
+                                'headers': current_headers.copy()
+                            }
+                        })
+            current_lines.clear()
+
+        for line in post.content.split('\n'):
             header_match = re.match(r'^(#{1,6})\s+(.+)$', line)
             if header_match:
+                flush_section()
                 level = len(header_match.group(1))
                 title = header_match.group(2).strip()
                 current_headers[str(level)] = title
-                # Remove lower level headers when we encounter a higher level
+                # Drop deeper headers when a shallower one is encountered
                 current_headers = {k: v for k, v in current_headers.items() if int(k) <= level}
                 continue
-            
-            # Add line to current chunk
-            current_chunk.append(line)
-            
-            # Check if we should create a new chunk
-            if len('\n'.join(current_chunk)) >= self.chunk_size:
-                chunk_text = '\n'.join(current_chunk).strip()
-                if chunk_text:
-                    chunks.append({
-                        'content': chunk_text,
-                        'metadata': {
-                            'source': file_path,
-                            'headers': current_headers.copy()  # Include current header hierarchy
-                        }
-                    })
-                current_chunk = []
-        
-        # Add the last chunk if it exists
-        if current_chunk:
-            chunk_text = '\n'.join(current_chunk).strip()
-            if chunk_text:
-                chunks.append({
-                    'content': chunk_text,
-                    'metadata': {
-                        'source': file_path,
-                        'headers': current_headers.copy()  # Include current header hierarchy
-                    }
-                })
-        
+            current_lines.append(line)
+
+        flush_section()
         return chunks
 
 def load_config(config_path="config.yaml") -> Config:

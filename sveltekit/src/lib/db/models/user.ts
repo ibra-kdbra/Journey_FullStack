@@ -11,7 +11,7 @@ export const User = sqliteTable('user', {
     .$default(() => generateNanoId())
     .unique(),
   email: text().unique(),
-  googleId: integer().unique(),
+  googleId: text().unique(),
   firstName: text().notNull(),
   lastName: text().notNull(),
   hashedPassword: text(),

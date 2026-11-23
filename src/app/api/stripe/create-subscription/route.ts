@@ -1,18 +1,32 @@
 import { db } from '@/lib/db'
 import { stripe } from '@/lib/stripe'
 import { NextResponse } from 'next/server'
+import { pricingCards } from '@/lib/constants'
+import { forbidden, getAgencyAdmin, requireUserId, unauthorized } from '@/lib/api-auth'
 
 export async function POST(req: Request) {
+  if (!(await requireUserId())) return unauthorized()
+
   const { customerId, priceId } = await req.json()
   if (!customerId || !priceId)
     return new NextResponse('Customer Id or price id is missing', {
       status: 400,
     })
 
+  // Only platform plans may be purchased through this route.
+  const allowedPriceIds = pricingCards.map((c) => c.priceId).filter(Boolean)
+  if (!allowedPriceIds.includes(priceId))
+    return new NextResponse('Invalid price id', { status: 400 })
+
+  // The caller must be an owner/admin of the agency that owns this customer.
+  const admin = await getAgencyAdmin()
+  if (!admin) return forbidden()
+
   const subscriptionExists = await db.agency.findFirst({
-    where: { customerId },
+    where: { customerId, id: admin.agencyId! },
     include: { Subscription: true },
   })
+  if (!subscriptionExists) return forbidden()
 
   try {
     if (

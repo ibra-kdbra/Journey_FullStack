@@ -2,6 +2,7 @@ import { compare } from "bcrypt";
 import { sign } from "jsonwebtoken";
 import { inject, injectable } from "tsyringe";
 
+import { getJwtSecret } from "../../../../config/auth";
 import { AppError } from "../../../../shared/errors/AppError";
 import { IUserRepository } from "../../repositories/IUserRepository";
 
@@ -30,7 +31,7 @@ class AuthenticateUserUseCase {
         if (!passwordMatch) {
             throw new AppError("Email Or Password incorrect");
         }
-        const token = sign({}, "923aea88786448f4a8840c30f0327f8f", {
+        const token = sign({}, getJwtSecret(), {
             subject: user.id,
             expiresIn: "1d",
         });

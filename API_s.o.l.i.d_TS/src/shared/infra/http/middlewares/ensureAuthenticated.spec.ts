@@ -7,7 +7,7 @@ import { UserRepositoryInMemory } from "../../../../modules/accounts/repositorie
 import { AppError } from "../../../errors/AppError";
 import { ensureAuthenticated } from "./ensureAuthenticated";
 
-const SECRET = "923aea88786448f4a8840c30f0327f8f";
+const SECRET = process.env.JWT_SECRET as string;
 
 let users: UserRepositoryInMemory;
 

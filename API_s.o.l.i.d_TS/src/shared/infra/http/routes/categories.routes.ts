@@ -9,8 +9,18 @@ import { ensureAuthenticated } from "../middlewares/ensureAuthenticated";
 
 const categoriesRoutes = Router();
 
+// Only authenticated admins reach multer (see the route below); the limits
+// bound what they can write to disk.
 const upload = multer({
     dest: "./tmp",
+    limits: { fileSize: 1024 * 1024, files: 1 },
+    fileFilter: (req, file, callback) => {
+        const isCsv =
+            file.mimetype === "text/csv" ||
+            (file.mimetype === "application/vnd.ms-excel" &&
+                file.originalname.toLowerCase().endsWith(".csv"));
+        callback(null, isCsv);
+    },
 });
 const listCategoriesController = new ListCategoriesController();
 const importCategoryController = new ImportCategoryController();
@@ -22,9 +32,9 @@ categoriesRoutes.get("/", listCategoriesController.handle);
 
 categoriesRoutes.post(
     "/import",
-    upload.single("file"),
     ensureAuthenticated,
     ensureAdmin,
+    upload.single("file"),
     importCategoryController.handle,
 );
 

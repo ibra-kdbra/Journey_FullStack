@@ -31,10 +31,12 @@ class ImportCategoryUseCase {
                     categories.push({ name, description });
                 })
                 .on("end", () => {
-                    fs.promises.unlink(file.path);
-                    resolve(categories);
+                    // Wait for the upload to be removed before resolving: an
+                    // un-awaited unlink rejects later as an unhandled rejection.
+                    fs.promises.unlink(file.path).then(() => resolve(categories), reject);
                 })
                 .on("error", (err) => {
+                    fs.promises.unlink(file.path).catch(() => undefined);
                     reject(err);
                 });
         });

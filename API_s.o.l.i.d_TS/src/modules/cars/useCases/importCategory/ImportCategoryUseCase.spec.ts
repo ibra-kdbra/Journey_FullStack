@@ -41,6 +41,26 @@ describe("Import Category", () => {
         expect(categoryRepositoryInMemory.categories[0].description).toBe("existing");
     });
 
+    it("removes the uploaded file before resolving", async () => {
+        const file = csvFile("SUV,Sport utility\n");
+
+        await importCategoryUseCase.execute(file);
+
+        expect(fs.existsSync(file.path)).toBe(false);
+    });
+
+    it("reports a failed cleanup instead of leaving an unhandled rejection", async () => {
+        const unlink = jest
+            .spyOn(fs.promises, "unlink")
+            .mockRejectedValueOnce(new Error("unlink failed"));
+
+        await expect(importCategoryUseCase.execute(csvFile("SUV,Sport utility\n"))).rejects.toThrow(
+            "unlink failed",
+        );
+        expect(categoryRepositoryInMemory.categories).toHaveLength(0);
+        unlink.mockRestore();
+    });
+
     it("propagates repository errors", async () => {
         jest.spyOn(categoryRepositoryInMemory, "create").mockRejectedValueOnce(
             new Error("db down"),

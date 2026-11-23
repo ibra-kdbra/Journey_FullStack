@@ -3,3 +3,8 @@
 node_modules/
 yarn-error.log
 dist/
+
+# generated user exports (contain personal data)
+exports/
+public/excel/
+public/pdf/

@@ -1,15 +1,5 @@
-import express from "express";
 import sequelize from "./helpers/db";
-import { userRoutes, MainRoutes } from "./routes";
-
-import "reflect-metadata";
-
-const app = express();
-app.use(express.json());
-app.use(express.static('public'));
-
-app.use("/users", userRoutes);
-app.use("/", MainRoutes);
+import app from "./app";
 
 (async () => {
     try {
@@ -23,4 +13,3 @@ app.use("/", MainRoutes);
         console.error(error);
     }
 })()
-

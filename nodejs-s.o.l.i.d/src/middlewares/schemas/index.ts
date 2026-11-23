@@ -1,6 +1,7 @@
 import { ExportTypeSchema } from "./ExportTypeSchema";
+import { LoginSchema } from "./LoginSchema";
 import { UserCreateSchema, UserUpdateSchema } from "./UsersSchema";
 
 export {
-    ExportTypeSchema, UserCreateSchema, UserUpdateSchema
+    ExportTypeSchema, LoginSchema, UserCreateSchema, UserUpdateSchema
 }

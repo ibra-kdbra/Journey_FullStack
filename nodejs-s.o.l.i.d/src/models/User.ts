@@ -41,7 +41,12 @@ User.init(
     {
         tableName: 'users',
         sequelize,
-        timestamps: false
+        timestamps: false,
+        // The password hash must never leave the server by accident; code that
+        // really needs it (login) uses User.unscoped().
+        defaultScope: {
+            attributes: { exclude: ['password'] },
+        },
     }
 );
 

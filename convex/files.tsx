@@ -1,16 +1,28 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import {
+  getAccessibleFile,
+  getOwnedTeam,
+  requireIdentity,
+} from "./authHelpers";
+
 export const createNewFile = mutation({
   args: {
     fileName: v.string(),
     teamId: v.string(),
-    createdBy: v.string(),
     archieved: v.boolean(),
     document: v.string(),
     whiteboard: v.string(),
   },
   handler: async (ctx, args) => {
-    return await ctx.db.insert("files", args);
+    const { email } = await requireIdentity(ctx);
+    const team = await getOwnedTeam(ctx, args.teamId, email);
+    if (!team) throw new Error("Forbidden");
+    return await ctx.db.insert("files", {
+      ...args,
+      teamId: team._id,
+      createdBy: email,
+    });
   },
 });
 
@@ -19,9 +31,12 @@ export const getFiles = query({
     teamId: v.string(),
   },
   handler: async (ctx, args) => {
+    const { email } = await requireIdentity(ctx);
+    const team = await getOwnedTeam(ctx, args.teamId, email);
+    if (!team) throw new Error("Forbidden");
     return await ctx.db
       .query("files")
-      .filter((q) => q.eq(q.field("teamId"), args.teamId))
+      .filter((q) => q.eq(q.field("teamId"), team._id))
       .order("desc")
       .collect();
   },
@@ -33,6 +48,9 @@ export const updateDocument = mutation({
     document: v.string(),
   },
   handler: async (ctx, args) => {
+    const { email } = await requireIdentity(ctx);
+    const file = await getAccessibleFile(ctx, args._id, email);
+    if (!file) throw new Error("Forbidden");
     return await ctx.db.patch(args._id, { document: args.document });
   },
 });
@@ -43,6 +61,9 @@ export const updateWhiteboard = mutation({
     whiteboard: v.string(),
   },
   handler: async (ctx, args) => {
+    const { email } = await requireIdentity(ctx);
+    const file = await getAccessibleFile(ctx, args._id, email);
+    if (!file) throw new Error("Forbidden");
     return await ctx.db.patch(args._id, { whiteboard: args.whiteboard });
   },
 });
@@ -52,6 +73,7 @@ export const getFilebyId = query({
     _id: v.id("files"),
   },
   handler: async (ctx, args) => {
-    return await ctx.db.get(args._id);
+    const { email } = await requireIdentity(ctx);
+    return await getAccessibleFile(ctx, args._id, email);
   },
 });

@@ -1,15 +1,15 @@
 import { v } from "convex/values";
 
 import { mutation, query } from "./_generated/server";
+import { requireIdentity } from "./authHelpers";
 
 export const getTeams = query({
-  args: {
-    email: v.string(),
-  },
-  handler: async (ctx, args) => {
+  args: {},
+  handler: async (ctx) => {
+    const { email } = await requireIdentity(ctx);
     return await ctx.db
       .query("teams")
-      .filter((q) => q.eq(q.field("createdBy"), args.email))
+      .filter((q) => q.eq(q.field("createdBy"), email))
       .collect();
   },
 });
@@ -17,9 +17,12 @@ export const getTeams = query({
 export const createTeam = mutation({
   args: {
     teamName: v.string(),
-    createdBy: v.string(),
   },
   handler: async (ctx, args) => {
-    return await ctx.db.insert("teams", args);
+    const { email } = await requireIdentity(ctx);
+    return await ctx.db.insert("teams", {
+      teamName: args.teamName,
+      createdBy: email,
+    });
   },
 });

@@ -19,7 +19,6 @@ const page = () => {
   const handleCreateTeam = async () => {
     await createTeam({
       teamName,
-      createdBy: user?.email!,
     }).then((res) => {
       console.log(res);
       if (res) {

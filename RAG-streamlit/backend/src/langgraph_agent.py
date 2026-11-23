@@ -2,7 +2,7 @@ import logging
 from collections.abc import AsyncGenerator
 from typing import Annotated, Any, TypedDict
 
-from langchain_core.messages import AIMessage, AnyMessage, HumanMessage, SystemMessage
+from langchain_core.messages import AnyMessage, HumanMessage, SystemMessage
 from langchain_core.tools import BaseTool
 from langgraph.graph import END, START, StateGraph
 from langgraph.graph.message import add_messages
@@ -19,14 +19,18 @@ class AgentState(TypedDict, total=False):
     messages: Annotated[list[AnyMessage], add_messages]
     streamed_output: AsyncGenerator[str, None]
 
+def build_prompt(state: AgentState, system_prompt: str) -> list[AnyMessage]:
+    """Return the model input: the system prompt first, then the history.
+
+    Builds a new list so the graph state is never mutated.
+    """
+    return [SystemMessage(content=system_prompt), *state["messages"]]
+
 def assistant(state: AgentState, tools: list[BaseTool], system_prompt: str) -> dict[str, Any]:
     logger.info("Running assistant node")
     logger.info(f"Current messages: {[msg.type for msg in state['messages']]}")
-    messages = state["messages"]
-    if len(messages) == 1 and isinstance(messages[0], HumanMessage):
-        logger.info("Adding system prompt to message history")
-        messages.append(SystemMessage(content=system_prompt))
-    
+    messages = build_prompt(state, system_prompt)
+
     chat_model = OllamaModelFactory().create_model(format=None)
     chat_with_tools = chat_model.bind_tools(tools)
     response = chat_with_tools.invoke(messages)
@@ -34,10 +38,9 @@ def assistant(state: AgentState, tools: list[BaseTool], system_prompt: str) -> d
     logger.info(f"Assistant response: {getattr(response, 'content', '[no content]')}")
     return {"messages": [response]}
 
-async def final_answer_async(state: AgentState) -> dict[str, Any]:
+async def final_answer_async(state: AgentState, system_prompt: str) -> dict[str, Any]:
     logger.debug("Running final answer async (streaming) node")
-    messages = state["messages"]
-    messages.append(AIMessage(content="Finalizing answer..."))
+    messages = build_prompt(state, system_prompt)
 
     chat_model = OllamaModelFactory().create_model(format=None)
     stream = chat_model.astream(messages)
@@ -53,10 +56,9 @@ async def final_answer_async(state: AgentState) -> dict[str, Any]:
 
     return {"streamed_output": wrapped_stream()}
 
-def final_answer_sync(state: AgentState) -> dict[str, Any]:
+def final_answer_sync(state: AgentState, system_prompt: str) -> dict[str, Any]:
     logger.debug("Running final answer sync node")
-    messages = state["messages"]
-    messages.append(AIMessage(content="Finalizing answer..."))
+    messages = build_prompt(state, system_prompt)
 
     chat_model = OllamaModelFactory().create_model(format=None)
     response = chat_model.invoke(messages)
@@ -69,7 +71,13 @@ def create_agent_graph(tools: list[BaseTool], system_prompt: str, streaming: boo
     # Define nodes
     builder.add_node("assistant", lambda s: assistant(s, tools, system_prompt))
     builder.add_node("tools", ToolNode(tools))
-    builder.add_node("final_answer", final_answer_async if streaming else final_answer_sync)
+    if streaming:
+        async def final_answer(state: AgentState) -> dict[str, Any]:
+            return await final_answer_async(state, system_prompt)
+    else:
+        def final_answer(state: AgentState) -> dict[str, Any]:
+            return final_answer_sync(state, system_prompt)
+    builder.add_node("final_answer", final_answer)
 
     # Define edges
     builder.add_edge(START, "assistant")

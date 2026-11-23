@@ -23,7 +23,7 @@ class UsersAPI(Resource):
     @insert_pagination_parameters
     def get(self, page: int | None = None, per_page: int | None = None):
         if page and per_page:
-            users, meta = pagination_query(User, int(page), int(per_page))
+            users, meta = pagination_query(User, page, per_page)
         else:
             users = User.query.all()
             meta = {}

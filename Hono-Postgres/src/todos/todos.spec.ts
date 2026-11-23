@@ -14,7 +14,7 @@ const app = testClient(todoRouter);
 describe(ApplicationRoutes.TODOS, () => {
   /// Database connection
   beforeAll(async () => {
-    execSync("NODE_ENV=test bun run db:push");
+    execSync("NODE_ENV=test bun run db:migrate");
   });
   beforeEach(async () => {
     await database.delete(todos);
@@ -69,6 +69,49 @@ describe(ApplicationRoutes.TODOS, () => {
       expect(json).toHaveProperty("success");
       expect(json.success).toBeTruthy();
       expect(json).toHaveProperty("data.id");
+    });
+
+    it("Should return 400 and ErrorResponse for missing or empty description.", async () => {
+      for (const json of [
+        {},
+        { description: "" },
+        { description: "   " },
+        { description: 5 },
+      ]) {
+        const response = await app.index.$post({ json: json as never });
+        expect(response.status).toBe(StatusCodes.BAD_REQUEST);
+        const body = (await response.json()) as unknown as Record<
+          string,
+          unknown
+        >;
+        expect(body.success).toBe(false);
+        expect(body.code).toBe("VALIDATION_ERROR");
+      }
+      expect(await database.query.todos.findMany()).toHaveLength(0);
+    });
+
+    it("Should return 400 for invalid JSON.", async () => {
+      const response = await todoRouter.request("/", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: "{not json",
+      });
+      expect(response.status).toBe(StatusCodes.BAD_REQUEST);
+      const body = (await response.json()) as Record<string, unknown>;
+      expect(body.code).toBe("VALIDATION_ERROR");
+    });
+  });
+
+  describe("onErrorHandler", () => {
+    it("Should not leak the raw error message in a 500 body.", async () => {
+      const { Hono } = await import("hono");
+      const { onErrorHandler } = await import("@/middlewares/onErrorHandler");
+      const failing = new Hono().onError(onErrorHandler).get("/", () => {
+        throw new Error("secret internal detail");
+      });
+      const response = await failing.request("/");
+      expect(response.status).toBe(StatusCodes.INTERNAL_SERVER_ERROR);
+      expect(await response.text()).not.toContain("secret internal detail");
     });
   });
 });

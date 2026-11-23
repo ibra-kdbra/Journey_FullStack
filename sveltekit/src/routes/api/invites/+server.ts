@@ -1,6 +1,6 @@
 // Utils
 import { redirect } from 'sveltekit-flash-message/server';
-import type { RequestEvent } from '@sveltejs/kit';
+import { redirect as kitRedirect, type RequestEvent } from '@sveltejs/kit';
 import { eq, and, ne } from 'drizzle-orm';
 import * as m from '$lib/utils/messages.json';
 
@@ -25,7 +25,7 @@ async function handleInviteProcessing(event: RequestEvent, teamIdParam: string |
   }
 
   const invite = await db.query.Invite.findFirst({
-    where: eq(Invite.teamId, teamId) && eq(Invite.token, inviteToken)
+    where: and(eq(Invite.teamId, teamId), eq(Invite.token, inviteToken))
   });
 
   if (!invite) {
@@ -101,11 +101,14 @@ async function handleInviteProcessing(event: RequestEvent, teamIdParam: string |
   );
 }
 
-// GET Request for Accepting an Invite using URL Params
+// GET Request for the link in the invite email. GET must be safe (no state change), so this only sends the
+// user to the Teams page, where the pending invite is shown with an Accept button that POSTs.
 export async function GET(event: RequestEvent) {
-  const teamIdParam = event.url.searchParams.get('team');
-  const inviteToken = event.url.searchParams.get('token');
-  await handleInviteProcessing(event, teamIdParam, inviteToken);
+  if (!event.locals.user) {
+    redirect('/login', { type: 'error', message: m.teams.invite.receive.mustLogin }, event);
+  }
+
+  kitRedirect(303, '/settings/teams');
 }
 
 // POST Request for Accepting an Invite using Form Data

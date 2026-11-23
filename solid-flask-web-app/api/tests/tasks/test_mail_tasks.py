@@ -35,3 +35,13 @@ class TestMailTasks:
             token = re.search(r"reset_token=([\w-]+)", outbox[0].html).group(1)
 
         assert user.check_password_reset_token(token)
+
+    def test_links_url_encode_email(self, client, db):
+        with mail.record_messages() as outbox:
+            send_email_verification_email(receiver="a+b@x.com", verification_token="tok")
+            send_forgot_password_email(receiver="a+b@x.com", reset_token="tok")
+
+        assert len(outbox) == 2
+        for message in outbox:
+            assert "email=a%2Bb%40x.com" in message.html
+            assert "email=a+b@x.com" not in message.html

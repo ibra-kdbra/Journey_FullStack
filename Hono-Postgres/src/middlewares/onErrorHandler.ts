@@ -4,6 +4,7 @@ import { StatusCodes } from "http-status-codes";
 import { HTTPException } from "hono/http-exception";
 /// Local imports
 import { Logger } from "@/config";
+import type { ErrorResponse } from "@/types/responses";
 
 export const onErrorHandler: ErrorHandler = (error, c) => {
   Logger.error(error.message);
@@ -14,8 +15,10 @@ export const onErrorHandler: ErrorHandler = (error, c) => {
 
   return c.json(
     {
-      error: [error.message],
-    },
+      success: false,
+      error: "Internal server error",
+      code: "SERVER_ERROR",
+    } satisfies ErrorResponse,
     StatusCodes.INTERNAL_SERVER_ERROR,
   );
 };

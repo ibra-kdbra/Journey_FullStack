@@ -15,9 +15,13 @@ export class PhotoRemoteDataSourceImpl implements PhotoRemoteDataSource {
     const api = container.get<RestApiGateway>(TYPES.RestApiGateway);
     console.log('PhotoRemoteDataSourceImpl:', query);
     return await api.request<Photos>({
-      path: query
-        ? `?key=10378494-67ad2479ecf48567970bc1f0e&q=${query}&page=${page}&per_page=20`
-        : `?key=10378494-67ad2479ecf48567970bc1f0e&page=${page}&per_page=20`,
+      path: '',
+      params: {
+        key: '10378494-67ad2479ecf48567970bc1f0e',
+        ...(query ? {q: query} : {}),
+        page,
+        per_page: 20,
+      },
       method: 'GET',
     });
   }

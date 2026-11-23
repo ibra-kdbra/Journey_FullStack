@@ -56,7 +56,7 @@ mkdir -p vols/{etcd,minio,milvus}
    The `EMBEDDING_MODEL` environment variable is used in both the runtime and the build environment.  In order to define it once, we will pull it from the `.env` file before we run the Docker Compose command.  This enables us define the environment varialbe once and use it throughout the system.  You can do this by exporting the environment variable:
 
    ```bash
-   export EMBEDDING_MODEL=$(grep EMBEDDING_MODEL ../backend/src/.env | cut -d '=' -f2-) docker-compose -f docker-compose.yml up -d --build
+   export EMBEDDING_MODEL=$(grep '^EMBEDDING_MODEL=' ../backend/src/.env | cut -d '=' -f2-) && docker compose -f docker-compose.yml up -d --build
    ```
 
    The `-d` flag runs the containers in detached mode (background).

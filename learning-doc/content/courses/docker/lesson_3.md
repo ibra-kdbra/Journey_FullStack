@@ -123,12 +123,12 @@ first message
 
 ```dockerfile [cache/Dockerfile]
 FROM alpine:3.20.3
-RUN date +%s%N > /built-at
+RUN cat /proc/sys/kernel/random/uuid > /built-at
 COPY message.txt /message.txt
 CMD ["sh", "-c", "cat /message.txt"]
 ```
 
-`date +%s%N` is the current time in nanoseconds: if the `RUN` step is executed again, `/built-at` changes; if it is reused from the cache, it does not.
+`/proc/sys/kernel/random/uuid` yields a fresh random UUID every time it is read, so if the `RUN` step is executed again, `/built-at` changes; if it is reused from the cache, it does not. (A timestamp would be a poor marker here: Alpine's `date` is BusyBox's, which ignores `%N`, so two builds within the same second would print the same value even though both ran the step.)
 
 ```console
 $ cd ../cache
@@ -147,7 +147,7 @@ Changing `message.txt` invalidated the `COPY` step — its input changed — but
 ```dockerfile [cache-bad/Dockerfile]
 FROM alpine:3.20.3
 COPY message.txt /message.txt
-RUN date +%s%N > /built-at
+RUN cat /proc/sys/kernel/random/uuid > /built-at
 CMD ["sh", "-c", "cat /message.txt"]
 ```
 
@@ -215,7 +215,7 @@ echo "app version 1"
 FROM alpine:3.20.3
 WORKDIR /app
 COPY deps.txt .
-RUN date +%s%N > /installed-at
+RUN cat /proc/sys/kernel/random/uuid > /installed-at
 COPY app.sh .
 CMD ["sh", "app.sh"]
 ```

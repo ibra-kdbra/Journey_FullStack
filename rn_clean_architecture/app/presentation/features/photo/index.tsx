@@ -15,7 +15,7 @@ import AppTextInput from 'presentation/components/textinput';
 import {RefreshControl} from 'react-native';
 
 const PhotoScreen: React.FC<IProps> = () => {
-  const {isLoading, photos, onLastValueChange, onEndReached, onRefresh} =
+  const {isLoading, error, photos, onLastValueChange, onEndReached, onRefresh} =
     useBloc();
 
   const renderPhotoItem = ({item}: {item: Hit}) => {
@@ -39,6 +39,7 @@ const PhotoScreen: React.FC<IProps> = () => {
         isClear={true}
         onLastValueChange={onLastValueChange}
       />
+      {error ? <TextPrimary>{error}</TextPrimary> : null}
       <RecycleView
         data={photos}
         renderItem={renderPhotoItem}

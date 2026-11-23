@@ -1,5 +1,5 @@
 // email.controller.ts
-import { Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { NotificationService } from './notification.service';
 import { EmailNotification } from './notification.interfaces';
 
@@ -8,7 +8,7 @@ export class EmailController {
   constructor(private readonly notificationService: NotificationService) {}
 
   @Post()
-  sendEmail(notification: EmailNotification): void {
+  sendEmail(@Body() notification: EmailNotification): void {
     this.notificationService.sendEmail(notification);
   }
 }

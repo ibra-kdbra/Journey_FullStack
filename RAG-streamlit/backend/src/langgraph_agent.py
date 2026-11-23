@@ -108,7 +108,15 @@ async def run_agent_graph_streaming(
                 logger.debug(f"Debug Chunk: {chunk}")
                 yield chunk
         else:
-            yield "No stream available."
+            # No tool was called, so the graph went assistant -> END and the
+            # streaming node never ran. The assistant's own answer is the last
+            # message in the final state; forward that instead.
+            last_message = final_state["messages"][-1]
+            content = getattr(last_message, "content", None)
+            if isinstance(content, str) and content:
+                yield content
+            else:
+                yield "No stream available."
     except Exception as e:
         logger.exception("Error during agent graph streaming")
         yield f"Error: {str(e)}"

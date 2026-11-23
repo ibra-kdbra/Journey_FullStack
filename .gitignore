@@ -38,6 +38,7 @@ k8s
 package-lock.json
 .env
 .env.*
+!.env.example
 dump.rdb
 
 mongocryptd.pid

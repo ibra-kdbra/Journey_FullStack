@@ -11,7 +11,6 @@ import {AllExceptionFilter} from "./filter/all-exception.filter";
 import {ConfigService} from "@nestjs/config";
 import {AuthorizationGuard} from "./guard/authorization.guard";
 import {RolesGuard} from "./guard/roles.guard";
-import {JwtService} from "@nestjs/jwt";
 
 async function bootstrap() {
     dotenv.config();
@@ -20,7 +19,6 @@ async function bootstrap() {
     const app = await NestFactory.create(AppModule, { cors: true });
     const reflector = app.get(Reflector)
     const configService = app.get<ConfigService>(ConfigService)
-    const jwtService = app.get<JwtService>(JwtService)
 
     /** setup service configuration **/
     const servicePort = configService.get<string>('AIRCITY_PROCESS_API_PORT') || 2001;
@@ -38,7 +36,7 @@ async function bootstrap() {
     /** setup global validation pipe **/
     app.useGlobalPipes(new ValidationPipe({ transform: true, forbidUnknownValues: false }));
     app.useGlobalFilters(new AllExceptionFilter());
-    app.useGlobalGuards(new AuthorizationGuard(reflector, jwtService), new RolesGuard(reflector))
+    app.useGlobalGuards(new AuthorizationGuard(reflector), new RolesGuard(reflector))
 
     /** use express middleware **/
     app.use(json({ limit: '120mb' }));

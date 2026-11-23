@@ -41,9 +41,10 @@ public class PatientUseCase {
     }
 
     // Use Case 4: Update basic profile info
-    public Patient updateProfile(String id, String name, String phone) {
+    public Patient updateProfile(String id, String firstName, String lastName, String phone) {
         var patient = getPatientById(id);
-        patient.setFirstName(name);
+        patient.setFirstName(firstName);
+        patient.setLastName(lastName);
         patient.setPhoneNumber(phone);
         patient.setUpdatedAt(LocalDateTime.now());
         return patientRepository.save(patient);

@@ -74,4 +74,28 @@ class PatientUseCaseTest {
         // Then
         assertEquals("Jane", found.getFirstName());
     }
+
+    @Test
+    void updateProfile_ShouldUpdateFirstAndLastNameIndependently() {
+        // Given
+        String id = "test-id";
+        Patient patient = Patient.builder().id(id).firstName("Jane").lastName("Roe").build();
+        when(patientRepository.findById(id)).thenReturn(Optional.of(patient));
+        when(patientRepository.save(any(Patient.class))).thenAnswer(i -> i.getArguments()[0]);
+
+        // When
+        Patient updated = patientUseCase.updateProfile(id, "Janet", "Roe", "555-0100");
+
+        // Then: first name changed, last name untouched
+        assertEquals("Janet", updated.getFirstName());
+        assertEquals("Roe", updated.getLastName());
+        assertEquals("555-0100", updated.getPhoneNumber());
+
+        // When: only the last name changes
+        updated = patientUseCase.updateProfile(id, "Janet", "Smith", "555-0100");
+
+        // Then
+        assertEquals("Janet", updated.getFirstName());
+        assertEquals("Smith", updated.getLastName());
+    }
 }

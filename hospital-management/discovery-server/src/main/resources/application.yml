@@ -9,3 +9,10 @@ eureka:
     fetchRegistry: false
     serviceUrl:
       defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+
+# Credentials Eureka clients (and anyone opening the dashboard) must present
+# via HTTP Basic. Required; clients embed the same values in their defaultZone.
+hospital:
+  security:
+    username: ${EUREKA_USER}
+    password: ${EUREKA_PASSWORD}

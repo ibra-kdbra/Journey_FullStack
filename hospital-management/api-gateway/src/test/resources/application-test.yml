@@ -1,0 +1,12 @@
+hospital:
+  security:
+    username: test-user
+    password: test-password-only
+
+eureka:
+  client:
+    enabled: false
+spring:
+  cloud:
+    discovery:
+      enabled: false

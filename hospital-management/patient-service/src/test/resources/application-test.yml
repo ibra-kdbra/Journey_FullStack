@@ -1,0 +1,19 @@
+# Used by the unit/slice tests (surefire sets spring.profiles.active=test).
+spring:
+  datasource:
+    username: sa
+    password: ""
+  flyway:
+    enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+hospital:
+  security:
+    username: test-user
+    password: test-password-only
+
+eureka:
+  client:
+    enabled: false

@@ -1,0 +1,11 @@
+# Local development only: `SPRING_PROFILES_ACTIVE=dev mvn spring-boot:run`.
+# Fake, well-known credentials; never use the dev profile on a reachable host.
+hospital:
+  security:
+    username: ${HOSPITAL_API_USER:dev}
+    password: ${HOSPITAL_API_PASSWORD:dev-password}
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${EUREKA_USER:dev}:${EUREKA_PASSWORD:dev-password}@${EUREKA_HOST:localhost}:8761/eureka/

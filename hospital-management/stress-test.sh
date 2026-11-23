@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # Simple Stress Test Script for Patient Registration
-# Requirements: Patient Service running on port 8081
+# Requirements: Patient Service running on port 8081, and HOSPITAL_API_USER /
+# HOSPITAL_API_PASSWORD exported (the same values the service was started with).
 
 URL="http://localhost:8081/api/v1/patients"
 CONCURRENT_REQUESTS=10
@@ -10,7 +11,7 @@ TOTAL_REQUESTS=100
 echo "Starting stress test on $URL with $TOTAL_REQUESTS total requests ($CONCURRENT_REQUESTS concurrent)..."
 
 for i in $(seq 1 $TOTAL_REQUESTS); do
-  curl -s -X POST $URL \
+  curl -s -u "$HOSPITAL_API_USER:$HOSPITAL_API_PASSWORD" -X POST $URL \
     -H "Content-Type: application/json" \
     -d "{
       \"firstName\": \"TestUser_$i\",

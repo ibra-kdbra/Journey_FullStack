@@ -1,0 +1,6 @@
+# Local development only: `SPRING_PROFILES_ACTIVE=dev mvn spring-boot:run`.
+# Fake, well-known credentials; never use the dev profile on a reachable host.
+hospital:
+  security:
+    username: ${EUREKA_USER:dev}
+    password: ${EUREKA_PASSWORD:dev-password}

@@ -1,0 +1,4 @@
+hospital:
+  security:
+    username: test-user
+    password: test-password-only

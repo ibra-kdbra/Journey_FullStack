@@ -1,5 +1,5 @@
 // Types
-import { type Action, type Actions } from '@sveltejs/kit';
+import { error, type Action, type Actions } from '@sveltejs/kit';
 
 // Utils
 import { redirect } from 'sveltekit-flash-message/server';
@@ -65,7 +65,11 @@ const createTeam: Action = async (event) => {
     return setFormFail(createTeamForm);
   }
 
-  const { userId, name } = createTeamForm.data;
+  // The creator is always the signed-in user; never trust an id from the form.
+  const user = event.locals.user;
+  if (!user) error(401, 'Unauthorized');
+
+  const { name } = createTeamForm.data;
   let team: Team;
 
   try {
@@ -81,7 +85,7 @@ const createTeam: Action = async (event) => {
     if (team) {
       await db.insert(UsersTeams).values({
         teamId: team.id,
-        userId: userId,
+        userId: user.id,
         role: 'admin'
       });
     }

@@ -4,6 +4,9 @@ const mockRequest = jest.fn<(req: any) => Promise<any>>();
 jest.mock('di', () => ({
   container: {get: () => ({request: (req: any) => mockRequest(req)})},
 }));
+jest.mock('data/config/Config', () => ({
+  getAppConfig: () => ({pixabayApiKey: 'fake-test-key'}),
+}));
 jest.mock('di/types', () => ({TYPES: {RestApiGateway: 'RestApiGateway'}}));
 
 import {PhotoRemoteDataSourceImpl} from 'data/datasources/photo/PhotoRemoteDataSource';
@@ -16,7 +19,12 @@ describe('PhotoRemoteDataSourceImpl', () => {
 
     const req = mockRequest.mock.calls[0][0];
     expect(req.path).toBe('');
-    expect(req.params).toMatchObject({q: 'a&b=c', page: 2, per_page: 20});
+    expect(req.params).toMatchObject({
+      key: 'fake-test-key',
+      q: 'a&b=c',
+      page: 2,
+      per_page: 20,
+    });
   });
 
   it('omits q when there is no query', async () => {

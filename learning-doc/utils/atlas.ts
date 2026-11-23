@@ -303,17 +303,6 @@ export const atlasProjects: AtlasProject[] = [
         compare: ["astro-starter", "nuxt-clean-architecture"],
         status: "reference",
     },
-    {
-        path: "vercel-cleaner",
-        slug: "vercel-cleaner",
-        name: "Vercel Cleaner",
-        track: "tooling",
-        stack: ["Node.js"],
-        summary:
-            "A single operational script that deletes failed Vercel deployments — included because small tools are part of the real toolchain.",
-        compare: [],
-        status: "reference",
-    },
 ];
 
 export const trackById = (id: TrackId): AtlasTrack | undefined =>

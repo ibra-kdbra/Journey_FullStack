@@ -1,3 +1,4 @@
+import { getJwtSecret } from "../../../config/auth";
 import { AppDataSource } from "../typeorm";
 import { app } from "./app";
 
@@ -7,6 +8,9 @@ import { app } from "./app";
  * after boot raced the connection and failed against a repository that had no
  * driver yet.
  */
+// Fail at boot, not on the first login, when the signing secret is missing.
+getJwtSecret();
+
 AppDataSource.initialize()
     .then(() => {
         app.listen(3333, () => console.log("Server is Running on port 3333!"));

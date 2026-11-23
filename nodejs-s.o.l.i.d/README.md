@@ -33,12 +33,19 @@ yarn seed:down #undo seeding
 
 ### available endpoints
 
+`/users/*` requires `Authorization: Bearer <token>`; get a token from `POST /auth/login`
+(`{ "email", "password" }`). Users can read/update their own record and orders; listing all users
+and exporting (`GET /users/export/:type`, returned as a download) require an admin, i.e. a user id
+listed in `ADMIN_USER_IDS`. Set `JWT_SECRET` in production.
+
 ```rest
-GET /users/
-GET /users/:id
-PUT /users/:id
-GET /users/export/:type
-GET /users/orders/:id
+POST /auth/login
+
+GET /users/            (admin)
+GET /users/:id         (self or admin)
+PUT /users/:id         (self or admin)
+GET /users/export/:type  (admin)
+GET /users/orders/:id  (self or admin)
 
 POST /pay
 POST /notification/send

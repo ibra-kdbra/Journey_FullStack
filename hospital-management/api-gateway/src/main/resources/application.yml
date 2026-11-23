@@ -11,17 +11,24 @@ spring:
       # them — the app would start clean and route nothing.
       server:
         webflux:
-          discovery:
-            locator:
-              enabled: true
-              lower-case-service-id: true
+          # The discovery locator is deliberately off: it would route every
+          # service registered in Eureka at /<service-name>/**. Only the routes
+          # declared below are reachable through the gateway.
           routes:
             - id: patient-service
               uri: lb://patient-service
               predicates:
                 - Path=/api/v1/patients/**
 
+hospital:
+  security:
+    # Credentials clients must present to the gateway (HTTP Basic). Required.
+    # The gateway forwards the Authorization header, so patient-service checks
+    # the same credentials again.
+    username: ${HOSPITAL_API_USER}
+    password: ${HOSPITAL_API_PASSWORD}
+
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://${EUREKA_USER}:${EUREKA_PASSWORD}@${EUREKA_HOST:localhost}:8761/eureka/

@@ -208,9 +208,9 @@
         "install": true,
         "build": true,
         "lint": false,
-        "test": false
+        "test": true
       },
-      "notes": "build runs tsc. A `typecheck` script is also available. No lint script is defined. test is npm's placeholder, `echo \"Error: no test specified\" && exit 1`, so it can only fail. typecheck stays off too, but for a different reason: it is `tsc --noEmit` over the same files build already compiles with `tsc`, so it would double the job for no extra signal (issue #1360)."
+      "notes": "build runs tsc. A `typecheck` script is also available. No lint script is defined. test runs `node --test` through tsx over test/*.test.ts: 15 tests covering authentication and authorisation on the /users routes (anonymous 401, forged/expired/alg=none tokens, wrong-user and non-admin 403, login). Models are stubbed, so no MySQL is needed. typecheck stays off: it is `tsc --noEmit` over the same files build already compiles with `tsc`, so it would double the job for no extra signal (issue #1360)."
     },
     {
       "path": "nestjs-s.o.l.i.d",
@@ -238,7 +238,7 @@
         "lint": true,
         "test": true
       },
-      "notes": "Express 5 + TypeORM + tsyringe. typescript held at ^6: ts-node needs the programmatic compiler API removed in TS 7, so the dev server and jest both die on import (issue #1296). lint runs eslint 10 against a flat config. build is `tsc` to dist/. test is a real suite: 6 unit specs against in-memory repositories plus one integration spec that runs the migrations and reads back through CategoryRepository, so CI starts the runner's PostgreSQL and creates the database named in the postgres field. The DataSource reads DATABASE_URL when set, which is what that step exports. 21 tests, verified against a live PostgreSQL 16 from an empty database.",
+      "notes": "Express 5 + TypeORM + tsyringe. typescript held at ^6: ts-node needs the programmatic compiler API removed in TS 7, so the dev server and jest both die on import (issue #1296). lint runs eslint 10 against a flat config. build is `tsc` to dist/. test is a real suite: 6 unit specs against in-memory repositories plus one integration spec that runs the migrations and reads back through CategoryRepository, so CI starts the runner's PostgreSQL and creates the database named in the postgres field. The DataSource reads DATABASE_URL when set, which is what that step exports. 36 tests, verified against a live PostgreSQL 16 from an empty database.",
       "postgres": "api_solid_test"
     },
     {
@@ -260,20 +260,6 @@
       }
     },
     {
-      "path": "vercel-cleaner",
-      "ecosystem": "node",
-      "packageManager": "npm",
-      "node": "22",
-      "track": "tooling",
-      "checks": {
-        "install": true,
-        "build": false,
-        "lint": false,
-        "test": false
-      },
-      "notes": "Single-file operational script; no build step. No lint script is defined, and test is npm's placeholder, `echo \"Error: no test specified\" && exit 1`, so it can only fail."
-    },
-    {
       "path": "RAG-streamlit",
       "ecosystem": "python",
       "packageManager": "poetry",
@@ -285,7 +271,7 @@
         "lint": false,
         "test": false
       },
-      "notes": "Umbrella entry. The three Poetry projects beneath it \u2014 backend, frontend and pipelines \u2014 carry their own manifest entries and CI checks. Nothing runs at this level: install, build, lint and test are all off because there is no project here to run them against."
+      "notes": "Umbrella entry. The three Poetry projects beneath it — backend, frontend and pipelines — carry their own manifest entries and CI checks. Nothing runs at this level: install, build, lint and test are all off because there is no project here to run them against."
     },
     {
       "path": "RAG-streamlit/frontend",
@@ -359,7 +345,7 @@
         "lint": true,
         "test": true
       },
-      "notes": "Flask API, pip + setuptools rather than Poetry. Python 3.13 to match Dockerfile.api. mysqlclient builds from source, so it needs MySQL client headers \u2014 declared in systemPackages. install, ruff and 75 tests all observed passing before these flags were set. ruff selects F, E4/E7/E9, I and N, plus UP and B - the two groups measured as worth adding when the other Python projects widened. B found two statements in mail_tasks.py that evaluated `message.html` and discarded it, both removed. It also flagged B008 on create_app's `config_object=ProdConfig()` default; that is fixed rather than suppressed - the default is None and ProdConfig is built in the body, so each call gets its own and nothing is read from the environment at import time (issue #1435). No suppression of any kind remains: the project carries no ruff ignores and no noqa comments. No build step; the service runs from source."
+      "notes": "Flask API, pip + setuptools rather than Poetry. Python 3.13 to match Dockerfile.api. mysqlclient builds from source, so it needs MySQL client headers — declared in systemPackages. install, ruff and 75 tests all observed passing before these flags were set. ruff selects F, E4/E7/E9, I and N, plus UP and B - the two groups measured as worth adding when the other Python projects widened. B found two statements in mail_tasks.py that evaluated `message.html` and discarded it, both removed. It also flagged B008 on create_app's `config_object=ProdConfig()` default; that is fixed rather than suppressed - the default is None and ProdConfig is built in the body, so each call gets its own and nothing is read from the environment at import time (issue #1435). No suppression of any kind remains: the project carries no ruff ignores and no noqa comments. No build step; the service runs from source."
     },
     {
       "path": "hospital-management",
@@ -373,7 +359,7 @@
         "lint": false,
         "test": true
       },
-      "notes": "Six Spring/Java modules behind an aggregator pom.xml. build runs `mvn -B -DskipTests package`, test runs `mvn -B verify` (4 tests, all in patient-service). billing/clinical/scheduling are domain-only modules \u2014 entity, repository port and use case, Lombok and the JDK only \u2014 so their POMs are plain Java libraries rather than Spring Boot applications. install is off because `mvn verify` resolves dependencies itself, so a separate install step would only download the same tree twice. lint is off because the pom configures no checkstyle, spotless or pmd plugin."
+      "notes": "Six Spring/Java modules behind an aggregator pom.xml. build runs `mvn -B -DskipTests package`, test runs `mvn -B verify` (tests in patient-service, api-gateway and discovery-server, including HTTP Basic security tests). billing/clinical/scheduling are domain-only modules — entity, repository port and use case, Lombok and the JDK only — so their POMs are plain Java libraries rather than Spring Boot applications. install is off because `mvn verify` resolves dependencies itself, so a separate install step would only download the same tree twice. lint is off because the pom configures no checkstyle, spotless or pmd plugin."
     }
   ]
 }

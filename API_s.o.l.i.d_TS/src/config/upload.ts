@@ -13,6 +13,14 @@ export default {
                     return callback(null, fileName);
                 },
             }),
+            limits: { fileSize: 5 * 1024 * 1024 },
+            fileFilter: (
+                request: unknown,
+                file: { mimetype: string },
+                callback: multer.FileFilterCallback,
+            ) => {
+                callback(null, file.mimetype.startsWith("image/"));
+            },
         };
     },
 };

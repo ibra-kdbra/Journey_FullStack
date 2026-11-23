@@ -93,13 +93,22 @@ const reset: Action = async (event) => {
         event
       );
     }
+    let ok: boolean;
     try {
-      await db
-        .update(User)
-        .set({
-          hashedPassword: await hashPassword(password)
-        })
-        .where(eq(User.email, email));
+      // Verify the token server-side: it must exist, be unexpired and belong to the
+      // account whose email was submitted. The token's owner is what gets updated.
+      const hashedPassword = await hashPassword(password);
+      ok = await db.transaction(async (tx) => {
+        const row = await tx.query.Token.findFirst({
+          where: eq(Token.key, token),
+          with: { user: { columns: { id: true, email: true } } }
+        });
+        if (!row || !row.user || row.expiresAt < Date.now() || row.user.email !== email) return false;
+
+        await tx.update(User).set({ hashedPassword }).where(eq(User.id, row.user.id));
+        await tx.delete(Token).where(eq(Token.id, row.id));
+        return true;
+      });
     } catch {
       return setFormError(
         form,
@@ -112,7 +121,17 @@ const reset: Action = async (event) => {
       );
     }
 
-    await db.delete(Token).where(eq(Token.key, token));
+    if (!ok) {
+      return setFormError(
+        form,
+        'Invalid or expired token',
+        {
+          status: 400,
+          removeSensitiveData: ['password', 'passwordConfirmation']
+        },
+        event
+      );
+    }
   }
 
   redirect(

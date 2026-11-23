@@ -1,10 +1,10 @@
 import FileExporter from "../../interfaces/FileExporter";
 import { Workbook } from 'exceljs';
 import { User } from "../../models/User";
-import path from "path";
-import fs from "fs";
+import { newExportPath } from "../../helpers/exportPath";
 
 export default class ExcelExporter implements FileExporter {
+    readonly extension = 'xlsx';
 
     async exportFile(data: User[]) {
         const workbook = new Workbook();
@@ -20,11 +20,8 @@ export default class ExcelExporter implements FileExporter {
             worksheet.addRow([row.name, row.email]);
         });
 
-        // public/ lives at the project root, not next to the compiled sources
-        const folderPath = path.join(process.cwd(), 'public/excel');
-        await fs.promises.mkdir(folderPath, { recursive: true });
-        const filePath = path.join(folderPath, 'export.xlsx');
-
+        const filePath = await newExportPath(this.extension);
         await workbook.xlsx.writeFile(filePath);
+        return filePath;
     }
 }

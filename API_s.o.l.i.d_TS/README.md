@@ -51,3 +51,7 @@ It should be possible to register a rental.
 The rental must have a minimum duration of 24 hours.
 It should not be possible to register a new rental if there is already one open for the same user.
 It should not be possible to register a new rental if there is already one open for the same car.
+
+## Configuration
+
+Copy `.env.example` to `.env`. `JWT_SECRET` (random, at least 32 characters, for example `openssl rand -hex 32`) is required: the server refuses to start without it.

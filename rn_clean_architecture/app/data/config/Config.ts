@@ -1,5 +1,6 @@
 export interface AppConfig {
   endpoint?: string;
+  pixabayApiKey?: string;
 }
 
 const Environment = {
@@ -14,6 +15,9 @@ const getConfig = (env: string): AppConfig => {
     default:
       return {
         endpoint: 'https://pixabay.com/api/',
+        // Inlined at bundle time from the PIXABAY_API_KEY environment variable
+        // (see .env.example); never commit a real key.
+        pixabayApiKey: process.env.PIXABAY_API_KEY,
       };
   }
 };

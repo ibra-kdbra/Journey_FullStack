@@ -12,7 +12,7 @@
     "clean": "rimraf dist/",
     "build": "npm run clean && tsc",
     "start": "npm run build && nodemon dist/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "NODE_ENV=test node --import tsx --test test/*.test.ts",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -21,6 +21,7 @@
     "exceljs": "^4.3.0",
     "express": "^5.3.0",
     "joi": "^18.3.2",
+    "jsonwebtoken": "^9.0.3",
     "mysql2": "^3.24.6",
     "nodemailer": "^10.6.0",
     "pdfmake": "^0.3.14",
@@ -32,12 +33,14 @@
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",
     "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^26.6.6",
     "@types/nodemailer": "^8.0.2",
     "@types/pdfmake": "^0.3.0",
     "nodemon": "^3.1.9",
     "rimraf": "^6.1.4",
     "ts-node": "^10.9.1",
+    "tsx": "^4.23.15",
     "typescript": "^7.0.2"
   }
 }

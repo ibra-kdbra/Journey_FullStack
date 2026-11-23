@@ -3,6 +3,7 @@ import { PUBLIC_BASE_URL } from '$env/static/public';
 
 // Types
 import type { Action, Actions } from '@sveltejs/kit';
+import { error } from '@sveltejs/kit';
 
 // Utils
 import { redirect } from 'sveltekit-flash-message/server';
@@ -20,6 +21,7 @@ import { createTeamInviteSchema, editTeamSchema, leaveTeamSchema, deleteTeamSche
 import db from '$lib/server/database';
 import { Team, UsersTeams } from '$models/team';
 import { Invite } from '$models/invite';
+import { requireTeamMember } from '$lib/server/teamAuth';
 import { getTeamByPublicIdWithRelationsQuery, type GetTeamByPublicIdWithRelations } from '$queries/team';
 
 export async function load(event) {
@@ -89,6 +91,8 @@ const createTeamInvite: Action = async (event) => {
 
   const { teamId, email } = createTeamInviteFormValidated.data;
 
+  await requireTeamMember(event.locals.user, teamId, 'admin');
+
   if (teamId && email) {
     if (email === event.locals.user?.email) {
       return setFormError(createTeamInviteFormValidated, m.teams.invite.send.alreadyMember, {
@@ -137,6 +141,8 @@ const editTeam: Action = async (event) => {
 
   const { teamId, name } = editTeamFormValidated.data;
 
+  await requireTeamMember(event.locals.user, teamId, 'admin');
+
   if (teamId && name) {
     try {
       await db.update(Team).set({ name: name }).where(eq(Team.id, teamId));
@@ -165,6 +171,10 @@ const leaveTeam: Action = async (event) => {
 
   const { teamId, userId } = leaveTeamFormValidated.data;
 
+  // Members may only remove themselves; the submitted userId must be the caller.
+  const membership = await requireTeamMember(event.locals.user, teamId);
+  if (Number(userId) !== membership.userId) error(403, 'Forbidden');
+
   try {
     await db.delete(UsersTeams).where(and(eq(UsersTeams.teamId, teamId), eq(UsersTeams.userId, Number(userId))));
   } catch {
@@ -189,6 +199,8 @@ const deleteTeam: Action = async (event) => {
   }
 
   const { teamId } = deleteTeamFormValidated.data;
+
+  await requireTeamMember(event.locals.user, teamId, 'admin');
 
   if (teamId) {
     try {

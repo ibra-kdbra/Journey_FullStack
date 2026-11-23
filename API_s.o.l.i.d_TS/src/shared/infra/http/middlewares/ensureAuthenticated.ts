@@ -2,6 +2,7 @@ import { Response, Request, NextFunction } from "express";
 import { verify } from "jsonwebtoken";
 import { container } from "tsyringe";
 
+import { getJwtSecret } from "../../../../config/auth";
 import { IUserRepository } from "../../../../modules/accounts/repositories/IUserRepository";
 import { AppError } from "../../../errors/AppError";
 
@@ -20,7 +21,7 @@ export async function ensureAuthenticated(req: Request, res: Response, next: Nex
 
     let userID: string;
     try {
-        ({ sub: userID } = verify(token, "923aea88786448f4a8840c30f0327f8f") as IPayload);
+        ({ sub: userID } = verify(token, getJwtSecret()) as IPayload);
     } catch {
         throw new AppError("Invalid token", 401);
     }

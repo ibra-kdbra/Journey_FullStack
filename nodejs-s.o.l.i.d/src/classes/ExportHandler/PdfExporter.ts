@@ -1,18 +1,17 @@
 import path from "path";
 import FileExporter from "../../interfaces/FileExporter";
 import { User } from "../../models/User";
-import fs from "fs";
+import { newExportPath } from "../../helpers/exportPath";
 import pdfmake = require("pdfmake");
 
 export default class PdfExporter implements FileExporter {
+    readonly extension = 'pdf';
    
     async exportFile(data: User[]) {
 
         // public/ lives at the project root, not next to the compiled sources
         const folderPath = path.join(process.cwd(), 'public');
-        const pdfFolder = path.join(folderPath, 'pdf');
-        const filePath = path.join(pdfFolder, 'export.pdf');
-        await fs.promises.mkdir(pdfFolder, { recursive: true });
+        const filePath = await newExportPath(this.extension);
 
         var fonts = {
             Roboto: {
@@ -58,5 +57,6 @@ export default class PdfExporter implements FileExporter {
 
         const pdfDoc = pdfmake.createPdf(docDefinition);
         await pdfDoc.write(filePath);
+        return filePath;
     }
 }

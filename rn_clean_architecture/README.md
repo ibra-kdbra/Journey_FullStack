@@ -74,3 +74,11 @@ There are 3 main modules to help separate the code. They are Data, Domain, and P
 
 # Presentation (View)
 - View,updates UI
+
+#### Configuration
+The photo list uses the [Pixabay API](https://pixabay.com/api/docs/). The key is not stored in the repository:
+```
+cp .env.example .env   # then set PIXABAY_API_KEY
+npx react-native start --reset-cache
+```
+`PIXABAY_API_KEY` is read by `babel.config.js` (from `.env` or the shell) and inlined at bundle time.

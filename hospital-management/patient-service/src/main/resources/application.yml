@@ -5,31 +5,38 @@ spring:
   application:
     name: patient-service
   datasource:
-    url: jdbc:postgresql://localhost:5432/hospital_patient_db
-    username: user
-    password: password
+    # No credential defaults: DB_USER and DB_PASSWORD must be provided by the
+    # environment (see ../README.md), or the service refuses to start.
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/hospital_patient_db}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+  flyway:
+    # Adopt databases that were created by ddl-auto=update before Flyway: V1 is idempotent.
+    baseline-on-migrate: true
+    baseline-version: 0
   jpa:
     hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
+      # The schema is managed by Flyway (db/migration). Hibernate only checks it.
+      # Hibernate-managed DDL and SQL logging are enabled by the `dev` profile.
+      ddl-auto: validate
+    show-sql: false
+
+hospital:
+  security:
+    # Credentials of the API user (HTTP Basic). Required; no defaults here.
+    username: ${HOSPITAL_API_USER}
+    password: ${HOSPITAL_API_PASSWORD}
 
 eureka:
   client:
     serviceUrl:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://${EUREKA_USER}:${EUREKA_PASSWORD}@${EUREKA_HOST:localhost}:8761/eureka/
 
 management:
   endpoints:
     web:
       exposure:
-        include: "*"
+        include: health,info,prometheus
   endpoint:
     health:
-      show-details: always
-  metrics:
-    export:
-      prometheus:
-        enabled: true
+      show-details: when-authorized

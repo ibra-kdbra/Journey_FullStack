@@ -3,6 +3,7 @@ import { Request, Response } from 'express'
 import { ExcelExporter, PdfExporter } from "../classes"
 import { exportData, sendEmail } from '../services'
 import Order from "../models/Order"
+import fs from "fs"
 
 export const all = async (req: Request, res: Response) => {
     try {
@@ -44,10 +45,13 @@ export const exportFile = async (req: Request, res: Response) => {
     try {
         const exporter = req.params.type === 'excel' ? new ExcelExporter() : new PdfExporter();
         const users = await User.findAll()
-        await exportData(exporter, users)
-        res.json({ "success": true, message: `File exported to path` })
+        const filePath = await exportData(exporter, users)
+        // Stream the file to the (already authorised) caller, then delete it.
+        res.download(filePath, `users.${exporter.extension}`, () => {
+            fs.promises.unlink(filePath).catch(() => undefined)
+        })
     } catch (error) {
-        console.log(error); res.status(500).json(error)
+        console.error(error); res.status(500).json({ status: 'error', message: 'Internal server error' })
     }
 }
 

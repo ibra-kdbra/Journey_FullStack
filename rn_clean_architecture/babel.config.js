@@ -1,3 +1,13 @@
+const fs = require('fs');
+const path = require('path');
+
+// Load untracked local settings (see .env.example) so `PIXABAY_API_KEY` can live
+// in a git-ignored .env file. Variables already set in the shell win.
+const envFile = path.join(__dirname, '.env');
+if (fs.existsSync(envFile) && typeof process.loadEnvFile === 'function') {
+  process.loadEnvFile(envFile);
+}
+
 module.exports = {
   presets: ['module:@react-native/babel-preset'],
   env: {
@@ -11,6 +21,13 @@ module.exports = {
     // decorators, which is what constructor injection is made of. Without this,
     // `constructor(@inject(TYPES.X) private x: X)` is silently dropped and
     // inversify resolves undefined.
+    // Inlines the listed variables at bundle time. React Native has no runtime
+    // process.env, so this is how a build-time setting reaches the app. Run
+    // `npx react-native start --reset-cache` after changing the value.
+    [
+      'transform-inline-environment-variables',
+      {include: ['PIXABAY_API_KEY']},
+    ],
     'babel-plugin-transform-typescript-metadata',
     [
       require('@babel/plugin-proposal-decorators').default,

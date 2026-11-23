@@ -14,7 +14,7 @@ async function handleInviteProcessing(event: RequestEvent, teamIdParam: string |
     redirect('/login', { type: 'error', message: m.teams.invite.receive.mustLogin }, event);
   }
 
-  if (!inviteToken || !teamIdParam) {
+  if (!teamIdParam) {
     redirect('/', { type: 'error', message: m.teams.invite.receive.invalidUrl }, event);
   }
 
@@ -24,8 +24,16 @@ async function handleInviteProcessing(event: RequestEvent, teamIdParam: string |
     redirect('/', { type: 'error', message: m.teams.invite.receive.invalidUrl }, event);
   }
 
+  // Invites are accepted by team id for the signed-in user's own email; the token (when supplied, e.g. from
+  // older links) must also match. Tokens are never sent to the browser.
   const invite = await db.query.Invite.findFirst({
-    where: and(eq(Invite.teamId, teamId), eq(Invite.token, inviteToken))
+    where: and(
+      eq(Invite.teamId, teamId),
+      eq(Invite.email, event.locals.user.email ?? ''),
+      eq(Invite.status, 'pending'),
+      ...(inviteToken ? [eq(Invite.token, inviteToken)] : [])
+    ),
+    orderBy: (i, { desc }) => [desc(i.createdAt)]
   });
 
   if (!invite) {

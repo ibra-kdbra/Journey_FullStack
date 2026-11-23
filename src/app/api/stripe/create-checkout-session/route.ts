@@ -1,6 +1,7 @@
 import { db } from '@/lib/db'
 import { stripe } from '@/lib/stripe'
 import { NextResponse } from 'next/server'
+import { corsHeaders, isAllowedOrigin } from '@/lib/api-auth'
 
 export async function POST(req: Request) {
   const {
@@ -14,10 +15,43 @@ export async function POST(req: Request) {
   } = await req.json()
 
   const origin = req.headers.get('origin')
-  if (!subAccountConnectAccId || !prices.length)
+  // Browsers from other origins must be on the allowlist.
+  if (origin && !isAllowedOrigin(origin))
+    return new NextResponse('Origin not allowed', { status: 403 })
+
+  if (
+    !subAccountConnectAccId ||
+    !subaccountId ||
+    !Array.isArray(prices) ||
+    !prices.length
+  )
     return new NextResponse('Stripe Account Id or price id is missing', {
       status: 400,
     })
+
+  // The connected account must belong to the given sub account, and every
+  // price must be one that sub account's funnels actually sell.
+  const subAccount = await db.subAccount.findUnique({
+    where: { id: subaccountId },
+    include: { Funnels: true },
+  })
+  if (
+    !subAccount ||
+    !subAccount.connectAccountId ||
+    subAccount.connectAccountId !== subAccountConnectAccId
+  )
+    return new NextResponse('Invalid account', { status: 403 })
+
+  const sellable = new Set<string>()
+  for (const funnel of subAccount.Funnels) {
+    try {
+      const live = JSON.parse(funnel.liveProducts || '[]')
+      if (Array.isArray(live))
+        for (const p of live) if (p?.productId) sellable.add(p.productId)
+    } catch {}
+  }
+  if (!prices.every((p) => p && sellable.has(p.productId)))
+    return new NextResponse('Invalid price', { status: 400 })
   if (
     !process.env.NEXT_PUBLIC_PLATFORM_SUBSCRIPTION_PERCENT ||
     !process.env.NEXT_PUBLIC_PLATFORM_ONETIME_FEE ||
@@ -76,11 +110,7 @@ export async function POST(req: Request) {
         clientSecret: session.client_secret,
       },
       {
-        headers: {
-          'Access-Control-Allow-Origin': origin || '*',
-          'Access-Control-Allow-Methods': 'GET,OPTIONS,PATCH,DELETE,POST,PUT',
-          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        },
+        headers: corsHeaders(origin),
       }
     )
   } catch (error) {
@@ -91,17 +121,7 @@ export async function POST(req: Request) {
 }
 
 export async function OPTIONS(request: Request) {
-  const allowedOrigin = request.headers.get('origin')
-  const response = new NextResponse(null, {
-    status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': allowedOrigin || '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers':
-        'Content-Type, Authorization, X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Date, X-Api-Version',
-      'Access-Control-Max-Age': '86400',
-    },
-  })
-
-  return response
+  const origin = request.headers.get('origin')
+  if (!isAllowedOrigin(origin)) return new NextResponse(null, { status: 403 })
+  return new NextResponse(null, { status: 204, headers: corsHeaders(origin) })
 }

@@ -1,8 +1,11 @@
 import { stripe } from '@/lib/stripe'
 import { StripeCustomerType } from '@/lib/types'
 import { NextResponse } from 'next/server'
+import { requireUserId, unauthorized } from '@/lib/api-auth'
 
 export async function POST(req: Request) {
+  if (!(await requireUserId())) return unauthorized()
+
   const { address, email, name, shipping }: StripeCustomerType =
     await req.json()
 

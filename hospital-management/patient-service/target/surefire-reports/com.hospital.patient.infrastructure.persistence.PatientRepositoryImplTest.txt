@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: com.hospital.patient.infrastructure.persistence.PatientRepositoryImplTest
--------------------------------------------------------------------------------
-Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 8.764 s -- in com.hospital.patient.infrastructure.persistence.PatientRepositoryImplTest

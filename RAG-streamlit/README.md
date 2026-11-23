@@ -80,13 +80,13 @@ Before starting the containers, create `.env` files based on the provided templa
 1. **Clone the Repository**:
 
    ```bash
-   git clone https://github.com/ssgrummons/rag-with-milvus-langchain-streamlit.git
+   git clone https://github.com/ibra-kdbra/Journey_FullStack.git
    ```
 
 2. **Navigate to the Project Directory**:
 
    ```bash
-   cd rag-with-milvus-langchain-streamlit
+   cd Journey_FullStack/RAG-streamlit
    ```
 
 3. **Start the Services**:
@@ -94,10 +94,10 @@ Before starting the containers, create `.env` files based on the provided templa
    The `EMBEDDING_MODEL` environment variable is used in both the runtime and the build environment.  In order to define it once, we will pull it from the `.env` file before we run the Docker Compose command.  This enables us define the environment varialbe once and use it throughout the system.  You can do this by exporting the environment variable:
 
    ```bash
-   export EMBEDDING_MODEL=$(grep EMBEDDING_MODEL ./backend/src/.env | cut -d '=' -f2-) | docker-compose -f ./deployment/docker-compose.yml up -d --build
+   export EMBEDDING_MODEL=$(grep '^EMBEDDING_MODEL=' ./backend/src/.env | cut -d '=' -f2-) && docker compose -f ./deployment/docker-compose.yml up -d --build
    ```
 
-   This command builds and starts all the services in detached mode.
+   This command builds and starts all the services in detached mode. If `EMBEDDING_MODEL` is unset or empty, the build falls back to `all-MiniLM-L6-v2`.
 
 4. **Access the Applications**:
 

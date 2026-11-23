@@ -278,3 +278,24 @@ def test_process_markdown_strips_front_matter(tmp_path):
     # The heading is lifted out of the body into the chunk's header hierarchy.
     assert chunks[0]["metadata"]["headers"] == {"1": "Heading"}
     assert chunks[0]["metadata"]["source"] == str(doc)
+
+
+def test_index_metric_matches_backend_search(config, mock_milvus, mock_models):
+    """The index metric must equal the one the backend searches with (COSINE).
+
+    Milvus rejects a search whose metric differs from the index metric.
+    """
+    connector = MilvusConnector(config)
+    connector.ensure_collection_exists()
+
+    collection = mock_milvus[1].return_value
+    collection.create_index.assert_called_once()
+    kwargs = collection.create_index.call_args.kwargs
+    assert kwargs["field_name"] == "embedding"
+    assert kwargs["index_params"]["metric_type"] == "COSINE"
+
+
+def test_metric_type_is_configurable():
+    cfg = Config.from_dict({**SAMPLE_CONFIG, 'metric_type': 'IP'})
+    assert cfg.metric_type == 'IP'
+    assert Config.from_dict(SAMPLE_CONFIG).metric_type == 'COSINE'

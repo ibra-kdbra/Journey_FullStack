@@ -2,6 +2,8 @@ embedding_model: "all-MiniLM-L6-v2"
 keyword_model: "all-MiniLM-L6-v2"
 chunk_size: 500
 chunk_overlap: 100
+# Milvus index metric; the backend must search with the same one (COSINE).
+metric_type: "COSINE"
 markdown_folder: "../docs"
 milvus:
   host: "localhost"

@@ -149,8 +149,8 @@ async def chat(request: ChatRequest) -> ChatResponse:
     Raises:
         HTTPException: If there's an error processing the request.
     """
-    agent_graph = create_agent_graph(tools, assistant_system_prompt, False)
     try:
+        agent_graph = create_agent_graph(tools, assistant_system_prompt, False)
         # Use the LangGraph agent
         response = run_agent_graph(agent_graph, request.user_prompt)
         return ChatResponse(response=response)
@@ -161,8 +161,8 @@ async def chat(request: ChatRequest) -> ChatResponse:
 @app.post("/chat/stream")
 async def chat_stream(request: ChatRequest):
     """Handle streaming chat requests with tool support."""
-    agent_graph = create_agent_graph(tools, assistant_system_prompt, True)
     try:
+        agent_graph = create_agent_graph(tools, assistant_system_prompt, True)
         # Use the LangGraph agent in streaming mode
         
         async def stream_generator():

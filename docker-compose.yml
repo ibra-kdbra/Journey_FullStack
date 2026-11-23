@@ -12,6 +12,7 @@ services:
       - ENABLE_HIDDEN_FILES=${ENABLE_HIDDEN_FILES:?err}
       - HIDE_DISK_SIZE=${HIDE_DISK_SIZE:?err}
       - ACCESS_TOKEN=${ACCESS_TOKEN}
+      - TRUSTED_PROXY=true # requests arrive via the bundled nginx
     # uid of the owner of the DATA_ROOT folder so the api can
     # pretent to be the user making the changes to the file
     user: "${DATA_ROOT_UID:?err}:${DATA_ROOT_UID:?err}"

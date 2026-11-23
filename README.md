@@ -11,5 +11,6 @@ Inspired by [Thunar File Manager](https://docs.xfce.org/xfce/thunar/start), [Mat
 - docker-compose is required
 - `git clone https://github.com/ibra-kdbra/Journey_FullStack/cloudv3/)`
 - `cd cloudv3/`
-- `vim config.env`
+- `cp config.env.example config.env`
+- `vim config.env` (set `DATA_ROOT`; the default is read-only, set `ACCESS_TOKEN` before enabling writes)
 - `./deploy.sh`

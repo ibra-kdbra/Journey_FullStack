@@ -48,3 +48,12 @@ To address these challenges, we have developed a Node.js application integrated 
 
 
 
+
+## Security configuration
+
+- All routes require a valid `Authorization: Bearer <Firebase ID token>` header; it is verified (signature, expiry, revocation) with firebase-admin using the app initialised from `FB_CONFIG`. Only routes marked `@Public()` skip this.
+- `POST /notifications/incoming-message` is public but verified with the `X-Twilio-Signature` header (auth token from `TWILIO_KEY`; set `TWILIO_WEBHOOK_URL` to the public URL Twilio calls).
+- `POST /notifications/cronjob/send-message` requires `CRON_SECRET` (`x-cron-secret` header).
+- `GET /notifications/message/test` needs a JWT and is disabled when `NODE_ENV=production`.
+
+See `.env.example` for the variable names.

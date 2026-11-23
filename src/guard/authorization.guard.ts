@@ -1,20 +1,21 @@
-import {CanActivate, ExecutionContext, Injectable, Logger} from "@nestjs/common";
+import {CanActivate, ExecutionContext, Injectable, UnauthorizedException} from "@nestjs/common";
 import {Reflector} from "@nestjs/core";
-import {JwtService} from "@nestjs/jwt";
-import {Observable} from "rxjs";
+import admin from "firebase-admin";
+import {getAuth} from "firebase-admin/auth";
 import {PermissionModel} from "../model/permission.model";
 import {JwtModel} from "../model/jwt.model";
 import {isJWT} from "class-validator";
-import * as console from "console";
+
+export const FIREBASE_APP_NAME = "firebase";
 
 @Injectable()
 export class AuthorizationGuard implements CanActivate {
 
-    constructor(private readonly reflector: Reflector, private readonly jwtService: JwtService) {
+    constructor(private readonly reflector: Reflector) {
 
     }
 
-    canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+    async canActivate(context: ExecutionContext): Promise<boolean> {
         const isPublicController = this.reflector.get<boolean>('isPublic', context.getClass());
         const isPublicMethod = this.reflector.get<boolean>('isPublic', context.getHandler());
         if (isPublicController || isPublicMethod) {
@@ -22,21 +23,26 @@ export class AuthorizationGuard implements CanActivate {
         }
 
         const request = context.switchToHttp().getRequest();
+        const authorization: string | undefined = request?.headers?.authorization;
 
-        //const allowUnauthorizedRequest = this.reflector.get<boolean>('allowUnauthorizedRequest', context.getHandler());
-
-        //if (allowUnauthorizedRequest) {
-            return true;
-        //}
-        if (request && request.headers && request.headers.authorization && request.headers.authorization.startsWith("Bearer ")) {
-            const jwt = request.headers.authorization.replace('Bearer ', '')
-            if (isJWT(jwt)) {
-                request.currentUser = <JwtModel>this.jwtService.decode(jwt);
-                //request.currentUser.permissions = <Array<PermissionModel>>this.parsePermissions(request.currentUser.permissions) || [];
-                return true;
-            }
+        if (!authorization || !authorization.startsWith("Bearer ")) {
+            throw new UnauthorizedException("Missing bearer token");
         }
-        return false;
+
+        const jwt = authorization.substring("Bearer ".length).trim();
+        if (!isJWT(jwt)) {
+            throw new UnauthorizedException("Malformed bearer token");
+        }
+
+        try {
+            // Verifies signature, issuer/audience, expiry and revocation with Firebase.
+            // Reuses the 'firebase' app initialised by UserService.
+            const decoded = await getAuth(admin.app(FIREBASE_APP_NAME)).verifyIdToken(jwt, true);
+            request.currentUser = <JwtModel><unknown>{...decoded, user_id: decoded.uid};
+        } catch (e) {
+            throw new UnauthorizedException("Invalid or expired token");
+        }
+        return true;
     }
 
     parsePermissions(permissions: string[]): Array<PermissionModel> {

@@ -1,0 +1,3 @@
+com/hospital/patient/core/usecase/PatientUseCaseTest.class
+com/hospital/patient/infrastructure/persistence/PatientRepositoryImplTest.class
+com/hospital/patient/infrastructure/web/controller/PatientControllerTest.class

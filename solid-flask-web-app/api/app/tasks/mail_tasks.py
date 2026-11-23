@@ -1,4 +1,5 @@
 from string import Template
+from urllib.parse import urlencode
 
 from celery import shared_task
 from celery.utils.log import get_task_logger
@@ -15,10 +16,8 @@ logger = get_task_logger(__name__)
 
 @shared_task(ignore_result=True)
 def send_forgot_password_email(*, receiver: str, reset_token: str):
-    reset_link = (
-        f"{MY_SOLID_APP_FRONTEND_URL}/reset-password?"
-        f"email={receiver}&reset_token={reset_token}"
-    )
+    query = urlencode({"email": receiver, "reset_token": reset_token})
+    reset_link = f"{MY_SOLID_APP_FRONTEND_URL}/reset-password?{query}"
 
     with open("./email_templates/forgot_password.html") as file:
         html_content = file.read()
@@ -38,10 +37,8 @@ def send_forgot_password_email(*, receiver: str, reset_token: str):
 
 @shared_task(ignore_result=True)
 def send_email_verification_email(*, receiver: str, verification_token: str):
-    verification_link = (
-        f"{MY_SOLID_APP_FRONTEND_URL}/verify-email?"
-        f"email={receiver}&verification_token={verification_token}"
-    )
+    query = urlencode({"email": receiver, "verification_token": verification_token})
+    verification_link = f"{MY_SOLID_APP_FRONTEND_URL}/verify-email?{query}"
 
     with open("./email_templates/verify_email.html") as file:
         html_content = file.read()

@@ -12,7 +12,7 @@ import {
 import { LogOut, Plus, Settings } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { LogoutLink } from "@kinde-oss/kinde-auth-nextjs/components";
-import { useConvex } from "convex/react";
+import { useConvex, useConvexAuth } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { cn } from "@/lib/utils";
 
@@ -25,6 +25,7 @@ export interface Team {
 const SidebarTopButton = ({ user, setActiveTeamInfo }: any) => {
   const router = useRouter();
   const convex = useConvex();
+  const { isAuthenticated } = useConvexAuth();
   const menu = [
     {
       id: 1,
@@ -43,19 +44,17 @@ const SidebarTopButton = ({ user, setActiveTeamInfo }: any) => {
   let [teamList, setTeamList] = useState([] as Team[]);
 
   const getTeamList = async () => {
-    const result = await convex.query(api.teams.getTeams, {
-      email: user?.email!,
-    });
+    const result = await convex.query(api.teams.getTeams, {});
     setTeamList(result as Team[]);
     setActiveTeam(result[0]);
     return result;
   };
 
   useEffect(() => {
-    if (user) {
+    if (user && isAuthenticated) {
       getTeamList();
     }
-  }, [user]);
+  }, [user, isAuthenticated]);
 
   useEffect(() => {
     activeTeam ? setActiveTeamInfo(activeTeam) : null;

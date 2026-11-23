@@ -66,3 +66,7 @@ To run the app in development mode, run the following command:
 ```bash
 npm run dev
 ```
+
+## Convex authentication
+
+Every Convex function requires an authenticated caller. The browser sends the signed-in user's Kinde ID token (served by `/api/convex-token`) to Convex, which verifies it using `convex/auth.config.ts`. Set `KINDE_ISSUER_URL` and `KINDE_CLIENT_ID` as environment variables on the Convex deployment (see `.env.example`). The user's email is derived server-side from the verified token; teams and files are only accessible to the team's creator.

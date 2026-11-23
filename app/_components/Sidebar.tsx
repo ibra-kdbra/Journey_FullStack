@@ -28,7 +28,6 @@ const Sidebar = () => {
       createFile({
         fileName,
         teamId: activeTeam?._id,
-        createdBy: user?.email!,
         archieved: false,
         document: "",
         whiteboard: "",

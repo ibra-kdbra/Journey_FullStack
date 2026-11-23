@@ -4,7 +4,7 @@ import Sidebar from "@/app/_components/Sidebar";
 import { FileListContext } from "@/app/_context/FileListContext";
 import { api } from "@/convex/_generated/api";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
-import { useConvex } from "convex/react";
+import { useConvex, useConvexAuth } from "convex/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -15,20 +15,19 @@ export default function DashboardLayout({
 }>) {
   const { user } = useKindeBrowserClient();
   const convex = useConvex();
+  const { isAuthenticated } = useConvexAuth();
   const router = useRouter();
 
   const [fileList, setFileList] = useState([] as any[]);
 
   useEffect(() => {
-    if (user) {
+    if (user && isAuthenticated) {
       checkTeam();
     }
-  }, [user]);
+  }, [user, isAuthenticated]);
 
   const checkTeam = async () => {
-    const result = await convex.query(api.teams.getTeams, {
-      email: user?.email!,
-    });
+    const result = await convex.query(api.teams.getTeams, {});
     if (!result.length) {
       router.push("/team/create");
     }

@@ -7,7 +7,7 @@ import {
 } from "@/components/ui/resizable";
 import WorkSpaceHeader from "../_components/WorkSpaceHeader";
 import dynamic from "next/dynamic";
-import { useConvex } from "convex/react";
+import { useConvex, useConvexAuth } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { FILE } from "../../dashboard/_components/DashboardTable";
 
@@ -21,12 +21,13 @@ const Canvas = dynamic(() => import("../_components/Canvas"), {
 
 const Workspace = ({ params }: any) => {
   const convex = useConvex();
+  const { isAuthenticated } = useConvexAuth();
 
   const [fileData, setfileData] = useState<FILE>();
 
   useEffect(() => {
-    params.fileId && getFileData();
-  }, []);
+    params.fileId && isAuthenticated && getFileData();
+  }, [isAuthenticated]);
 
   const getFileData = async () => {
     const file = await convex.query(api.files.getFilebyId, {

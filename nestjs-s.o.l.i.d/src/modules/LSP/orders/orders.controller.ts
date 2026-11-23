@@ -1,4 +1,11 @@
-import { Controller, Get, Inject, Param } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Inject,
+  NotFoundException,
+  Param,
+  ParseIntPipe,
+} from '@nestjs/common';
 import { PricingService } from '../pricing/pricing.service';
 import { SalePricingStrategy } from '../pricing/sale-pricing-strategy.service';
 import { OrdersService } from './orders.service';
@@ -13,9 +20,12 @@ export class OrdersController {
 
   @Get('/pricing/:id')
   public async calculateOrderPrice(
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number,
   ): Promise<{ price: number }> {
-    const order = await this.ordersService.findOne(parseInt(id));
+    const order = await this.ordersService.findOne(id);
+    if (!order) {
+      throw new NotFoundException(`Order ${id} not found`);
+    }
 
     return { price: this.pricingService.calculatePrice(order.totalPrice) };
   }

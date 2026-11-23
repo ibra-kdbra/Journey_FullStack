@@ -47,7 +47,6 @@
       <p>{invite.team.name}</p>
       <form id="accept-team-invite-form-{invite.teamId}" method="POST" action="/api/invites" class="py-4">
         <Input type="hidden" name="teamId" value={invite.teamId} />
-        <Input type="hidden" name="token" value={invite.token} />
         <Form.Button
           type="submit"
           size="sm"
@@ -96,8 +95,6 @@
 
 <h2 class="text-lg font-semibold">Create a New Team</h2>
 <form id="create-team-form" method="POST" action="?/createTeam" class="py-4" use:createTeamFormEnhance>
-  <Input type="hidden" name="userId" value={data.user?.id ?? ''} />
-
   <Form.Field form={createTeamForm} name="name">
     {#snippet children({ constraints })}
       <Form.Control>

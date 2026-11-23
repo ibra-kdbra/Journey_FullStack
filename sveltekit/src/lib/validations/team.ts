@@ -2,7 +2,6 @@ import { z } from 'zod';
 
 // Create Team Form Validation
 export const createTeamSchema = z.object({
-  userId: z.number({ error: 'User is required' }),
   name: z
     .string({ error: 'Name is required' })
     .trim()

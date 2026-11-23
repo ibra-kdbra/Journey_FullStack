@@ -17,14 +17,23 @@ vi.mock('$lib/server/database', async () => {
 });
 vi.mock('$env/static/public', () => ({ PUBLIC_BASE_URL: 'http://localhost' }));
 vi.mock('$lib/utils/mail/mailer', () => ({ Emails: { TeamInvite: 'x' }, sendEmail: vi.fn() }));
+vi.mock('sveltekit-rate-limiter/server', () => ({
+  RetryAfterRateLimiter: class {
+    check = async () => ({ limited: false });
+  }
+}));
 vi.mock('sveltekit-flash-message/server', () => ({
+  setFlash: vi.fn(),
   redirect: (...args: unknown[]) => {
     throw Object.assign(new Error('redirect'), { redirected: true, args });
   }
 }));
 
 import { actions } from '../../src/routes/(dashboard)/settings/teams/[teamPublicId]/+page.server';
+import { actions as teamsActions } from '../../src/routes/(dashboard)/settings/teams/+page.server';
+import { POST as acceptInvite } from '../../src/routes/api/invites/+server';
 import { actions as resetActions } from '../../src/routes/(auth)/reset-password/update/+page.server';
+import { getUserPendingInvitesByEmailQuery } from '../../src/lib/db/queries/invite';
 import { getTeamByPublicIdWithRelationsQuery, getTeamsByUserIdQuery } from '../../src/lib/db/queries/team';
 
 const d = () => db.d as ReturnType<typeof drizzle<typeof schema>>;
@@ -155,6 +164,18 @@ describe('team queries do not expose credentials', () => {
     expect(json).toContain('admin@example.com');
     expect(json).not.toMatch(/hashedPassword|googleId|secret-hash/);
   });
+
+  it('team queries and pending-invite query do not expose invite tokens', async () => {
+    await d()
+      .insert(schema.Invite)
+      .values({ teamId: 1, email: 'out@example.com', token: 'tok-secret', expiresAt: Date.now() + 60_000 });
+    const team = await getTeamByPublicIdWithRelationsQuery.execute({ publicId: 'team-one' });
+    const userTeams = await getTeamsByUserIdQuery.execute({ id: 1 });
+    const pending = await getUserPendingInvitesByEmailQuery.execute({ email: 'out@example.com' });
+    expect(JSON.stringify(team)).toContain('out@example.com');
+    expect(JSON.stringify(pending)).toContain('one');
+    expect(JSON.stringify([team, userTeams, pending])).not.toContain('tok-secret');
+  });
 });
 
 describe('reset-password action', () => {
@@ -202,4 +223,43 @@ describe('reset-password action', () => {
     expect(await hash(1)).toBe('secret-hash-1');
     expect(await d().select().from(schema.Token)).toHaveLength(0);
   });
+});
+
+describe('createTeam and invite acceptance', () => {
+  beforeAll(async () => {
+    await migrate(d(), { migrationsFolder: 'src/lib/db/migrations' });
+  });
+  beforeEach(seed);
+
+  it('createTeam rejects anonymous callers', async () => {
+    const r = await outcome(() => teamsActions.createTeam(ev(null, { name: 'newteam' })));
+    expect(r.status).toBe(401);
+    expect(await d().select().from(schema.Team)).toHaveLength(1);
+  });
+
+  it('createTeam makes the session user admin and ignores a submitted userId', async () => {
+    const r = await outcome(() =>
+      teamsActions.createTeam(ev({ id: 3, email: 'out@example.com' }, { name: 'newteam', userId: '1' }))
+    );
+    expect(r.redirected).toBe(true);
+    const created = (await d().select().from(schema.Team).where(eq(schema.Team.name, 'newteam')))[0];
+    const members = await d().select().from(schema.UsersTeams).where(eq(schema.UsersTeams.teamId, created.id));
+    expect(members).toEqual([expect.objectContaining({ userId: 3, role: 'admin' })]);
+  });
+
+  it('an invitee can accept by team id without a token, only for their own email', async () => {
+    await d()
+      .insert(schema.Invite)
+      .values({ teamId: 1, email: 'out@example.com', token: 'tok', expiresAt: Date.now() + 60_000 });
+    const other = await outcome(() => acceptInvite(ev({ id: 2, email: 'member@example.com' }, { teamId: '1' })));
+    expect(other.redirected).toBe(true);
+    expect(await memberCount(3)).toBe(0);
+    const ok = await outcome(() => acceptInvite(ev({ id: 3, email: 'out@example.com' }, { teamId: '1' })));
+    expect(ok.redirected).toBe(true);
+    expect(await memberCount(3)).toBe(1);
+  });
+
+  async function memberCount(userId: number) {
+    return (await d().select().from(schema.UsersTeams).where(eq(schema.UsersTeams.userId, userId))).length;
+  }
 });

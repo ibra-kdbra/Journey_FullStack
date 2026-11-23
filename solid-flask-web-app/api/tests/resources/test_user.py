@@ -43,6 +43,17 @@ class TestUsersAPI:
         assert response_data["meta"]["per_page"] == 1
         assert response_data["meta"]["total_pages"] == 2
 
+    def test_get_users_with_invalid_pagination(self, client, db, logged_in_user):
+        for query in ("page=x&per_page=1", "page=1&per_page=y", "page=0&per_page=1"):
+            response = client.get(f"/users?{query}")
+            assert response.status_code == 400, query
+
+    def test_get_users_clamps_per_page(self, client, db, logged_in_user):
+        response = client.get("/users?page=1&per_page=100000")
+
+        assert response.status_code == 200
+        assert response.get_json()["meta"]["per_page"] == 100
+
     def test_get_users_not_logged_in(self, client, db):
         response = client.get("/users")
         assert response.status_code == 401

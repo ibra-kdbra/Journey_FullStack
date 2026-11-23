@@ -5,15 +5,28 @@ from flask_login import current_user, login_required
 
 from app.errors import APIError, APIErrorEnum
 
+MAX_PER_PAGE = 100
+
+
+def _positive_int_arg(name: str) -> int | None:
+    value = request.args.get(name, type=int)
+    if request.args.get(name) is not None and (value is None or value < 1):
+        raise APIError(
+            APIErrorEnum.unknown_error,
+            f"Query parameter '{name}' must be a positive integer",
+            400,
+        )
+    return value
+
 
 def insert_pagination_parameters(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        page = request.args.get("page")
-        per_page = request.args.get("per_page")
+        page = _positive_int_arg("page")
+        per_page = _positive_int_arg("per_page")
 
         if page is not None and per_page is not None:
-            return func(*args, page=int(page), per_page=int(per_page))
+            return func(*args, **kwargs, page=page, per_page=min(per_page, MAX_PER_PAGE))
         else:
             return func(*args, **kwargs, page=None, per_page=None)
 

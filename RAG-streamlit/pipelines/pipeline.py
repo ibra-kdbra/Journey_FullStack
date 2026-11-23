@@ -50,6 +50,8 @@ class Config:
     milvus_port: str
     collection_name: str
     collection_schema: dict[str, Any]
+    # Must equal the metric the backend searches with (backend/src/tools.py).
+    metric_type: str = "COSINE"
 
     @classmethod
     def from_dict(cls, config_dict: dict[str, Any]) -> 'Config':
@@ -87,7 +89,8 @@ class Config:
                 milvus_host=config_dict['milvus']['host'],
                 milvus_port=str(config_dict['milvus']['port']),
                 collection_name=config_dict['collection']['name'],
-                collection_schema=config_dict['collection']['schema']
+                collection_schema=config_dict['collection']['schema'],
+                metric_type=config_dict.get('metric_type', 'COSINE')
             )
         except Exception as e:
             raise ConfigError(f"Invalid configuration: {str(e)}") from e
@@ -151,6 +154,17 @@ class MilvusConnector:
         except Exception as e:
             raise ConfigError(f"Invalid collection schema: {str(e)}") from e
 
+    def _create_index(self, collection: Collection) -> None:
+        """Index the embedding field with the configured metric."""
+        collection.create_index(
+            field_name="embedding",
+            index_params={
+                "index_type": "IVF_FLAT",
+                "metric_type": self.config.metric_type,
+                "params": {"nlist": 128},
+            },
+        )
+
     def ensure_collection_exists(self) -> None:
         """Ensure collection exists with correct schema."""
         try:
@@ -166,12 +180,12 @@ class MilvusConnector:
                     logger.warning(f"Collection {self.config.collection_name} has different schema. Recreating...")
                     utility.drop_collection(self.config.collection_name)
                     collection = Collection(name=self.config.collection_name, schema=new_schema)
-                    collection.create_index(field_name="embedding", index_type="IVF_FLAT", metric_type="L2")
+                    self._create_index(collection)
             else:
                 logger.info(f"Creating new collection: {self.config.collection_name}")
                 schema = self._create_collection_schema()
                 collection = Collection(name=self.config.collection_name, schema=schema)
-                collection.create_index(field_name="embedding", index_type="IVF_FLAT", metric_type="L2")
+                self._create_index(collection)
         except MilvusException as e:
             raise MilvusError(f"Failed to manage collection: {str(e)}") from e
 

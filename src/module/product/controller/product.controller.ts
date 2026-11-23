@@ -1,4 +1,4 @@
-import {Body, Controller, Delete, Get, Logger, Param, Patch, Post, Query, SetMetadata} from "@nestjs/common";
+import {Body, Controller, Delete, Get, Logger, Param, Patch, Post, Query} from "@nestjs/common";
 import {ApiBearerAuth, ApiOperation, ApiTags} from "@nestjs/swagger";
 import { ProductService } from "../service/product.service";
 import {ProductEntity} from "../entity/product.entity";
@@ -9,7 +9,6 @@ import {UpdateProductPriceRequestDto} from "../dto/product/update-product-price.
 import {GetProductOrderRequestDto} from "../dto/product/get-product-order.request.dto";
 import {UpdateProductStockQuantityRequestDto} from "../dto/product/update-product-stock-quantity.request.dto";
 
-const AllowUnauthorizedRequest = () => SetMetadata('allowUnauthorizedRequest', true);
 @ApiBearerAuth()
 @Controller('catalog')
 @ApiTags('catalog')
@@ -19,7 +18,6 @@ export class ProductController {
   constructor(private productService: ProductService) {
   }
 
-  @AllowUnauthorizedRequest()
   @Get('')
   @ApiOperation({summary: 'Get catalog products'})
   public async getProducts(@Query() dto: GetProductRequestDto) {
@@ -45,14 +43,12 @@ export class ProductController {
     return this.productService.updateProductPurchaseQuantity();
   }
 
-  @AllowUnauthorizedRequest()
   @Post('')
   @ApiOperation({summary: 'Create catalog product'})
   public async createProduct(@Body() dto: CreateProductRequestDto) {
     return this.productService.createProduct(dto);
   }
 
-  @AllowUnauthorizedRequest()
   @Post('bulk')
   @ApiOperation({summary: 'Create catalog product by batch'})
   public async createProducts(@Body() dto: CreateProductRequestDto[]) {
@@ -84,14 +80,12 @@ export class ProductController {
     return this.productService.updateProductStockQuantity(id, updateProductDto);
   }
 
-  @AllowUnauthorizedRequest()
   @Delete(':productId')
   @ApiOperation({summary: 'safe delete catalog product'})
   public async deleteProduct(@Param('productId') id: string) {
     return this.productService.deleteProduct(id);
   }
 
-  @AllowUnauthorizedRequest()
   @Delete('all-products')
   @ApiOperation({summary: 'safe delete all products'})
   public async deleteAllProducts() {

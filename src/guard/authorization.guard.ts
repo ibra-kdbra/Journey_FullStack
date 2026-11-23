@@ -1,11 +1,10 @@
-import {CanActivate, ExecutionContext, Injectable, Logger} from "@nestjs/common";
+import {CanActivate, ExecutionContext, Injectable, UnauthorizedException} from "@nestjs/common";
 import {Reflector} from "@nestjs/core";
 import {JwtService} from "@nestjs/jwt";
 import {Observable} from "rxjs";
 import {PermissionModel} from "../model/permission.model";
 import {JwtModel} from "../model/jwt.model";
 import {isJWT} from "class-validator";
-import * as console from "console";
 
 @Injectable()
 export class AuthorizationGuard implements CanActivate {
@@ -22,21 +21,24 @@ export class AuthorizationGuard implements CanActivate {
         }
 
         const request = context.switchToHttp().getRequest();
+        const authorization: string | undefined = request?.headers?.authorization;
 
-        //const allowUnauthorizedRequest = this.reflector.get<boolean>('allowUnauthorizedRequest', context.getHandler());
-
-        //if (allowUnauthorizedRequest) {
-            return true;
-        //}
-        if (request && request.headers && request.headers.authorization && request.headers.authorization.startsWith("Bearer ")) {
-            const jwt = request.headers.authorization.replace('Bearer ', '')
-            if (isJWT(jwt)) {
-                request.currentUser = <JwtModel>this.jwtService.decode(jwt);
-                //request.currentUser.permissions = <Array<PermissionModel>>this.parsePermissions(request.currentUser.permissions) || [];
-                return true;
-            }
+        if (!authorization || !authorization.startsWith("Bearer ")) {
+            throw new UnauthorizedException("Missing bearer token");
         }
-        return false;
+
+        const jwt = authorization.substring("Bearer ".length).trim();
+        if (!isJWT(jwt)) {
+            throw new UnauthorizedException("Malformed bearer token");
+        }
+
+        try {
+            // verify() checks the signature (with the secret configured on JwtModule) and expiry
+            request.currentUser = <JwtModel>this.jwtService.verify(jwt);
+        } catch (e) {
+            throw new UnauthorizedException("Invalid or expired token");
+        }
+        return true;
     }
 
     parsePermissions(permissions: string[]): Array<PermissionModel> {

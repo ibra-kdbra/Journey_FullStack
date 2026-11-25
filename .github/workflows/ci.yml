@@ -23,9 +23,12 @@ on:
 permissions:
   contents: read
 
+# Cancel superseded runs on pull requests only. On main a push is diffed against
+# github.event.before, so cancelling run A when B lands would leave the projects A
+# touched unverified: B's diff (A..B) does not contain A's changes.
 concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
+  group: ci-${{ github.event_name == 'pull_request' && github.ref || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   discover:

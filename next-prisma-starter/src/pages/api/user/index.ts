@@ -1,20 +1,37 @@
 import { NextApiHandler } from 'next'
 
 import { prisma } from '@/utils/client'
+import { parsePagination } from '@/utils/pagination'
 
+/**
+ * NOTE: this starter has no authentication. The endpoint is public, so it returns
+ * only fields that are safe to show anyone (no email, no role) and is paginated.
+ * Before returning anything more, put real auth in front of it.
+ */
 const userApiHandler: NextApiHandler = async (req, res) => {
 	try {
 		if (req.method === 'GET') {
-			const users = await prisma.user.findMany({
-				orderBy: {
-					createdAt: 'desc',
-				},
-			})
+			const page = parsePagination(req.query)
+			if (!page.ok) {
+				return res.status(400).json({ success: false, message: page.message })
+			}
+			const { take, skip } = page.value
+
+			const [users, total] = await Promise.all([
+				prisma.user.findMany({
+					select: { id: true, name: true, avatar: true, createdAt: true },
+					orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+					take,
+					skip,
+				}),
+				prisma.user.count(),
+			])
 
 			return res.status(200).json({
 				success: true,
-				message: `Total ${users.length} users found`,
+				message: `Showing ${users.length} of ${total} users`,
 				data: users,
+				pagination: { take, skip, total },
 			})
 		}
 

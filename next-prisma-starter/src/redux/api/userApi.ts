@@ -6,13 +6,8 @@ import {
 } from '@reduxjs/toolkit/query/react'
 
 const baseQuery = fetchBaseQuery({
+	// No Authorization header: the API routes do not check one (see README, "API access").
 	baseUrl: '/api',
-	prepareHeaders: (headers) => {
-		const token = localStorage.getItem('token') as string
-		if (token) {
-			headers.set('Authorization', token)
-		}
-	},
 })
 
 const userApi = createApi({

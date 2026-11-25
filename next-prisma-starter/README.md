@@ -62,6 +62,15 @@ Next-Prisma-Starter follows a well-organized folder structure to keep your codeb
 - `pages`: Next.js pages for routing and rendering components.
 - `api`: Custom API routes for server-side logic.
 
+### API access
+
+`GET /api/user` and `GET /api/post` are **public: this starter has no authentication**.
+To limit the damage they are paginated (`?take=20&skip=0`; `take` defaults to 20 and
+may not exceed 100, otherwise the response is 400 and the body says why) and `/api/user`
+returns only `id`, `name`, `avatar` and `createdAt` - never email or role. The response
+carries `pagination: { take, skip, total }`. If you add endpoints that expose more, add
+real authentication (for example NextAuth or a verified session token) first.
+
 ```bash
 next-prisma-starter/
 ├── prisma/

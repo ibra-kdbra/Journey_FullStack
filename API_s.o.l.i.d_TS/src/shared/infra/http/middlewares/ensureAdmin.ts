@@ -13,7 +13,7 @@ export async function ensureAdmin(req: Request, res: Response, next: NextFunctio
         throw new AppError("User not found", 401);
     }
     if (!user.isAdmin) {
-        throw new AppError("User is not a admin");
+        throw new AppError("User is not a admin", 403);
     }
     return next();
 }

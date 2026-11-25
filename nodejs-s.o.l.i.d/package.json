@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --watch './**/*.ts' --exec 'ts-node' ./src/index.ts",
+    "dev": "nodemon --watch './**/*.ts' --exec 'tsx' ./src/index.ts",
     "migrate:up": "npx sequelize-cli db:migrate",
     "migrate:down": "npx sequelize-cli db:migrate:undo",
     "seed:up": "npx sequelize-cli db:seed:all",
@@ -39,7 +39,6 @@
     "@types/pdfmake": "^0.3.0",
     "nodemon": "^3.1.9",
     "rimraf": "^6.1.4",
-    "ts-node": "^10.9.1",
     "tsx": "^4.23.15",
     "typescript": "^7.0.2"
   }

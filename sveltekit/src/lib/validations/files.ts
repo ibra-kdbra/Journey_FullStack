@@ -1,3 +1,17 @@
+import { z } from 'zod';
+
+// Upload request validation (server side, before signing a presigned URL)
+export const UPLOAD_DIRECTORIES = ['avatars', 'images'] as const;
+export const UPLOAD_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'] as const;
+export const UPLOAD_MAX_BYTES = 4_000_000;
+export const UPLOAD_URL_EXPIRY_SECONDS = 300;
+
+export const uploadRequestSchema = z.object({
+  fileType: z.enum(UPLOAD_IMAGE_TYPES),
+  fileSize: z.number().int().positive().max(UPLOAD_MAX_BYTES),
+  destinationDirectory: z.enum(UPLOAD_DIRECTORIES)
+});
+
 // Image file validations
 export function validateImageFile(
   imageFile: File,

@@ -5,7 +5,6 @@ import type { Action } from './$types';
 import { PUBLIC_BASE_URL } from '$env/static/public';
 
 // Utils
-import { invalidateUserSessions } from '$lib/server/auth';
 import { redirect } from 'sveltekit-flash-message/server';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { superValidate } from 'sveltekit-superforms/server';
@@ -85,8 +84,6 @@ const requestPasswordReset: Action = async (event) => {
       .returning();
 
     const token = createOrUpdateTokens[0];
-
-    await invalidateUserSessions(user.id);
 
     const url = new URL(`${PUBLIC_BASE_URL}/reset-password/update?user=${user.publicId}&token=${token?.key}`);
 

@@ -9,7 +9,7 @@ export interface IAdminCredentials {
 // The seeded admin's password comes from ADMIN_PASSWORD. Without it a random
 // one is generated (and printed once by the seed) everywhere except production,
 // where running without an explicit password is refused.
-export function resolveIAdminCredentials(env: NodeJS.ProcessEnv = process.env): IAdminCredentials {
+export function resolveAdminCredentials(env: NodeJS.ProcessEnv = process.env): IAdminCredentials {
     const email = env.ADMIN_EMAIL || "admin@ufc.br";
     if (env.ADMIN_PASSWORD) {
         return { email, password: env.ADMIN_PASSWORD, generated: false };

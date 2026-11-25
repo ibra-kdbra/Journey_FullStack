@@ -1,6 +1,8 @@
 package com.hospital.patient.core.usecase;
 
 import com.hospital.patient.core.domain.entity.Patient;
+import com.hospital.patient.core.domain.exception.DuplicateEmailException;
+import com.hospital.patient.core.domain.exception.PatientNotFoundException;
 import com.hospital.patient.core.domain.repository.PatientRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -57,8 +59,21 @@ class PatientUseCaseTest {
         when(patientRepository.findByEmail(patient.getEmail())).thenReturn(Optional.of(patient));
 
         // When & Then
-        assertThrows(RuntimeException.class, () -> patientUseCase.registerPatient(patient));
+        assertThrows(DuplicateEmailException.class, () -> patientUseCase.registerPatient(patient));
         verify(patientRepository, never()).save(any());
+    }
+
+    @Test
+    void getPatientById_ShouldThrowNotFound_WhenMissing() {
+        when(patientRepository.findById("nope")).thenReturn(Optional.empty());
+        assertThrows(PatientNotFoundException.class, () -> patientUseCase.getPatientById("nope"));
+    }
+
+    @Test
+    void changeEmail_ShouldThrowDuplicate_WhenTaken() {
+        when(patientRepository.findByEmail("taken@example.com"))
+                .thenReturn(Optional.of(Patient.builder().build()));
+        assertThrows(DuplicateEmailException.class, () -> patientUseCase.changeEmail("id", "taken@example.com"));
     }
 
     @Test

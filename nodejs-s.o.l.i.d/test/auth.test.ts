@@ -10,6 +10,7 @@ import jwt from 'jsonwebtoken'
 import app from '../src/app'
 import { User } from '../src/models/User'
 import { signToken } from '../src/services/TokenService'
+import transporter from '../src/helpers/MailConfig'
 
 const stub = <T extends object, K extends keyof T>(obj: T, key: K, fn: unknown) => {
     ;(obj as any)[key] = fn
@@ -135,5 +136,21 @@ describe('POST /auth/login', () => {
             body: JSON.stringify({ email: 'nobody@x.io', password: 'password123' }),
         })
         assert.equal(unknown.status, 401)
+    })
+})
+
+describe('profile update notification', () => {
+    it('is sent to the updated user, not a fixed address', async () => {
+        const sent: any[] = []
+        const original = transporter.sendMail
+        stub(transporter, 'sendMail', async (m: unknown) => void sent.push(m))
+        try {
+            const res = await call('/users/2', { method: 'PUT', body: JSON.stringify({ name: 'x' }) }, userToken())
+            assert.equal(res.status, 200)
+            assert.equal(sent.length, 1)
+            assert.equal(sent[0].to, 'n@x.io')
+        } finally {
+            stub(transporter, 'sendMail', original)
+        }
     })
 })

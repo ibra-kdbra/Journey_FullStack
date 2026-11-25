@@ -7,6 +7,8 @@ _public_ ssh key.
 
 ### What happens during deployment for staging and production
 
+> **Note:** these pipelines are not active in this monorepo. The workflow files used to live in `solid-flask-web-app/.github/workflows`, which GitHub does not read, so they never ran and have been removed (see git history). The steps below describe what the template's pipeline did and can be performed by hand or restored in a standalone repository.
+
 ##### Staging
 When merging to develop, a new deploy pipeline is automatically started for staging. The steps are:
  1. build new `ui` and `api` docker images

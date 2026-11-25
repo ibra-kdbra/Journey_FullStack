@@ -77,9 +77,14 @@ export const uploadImageFile = async (
       },
       body: JSON.stringify({
         fileType: file.type,
+        fileSize: file.size,
         destinationDirectory: uploadDestinationDirectory ?? ''
       })
     });
+
+    if (!getPresignedUrl.ok) {
+      throw new Error('Upload request rejected');
+    }
 
     const { fileName, presignedUrl } = await getPresignedUrl.json();
 

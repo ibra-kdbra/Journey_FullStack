@@ -331,3 +331,134 @@ def test_metric_type_is_configurable():
     cfg = Config.from_dict({**SAMPLE_CONFIG, 'metric_type': 'IP'})
     assert cfg.metric_type == 'IP'
     assert Config.from_dict(SAMPLE_CONFIG).metric_type == 'COSINE'
+
+
+# --- idempotency, schema handling and failure reporting -----------------
+
+import pipeline as pipeline_module  # noqa: E402
+from pipeline import IngestionError, SchemaMismatchError  # noqa: E402
+
+
+def _existing_collection(mock_milvus, schema):
+    _, mock_collection, mock_utility = mock_milvus
+    mock_utility.has_collection.return_value = True
+    mock_collection.return_value.schema = schema
+    return mock_collection, mock_utility
+
+
+def test_schema_match_ignores_description_and_order(config, mock_milvus, mock_models):
+    connector = MilvusConnector(config)
+    schema = connector._create_collection_schema()
+    # Same fields, different order and collection/field descriptions.
+    reordered = pipeline_module.CollectionSchema(
+        fields=list(reversed(schema.fields)), description="something else entirely"
+    )
+    _, mock_utility = _existing_collection(mock_milvus, reordered)
+    connector.ensure_collection_exists()
+    mock_utility.drop_collection.assert_not_called()
+
+
+def test_schema_mismatch_without_recreate_raises_and_drops_nothing(config, mock_milvus, mock_models):
+    connector = MilvusConnector(config)
+    wrong = connector._create_collection_schema()
+    next(f for f in wrong.fields if f.name == "embedding").params["dim"] = 768
+    _, mock_utility = _existing_collection(mock_milvus, wrong)
+    with pytest.raises(SchemaMismatchError, match="--recreate"):
+        connector.ensure_collection_exists()
+    mock_utility.drop_collection.assert_not_called()
+
+
+def test_schema_mismatch_with_recreate_drops_and_rebuilds(config, mock_milvus, mock_models):
+    connector = MilvusConnector(config)
+    wrong = connector._create_collection_schema()
+    next(f for f in wrong.fields if f.name == "embedding").params["dim"] = 768
+    mock_collection, mock_utility = _existing_collection(mock_milvus, wrong)
+    connector.ensure_collection_exists(recreate=True)
+    mock_utility.drop_collection.assert_called_once_with(config.collection_name)
+    assert mock_collection.return_value.create_index.called
+
+
+def test_missing_field_is_a_mismatch(config, mock_milvus, mock_models):
+    connector = MilvusConnector(config)
+    full = connector._create_collection_schema()
+    partial = pipeline_module.CollectionSchema(fields=full.fields[:-1])
+    _, mock_utility = _existing_collection(mock_milvus, partial)
+    with pytest.raises(SchemaMismatchError, match="created_at"):
+        connector.ensure_collection_exists()
+    mock_utility.drop_collection.assert_not_called()
+
+
+def test_insert_replaces_existing_chunks_of_source(config, mock_milvus, mock_models):
+    connector = MilvusConnector(config)
+    connector.insert_data(
+        ["a", "b"], [{"source": "x.md"}, {"source": "x.md"}], replace_source="x.md"
+    )
+    collection = mock_milvus[1].return_value
+    collection.delete.assert_called_once_with('metadata["source"] == "x.md"')
+    # delete happens before insert, so a re-run cannot leave duplicates
+    names = [c[0] for c in collection.method_calls if c[0] in ("delete", "insert")]
+    assert names == ["delete", "insert"]
+
+
+def test_running_twice_deletes_each_source_each_time(config, mock_milvus, mock_models, tmp_path):
+    (tmp_path / "d.md").write_text("some text")
+    config.markdown_folder = str(tmp_path)
+    connector = MilvusConnector(config)
+    mock_models[0].return_value.encode.return_value = np.array([[0.1] * 384])
+    process_documents(config, connector)
+    process_documents(config, connector)
+    collection = mock_milvus[1].return_value
+    assert collection.delete.call_count == 2
+    expected = f'metadata["source"] == "{tmp_path / "d.md"}"'
+    assert all(c.args == (expected,) for c in collection.delete.call_args_list)
+
+
+def test_failed_file_raises_ingestion_error_after_trying_all(config, mock_milvus, mock_models, tmp_path):
+    (tmp_path / "bad.md").write_text("bad")
+    (tmp_path / "good.md").write_text("good")
+    config.markdown_folder = str(tmp_path)
+    connector = MilvusConnector(config)
+    mock_models[0].return_value.encode.return_value = np.array([[0.1] * 384])
+    real = connector.insert_data
+
+    def flaky(chunks, metadata, replace_source=None):
+        if replace_source.endswith("bad.md"):
+            raise ModelError("boom")
+        return real(chunks, metadata, replace_source=replace_source)
+
+    connector.insert_data = flaky
+    with pytest.raises(IngestionError, match="bad.md"):
+        process_documents(config, connector)
+    assert mock_milvus[1].return_value.insert.call_count == 1  # good.md still ingested
+
+
+def test_main_exits_nonzero_when_a_file_fails(config):
+    with patch("pipeline.load_config", return_value=config), \
+         patch("pipeline.MilvusConnector"), \
+         patch("pipeline.connections"), \
+         patch("pipeline.process_documents", side_effect=IngestionError("1 file(s) failed")):
+        with pytest.raises(SystemExit) as exc:
+            pipeline_module.main([])
+    assert exc.value.code == 1
+
+
+def test_main_exits_nonzero_on_schema_mismatch_and_passes_recreate(config):
+    with patch("pipeline.load_config", return_value=config), \
+         patch("pipeline.MilvusConnector"), \
+         patch("pipeline.connections"), \
+         patch("pipeline.process_documents", side_effect=SchemaMismatchError("nope")) as pd:
+        with pytest.raises(SystemExit) as exc:
+            pipeline_module.main([])
+        assert exc.value.code == 1
+        assert pd.call_args.kwargs["recreate"] is False
+        with pytest.raises(SystemExit):
+            pipeline_module.main(["--recreate"])
+        assert pd.call_args.kwargs["recreate"] is True
+
+
+def test_main_succeeds_with_exit_zero(config):
+    with patch("pipeline.load_config", return_value=config), \
+         patch("pipeline.MilvusConnector"), \
+         patch("pipeline.connections"), \
+         patch("pipeline.process_documents"):
+        assert pipeline_module.main([]) is None

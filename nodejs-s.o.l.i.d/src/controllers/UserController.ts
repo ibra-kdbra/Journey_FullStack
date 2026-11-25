@@ -33,7 +33,11 @@ export const update = async (req: Request, res: Response) => {
             individualHooks: true,
         })
 
-        sendEmail('dev.melshafaey@gmail.com', 'Profile Updated', 'Profile Updated'); 
+        // Notify the user whose profile changed, at their own (post-update) address.
+        const user = await User.findByPk(Number(req.params.id))
+        if (user?.email) {
+            await sendEmail(user.email, 'Profile Updated', 'Your profile has been updated.')
+        }
         res.json({ updated })
     } catch (error) {
         res.status(500).json(error)

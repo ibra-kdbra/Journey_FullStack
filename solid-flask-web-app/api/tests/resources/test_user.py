@@ -1,5 +1,6 @@
 from unittest.mock import patch
 
+import pytest
 from flask_login import current_user
 
 from app.db.user import User
@@ -7,7 +8,7 @@ from app.errors import APIErrorEnum
 
 
 class TestUsersAPI:
-    def test_get_users_without_pagination(self, client, db, logged_in_user, admin):
+    def test_get_users_without_pagination(self, client, db, logged_in_admin, user):
         # There should be two users: the logged in user and the admin
         assert User.query.count() == 2
 
@@ -26,7 +27,7 @@ class TestUsersAPI:
         assert "user@test.com" in user_emails
         assert "admin@test.com" in user_emails
 
-    def test_get_users_with_pagination(self, client, db, logged_in_user, admin):
+    def test_get_users_with_pagination(self, client, db, logged_in_admin, user):
         assert User.query.count() == 2
 
         response = client.get("/users?page=1&per_page=1")
@@ -43,16 +44,22 @@ class TestUsersAPI:
         assert response_data["meta"]["per_page"] == 1
         assert response_data["meta"]["total_pages"] == 2
 
-    def test_get_users_with_invalid_pagination(self, client, db, logged_in_user):
+    def test_get_users_with_invalid_pagination(self, client, db, logged_in_admin):
         for query in ("page=x&per_page=1", "page=1&per_page=y", "page=0&per_page=1"):
             response = client.get(f"/users?{query}")
             assert response.status_code == 400, query
 
-    def test_get_users_clamps_per_page(self, client, db, logged_in_user):
+    def test_get_users_clamps_per_page(self, client, db, logged_in_admin):
         response = client.get("/users?page=1&per_page=100000")
 
         assert response.status_code == 200
         assert response.get_json()["meta"]["per_page"] == 100
+
+    def test_get_users_not_admin(self, client, db, logged_in_user):
+        response = client.get("/users")
+
+        assert response.status_code == 403
+        assert "items" not in response.get_json()
 
     def test_get_users_not_logged_in(self, client, db):
         response = client.get("/users")
@@ -67,7 +74,7 @@ class TestUsersAPI:
                 "/users",
                 json={
                     "email": "newuser@test.com",
-                    "password": "newpassword123",
+                    "password": "NewPassword123",
                     "is_admin": False,
                 },
             )
@@ -99,7 +106,7 @@ class TestUsersAPI:
                 "/users",
                 json={
                     "email": "duplicate@test.com",
-                    "password": "password123",
+                    "password": "Password123",
                     "is_admin": False,
                 },
             )
@@ -111,7 +118,7 @@ class TestUsersAPI:
             "/users",
             json={
                 "email": "duplicate@test.com",
-                "password": "password456",
+                "password": "Password456",
                 "is_admin": False,
             },
         )
@@ -120,13 +127,37 @@ class TestUsersAPI:
         assert response.get_json()["error"] == APIErrorEnum.email_already_exists.value
         assert "already exists" in response.get_json()["message"]
 
+    @pytest.mark.parametrize("password", ["a", "alllowercase1", "NoDigitsHere"])
+    def test_create_user_weak_password(self, client, db, logged_in_admin, password):
+        response = client.post(
+            "/users",
+            json={"email": "weak@test.com", "password": password, "is_admin": False},
+        )
+
+        assert response.status_code == 409
+        assert (
+            response.get_json()["error"]
+            == APIErrorEnum.password_does_not_match_conditions.value
+        )
+        assert User.query.count() == 1
+
+    def test_create_user_invalid_email(self, client, db, logged_in_admin):
+        response = client.post(
+            "/users",
+            json={"email": "nope", "password": "NewPassword123", "is_admin": False},
+        )
+
+        assert response.status_code == 400
+        assert response.get_json()["error"] == APIErrorEnum.invalid_request.value
+        assert User.query.count() == 1
+
     def test_create_user_not_admin(self, client, db, logged_in_user):
         # User is logged in but not admin
         response = client.post(
             "/users",
             json={
                 "email": "newuser@test.com",
-                "password": "newpassword123",
+                "password": "NewPassword123",
                 "is_admin": False,
             },
         )
@@ -138,7 +169,7 @@ class TestUsersAPI:
             "/users",
             json={
                 "email": "newuser@test.com",
-                "password": "newpassword123",
+                "password": "NewPassword123",
                 "is_admin": False,
             },
         )

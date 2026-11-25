@@ -17,6 +17,7 @@ class APIErrorEnum(IntEnum):
     user_not_found = 12
     unknown_error = 13
     too_many_requests = 14
+    invalid_request = 15
 
 
 class APIError(Exception):

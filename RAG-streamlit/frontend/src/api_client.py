@@ -17,11 +17,11 @@ class APIClientError(Exception):
 
 class APIClientInterface(ABC):
     @abstractmethod
-    def get_response(self, user_input: str) -> str:
+    def get_response(self, user_input: str, history: Optional[list] = None) -> str:
         pass
 
     @abstractmethod
-    async def get_streaming_response(self, user_input: str, callback: Optional[Callable[[str], None]] = None) -> AsyncGenerator[str, None]:
+    async def get_streaming_response(self, user_input: str, callback: Optional[Callable[[str], None]] = None, history: Optional[list] = None) -> AsyncGenerator[str, None]:
         pass
 
 class RAGAPIClient(APIClientInterface):
@@ -31,21 +31,31 @@ class RAGAPIClient(APIClientInterface):
         self.max_retries = max_retries
         self.retry_delay = retry_delay
 
-    def get_response(self, user_input: str) -> str:
+    def get_response(self, user_input: str, history: Optional[list] = None) -> str:
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         try:
-            return loop.run_until_complete(self._get_response_async(user_input))
+            return loop.run_until_complete(self._get_response_async(user_input, history))
         finally:
             loop.close()
 
-    async def get_streaming_response(self, user_input: str, callback: Optional[Callable[[str], None]] = None) -> AsyncGenerator[str, None]:
-        async for chunk in self._get_streaming_response_async(user_input, callback):
+    async def get_streaming_response(self, user_input: str, callback: Optional[Callable[[str], None]] = None, history: Optional[list] = None) -> AsyncGenerator[str, None]:
+        async for chunk in self._get_streaming_response_async(user_input, callback, history):
             yield chunk
 
-    async def _get_response_async(self, user_input: str) -> str:
+    @staticmethod
+    def _build_payload(user_input: str, history: Optional[list]) -> dict:
+        """Chat request body: the new prompt plus the earlier turns (oldest first)."""
+        return {
+            "user_prompt": user_input,
+            "history": [
+                {"role": m["role"], "content": m["content"]} for m in (history or [])
+            ],
+        }
+
+    async def _get_response_async(self, user_input: str, history: Optional[list] = None) -> str:
         url = f"{self.base_url}/chat"
-        payload = {"user_prompt": user_input}
+        payload = self._build_payload(user_input, history)
 
         for attempt in range(self.max_retries):
             try:
@@ -65,9 +75,9 @@ class RAGAPIClient(APIClientInterface):
                 else:
                     raise Exception(f"Failed to get response after {self.max_retries} attempts: {str(e)}")
 
-    async def _get_streaming_response_async(self, user_input: str, callback: Optional[Callable[[str], None]] = None) -> AsyncGenerator[str, None]:
+    async def _get_streaming_response_async(self, user_input: str, callback: Optional[Callable[[str], None]] = None, history: Optional[list] = None) -> AsyncGenerator[str, None]:
         url = f"{self.base_url}/chat/stream"
-        payload = {"user_prompt": user_input}
+        payload = self._build_payload(user_input, history)
 
         yielded_any = False
         for attempt in range(self.max_retries):
@@ -138,11 +148,11 @@ class APIClientFactory:
             return RAGAPIClient(**kwargs)
         raise ValueError(f"Unsupported client type: {client_type}")
 
-def get_response(user_input: str) -> str:
+def get_response(user_input: str, history: Optional[list] = None) -> str:
     client = APIClientFactory.create_client()
-    return client.get_response(user_input)
+    return client.get_response(user_input, history)
 
-async def get_streaming_response(user_input: str, callback: Optional[Callable[[str], None]] = None) -> AsyncGenerator[str, None]:
+async def get_streaming_response(user_input: str, callback: Optional[Callable[[str], None]] = None, history: Optional[list] = None) -> AsyncGenerator[str, None]:
     client = APIClientFactory.create_client()
-    async for chunk in client.get_streaming_response(user_input, callback):
+    async for chunk in client.get_streaming_response(user_input, callback, history):
         yield chunk

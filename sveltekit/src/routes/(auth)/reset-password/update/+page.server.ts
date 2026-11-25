@@ -18,6 +18,7 @@ import { resetPasswordSchema } from '$lib/validations/auth';
 import db from '$lib/server/database';
 import { User } from '$models/user';
 import { Token } from '$models/token';
+import { Session } from '$models/session';
 
 export async function load({ locals, url }) {
   // redirect user if already logged in
@@ -107,6 +108,8 @@ const reset: Action = async (event) => {
 
         await tx.update(User).set({ hashedPassword }).where(eq(User.id, row.user.id));
         await tx.delete(Token).where(eq(Token.id, row.id));
+        // Revoke every existing session of this user now that the password has changed.
+        await tx.delete(Session).where(eq(Session.userId, row.user.id));
         return true;
       });
     } catch {

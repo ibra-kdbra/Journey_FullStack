@@ -46,6 +46,11 @@ export async function GET(event: RequestEvent): Promise<Response> {
   const lastName = claimsParser.getString('family_name');
   const email = claimsParser.getString('email');
 
+  // Never link to or create an account from an email Google has not verified.
+  if (claimsParser.get('email_verified') !== true) {
+    redirect('/login', { type: 'error', message: m.auth.login.error }, event);
+  }
+
   const existingUser = await db.query.User.findFirst({
     where: or(eq(User.googleId, googleId), eq(User.email, email)),
     columns: {

@@ -28,6 +28,10 @@ class ChatApp:
             with st.chat_message(message["role"]):
                 st.markdown(message["content"])
 
+    def _previous_turns(self) -> list:
+        """Turns before the one being answered (the latest message is the new user prompt)."""
+        return list(st.session_state["messages"][:-1])
+
     def _handle_user_input(self, user_input: str) -> None:
         """Handle user input and generate response."""
         # Add user message to session state
@@ -44,7 +48,7 @@ class ChatApp:
                 self._handle_streaming_response(user_input, response_placeholder)
             else:
                 # Use non-streaming response (backward compatibility)
-                response = get_response(user_input)
+                response = get_response(user_input, self._previous_turns())
                 response_placeholder.markdown(response)
                 st.session_state["messages"].append({"role": "assistant", "content": response})
     
@@ -61,7 +65,7 @@ class ChatApp:
         
         # Run the async streaming function
         async def run_streaming():
-            async for chunk in get_streaming_response(user_input, update_placeholder):
+            async for chunk in get_streaming_response(user_input, update_placeholder, self._previous_turns()):
                 pass  # The callback handles the updates
         
         # Execute the async function

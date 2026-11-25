@@ -121,3 +121,21 @@ def test_stream_failure_before_first_chunk_is_retried():
     with patch("src.api_client.aiohttp.ClientSession", return_value=session):
         assert asyncio.run(consume()) == ["a"]
     assert session.calls == 2
+
+
+def test_history_is_sent_in_payload():
+    sent = []
+
+    class Spy(FakeSession):
+        def post(self, url, json=None):
+            sent.append(json)
+            return super().post(url, json=json)
+
+    history = [{"role": "user", "content": "a"}, {"role": "assistant", "content": "b"}]
+    with patch("src.api_client.aiohttp.ClientSession", return_value=Spy([FakeResponse()])):
+        asyncio.run(_client()._get_response_async("c", history))
+    assert sent == [{"user_prompt": "c", "history": history}]
+
+
+def test_no_history_sends_empty_list():
+    assert RAGAPIClient._build_payload("q", None) == {"user_prompt": "q", "history": []}

@@ -21,6 +21,7 @@ COLLECTION_NAME = os.getenv("COLLECTION_NAME", "document_chunks")
 MILVUS_HOST = os.getenv("MILVUS_HOST", "localhost")
 MILVUS_PORT = os.getenv("MILVUS_PORT", "19530")
 TOP_K = int(os.getenv("TOP_K", "3"))
+RETRIEVAL_ERROR_PREFIX = "ERROR:"
 
 class EmbeddingService:
     """Service for handling text embeddings."""
@@ -128,6 +129,7 @@ class MilvusService:
         Returns:
             List of search results
         """
+        collection = None
         try:
             collection = self.get_collection(collection_name)
             collection.load()
@@ -157,11 +159,27 @@ class MilvusService:
                     }
                     formatted_results.append(result)
             
-            collection.release()
             return formatted_results
         except Exception as e:
             logger.error(f"Failed to search Milvus: {str(e)}")
             raise
+        finally:
+            # Release even when the search raised, or the collection stays loaded.
+            if collection is not None:
+                try:
+                    collection.release()
+                except Exception as e:
+                    logger.warning(f"Failed to release collection: {str(e)}")
+
+
+def check_milvus() -> None:
+    """Raise if Milvus cannot be reached (used by /health).
+
+    Deliberately does not build a ContextRetriever, which would load the
+    embedding model.
+    """
+    connections.connect(host=MILVUS_HOST, port=MILVUS_PORT, timeout=5)
+    utility.list_collections(timeout=5)
 
 
 class ContextRetriever:
@@ -230,7 +248,7 @@ def get_context_retriever() -> ContextRetriever:
     return _context_retriever
 
 @tool
-def retrieve_context(query: str) -> list[Document]:
+def retrieve_context(query: str) -> list[Document] | str:
     """Retrieve relevant context about DataNinja from the knowledge base. The knowledge base is a Milvus vector store.  Any queries about DataNinja should be answered using this tool.
     
     Args:
@@ -238,6 +256,8 @@ def retrieve_context(query: str) -> list[Document]:
         
     Returns:
         List of the content of the relevant documents with their content and metadata.
+        If the knowledge base cannot be queried, a string starting with
+        "ERROR:" describing the failure (never an empty list).
     """
     top_k = TOP_K
     try:
@@ -257,7 +277,12 @@ def retrieve_context(query: str) -> list[Document]:
         return documents
     except Exception as e:
         logger.error(f"Error retrieving context: {str(e)}")
-        return []
+        return (
+            f"{RETRIEVAL_ERROR_PREFIX} the knowledge base could not be queried "
+            f"({type(e).__name__}: {e}). This is a service failure, not an absence "
+            "of documents. Tell the user the knowledge base is currently unavailable; "
+            "do not answer as if no relevant documents exist."
+        )
 
 @tool
 def multiply(a: int, b: int) -> int:

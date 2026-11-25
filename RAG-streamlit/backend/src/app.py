@@ -1,7 +1,9 @@
+import asyncio
 import json
 import logging
 import os
-from typing import Any
+import urllib.request
+from typing import Any, Literal
 
 import yaml
 from fastapi import FastAPI, HTTPException
@@ -15,7 +17,7 @@ from langgraph_agent import (
     run_agent_graph,
     run_agent_graph_streaming,
 )
-from tools import multiply, retrieve_context
+from tools import check_milvus, multiply, retrieve_context
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -40,6 +42,12 @@ class Settings(BaseSettings):
     OLLAMA_HOST: str = Field(..., description="Ollama service URL")
     OLLAMA_MODEL: str = Field(default="qwen2:7b", description="Default Ollama model to use")
     
+    ALLOWED_MODELS: str = Field(
+        default="",
+        description="Comma-separated extra Ollama models clients may request via ChatRequest.model "
+        "(OLLAMA_MODEL is always allowed)",
+    )
+
     # RAG Configuration
     CHUNK_SIZE: int = Field(default=500, description="Size of text chunks for processing")
     CHUNK_OVERLAP: int = Field(default=100, description="Overlap between chunks")
@@ -61,6 +69,12 @@ class Settings(BaseSettings):
         extra = "ignore"
 
     @property
+    def allowed_models(self) -> list[str]:
+        """Models a request may select: the default plus ALLOWED_MODELS."""
+        extra = [m.strip() for m in self.ALLOWED_MODELS.split(",") if m.strip()]
+        return [self.OLLAMA_MODEL, *[m for m in extra if m != self.OLLAMA_MODEL]]
+
+    @property
     def allowed_origins(self) -> list[str]:
         """Get list of allowed CORS origins."""
         return [origin.strip() for origin in self.CORS_ORIGINS.split(",")]
@@ -74,10 +88,36 @@ except Exception as e:
     logger.error(f"Failed to load settings: {str(e)}")
     raise
 
+class ChatTurn(BaseModel):
+    """One earlier turn of the conversation."""
+    role: Literal["user", "assistant"]
+    content: str
+
 class ChatRequest(BaseModel):
     """Request model for chat endpoint."""
-    model: str | None = settings.OLLAMA_MODEL  # Uses the env var via Settings
+    model: str | None = Field(
+        default=None,
+        description="Ollama model to use; must be in the server's allow-list. Defaults to OLLAMA_MODEL.",
+    )
     user_prompt: str
+    history: list[ChatTurn] = Field(
+        default_factory=list,
+        description="Earlier turns of the conversation, oldest first, excluding user_prompt.",
+    )
+
+def resolve_model(requested: str | None) -> str | None:
+    """Return the model to use, or raise 400 if it is not allowed.
+
+    None means "use the server default" and is passed through unchanged.
+    """
+    if requested is None or requested == settings.OLLAMA_MODEL:
+        return requested
+    if requested not in settings.allowed_models:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Model '{requested}' is not allowed. Allowed: {settings.allowed_models}",
+        )
+    return requested
 
 class ChatResponse(BaseModel):
     """Response model for chat endpoint."""
@@ -106,15 +146,29 @@ async def root() -> dict[str, str]:
     """Root endpoint."""
     return {"message": "Hello World from RAG Backend!"}
 
+def check_dependencies() -> None:
+    """Raise if Milvus or Ollama is unreachable."""
+    try:
+        check_milvus()
+    except Exception as e:
+        raise RuntimeError(f"Milvus unavailable: {e}") from e
+    try:
+        url = settings.OLLAMA_HOST.rstrip("/") + "/api/tags"
+        with urllib.request.urlopen(url, timeout=5) as resp:  # noqa: S310
+            if resp.status != 200:
+                raise RuntimeError(f"HTTP {resp.status}")
+    except Exception as e:
+        raise RuntimeError(f"Ollama unavailable: {e}") from e
+
 @app.get("/health")
 async def health_check() -> dict[str, str]:
     """Health check endpoint."""
     try:
-        # Add service health checks here
+        await asyncio.to_thread(check_dependencies)
         return {"status": "healthy"}
     except Exception as e:
         logger.error(f"Health check failed: {str(e)}")
-        raise HTTPException(status_code=503, detail="Service unhealthy") from e
+        raise HTTPException(status_code=503, detail=f"Service unhealthy: {e}") from e
 
 @app.get("/config")
 async def get_config() -> dict[str, Any]:
@@ -136,6 +190,9 @@ async def get_config() -> dict[str, Any]:
         }
     }
 
+def _history(request: ChatRequest) -> list[dict[str, str]]:
+    return [turn.model_dump() for turn in request.history]
+
 @app.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest) -> ChatResponse:
     """Handle chat requests with tool support.
@@ -150,10 +207,13 @@ async def chat(request: ChatRequest) -> ChatResponse:
         HTTPException: If there's an error processing the request.
     """
     try:
-        agent_graph = create_agent_graph(tools, assistant_system_prompt, False)
+        model_name = resolve_model(request.model)
+        agent_graph = create_agent_graph(tools, assistant_system_prompt, False, model_name)
         # Use the LangGraph agent
-        response = run_agent_graph(agent_graph, request.user_prompt)
+        response = run_agent_graph(agent_graph, request.user_prompt, _history(request))
         return ChatResponse(response=response)
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error in chat: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e)) from e
@@ -162,12 +222,13 @@ async def chat(request: ChatRequest) -> ChatResponse:
 async def chat_stream(request: ChatRequest):
     """Handle streaming chat requests with tool support."""
     try:
-        agent_graph = create_agent_graph(tools, assistant_system_prompt, True)
+        model_name = resolve_model(request.model)
+        agent_graph = create_agent_graph(tools, assistant_system_prompt, True, model_name)
         # Use the LangGraph agent in streaming mode
         
         async def stream_generator():
             try:
-                async for chunk in run_agent_graph_streaming(agent_graph, request.user_prompt):
+                async for chunk in run_agent_graph_streaming(agent_graph, request.user_prompt, _history(request)):
                     if chunk:
                         yield f"data: {json.dumps({'content': chunk})}\n\n"
             except Exception as e:
@@ -187,6 +248,8 @@ async def chat_stream(request: ChatRequest):
             }
         )
         
+    except HTTPException:
+        raise
     except Exception as e:
         logger.error(f"Error in chat stream: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e)) from e

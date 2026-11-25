@@ -168,3 +168,27 @@ def test_run_without_user_input(chat_app, mock_streamlit):
     
     # Verify no messages were added
     assert len(mock_streamlit['session_state']['messages']) == 0 
+
+def test_previous_turns_excludes_current_prompt(chat_app, mock_streamlit):
+    mock_streamlit['session_state']['messages'] = [
+        {'role': 'user', 'content': 'q1'},
+        {'role': 'assistant', 'content': 'a1'},
+        {'role': 'user', 'content': 'q2'},
+    ]
+    assert chat_app._previous_turns() == [
+        {'role': 'user', 'content': 'q1'},
+        {'role': 'assistant', 'content': 'a1'},
+    ]
+
+
+def test_non_streaming_sends_history(chat_app, mock_streamlit, mock_api_client):
+    chat_app.use_streaming = False
+    mock_streamlit['session_state']['messages'] = [
+        {'role': 'user', 'content': 'q1'},
+        {'role': 'assistant', 'content': 'a1'},
+    ]
+    chat_app._handle_user_input("follow up")
+    mock_api_client['get_response'].assert_called_once_with(
+        "follow up",
+        [{'role': 'user', 'content': 'q1'}, {'role': 'assistant', 'content': 'a1'}],
+    )

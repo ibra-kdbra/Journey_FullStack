@@ -74,9 +74,11 @@ model Event {
 model Quota {
   id     String @id @default(cuid())
   user   User   @relation(fields: [userId], references: [id])
-  userId String @unique
+  userId String
   year Int
   month Int
   count Int @default(0)
   updatedAt DateTime @updatedAt
+
+  @@unique([userId, year, month])
 }

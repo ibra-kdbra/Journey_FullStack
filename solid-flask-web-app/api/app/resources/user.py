@@ -6,20 +6,24 @@ from marshmallow import Schema, fields
 from app.db.user import User, UserSchema
 from app.errors import APIError, APIErrorEnum
 from app.extensions import api, db
+from app.resources.authentication import (
+    EMAIL_VALIDATORS,
+    ensure_password_matches_conditions,
+)
 from app.resources.decorators import admin_required, insert_pagination_parameters
-from app.resources.utils import pagination_query
+from app.resources.utils import load_or_400, pagination_query
 from app.tasks.mail_tasks import send_email_verification_email
 
 
 class CreateUserSchema(Schema):
-    email = fields.String(required=True)
+    email = fields.String(required=True, validate=EMAIL_VALIDATORS)
     password = fields.String(required=True)
     is_admin = fields.Boolean(required=True)
 
 
 @api.route("/users")
 class UsersAPI(Resource):
-    @login_required
+    @admin_required
     @insert_pagination_parameters
     def get(self, page: int | None = None, per_page: int | None = None):
         if page and per_page:
@@ -32,7 +36,8 @@ class UsersAPI(Resource):
 
     @admin_required
     def post(self):
-        user_data: dict = CreateUserSchema().load(request.get_json())
+        user_data: dict = load_or_400(CreateUserSchema(), request.get_json())
+        ensure_password_matches_conditions(user_data.get("password"))
         if User.query.filter_by(email=user_data.get("email")).first() is not None:
             raise APIError(
                 APIErrorEnum.email_already_exists,

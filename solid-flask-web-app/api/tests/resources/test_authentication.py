@@ -18,7 +18,7 @@ class TestRegisterAPI:
             "app.resources.authentication.send_email_verification_email"
         ) as mock_email:
             response = client.post(
-                "/register", json={"email": "new@user.com", "password": "white_wolf"}
+                "/register", json={"email": "new@user.com", "password": "White_wolf1"}
             )
 
             mock_email.delay.assert_called_once()
@@ -35,19 +35,47 @@ class TestRegisterAPI:
         assert new_user.email == "new@user.com"
         assert not new_user.is_admin
         assert new_user.hashed_password is not None
-        assert new_user.is_correct_password("white_wolf")
+        assert new_user.is_correct_password("White_wolf1")
         assert new_user.email_verification_token is not None
 
     def test_register_email_exists(self, client, user):
         assert User.query.count() == 1
         response = client.post(
-            "/register", json={"email": "user@test.com", "password": "white_wolf"}
+            "/register", json={"email": "user@test.com", "password": "White_wolf1"}
         )
 
         assert response.status_code == 409
         assert response.json["error"] == APIErrorEnum.email_already_exists.value
         assert response.json["message"] == "An account with this email already exists"
         assert User.query.count() == 1
+
+    @pytest.mark.parametrize(
+        "password", ["a", "short1A", "alllowercase1", "ALLUPPERCASE1", "NoDigitsHere"]
+    )
+    def test_register_weak_password(self, client, db, password):
+        response = client.post(
+            "/register", json={"email": "new@user.com", "password": password}
+        )
+
+        assert response.status_code == 409
+        assert (
+            response.json["error"]
+            == APIErrorEnum.password_does_not_match_conditions.value
+        )
+        assert User.query.count() == 0
+
+    @pytest.mark.parametrize(
+        "email", ["not-an-email", "a@b", "", "x" * 100 + "@test.com"]
+    )
+    def test_register_invalid_email(self, client, db, email):
+        response = client.post(
+            "/register", json={"email": email, "password": "White_wolf1"}
+        )
+
+        assert response.status_code == 400
+        assert response.json["error"] == APIErrorEnum.invalid_request.value
+        assert "email" in response.json["message"]
+        assert User.query.count() == 0
 
 
 class TestLoginAPI:

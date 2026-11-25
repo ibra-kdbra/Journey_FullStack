@@ -3,6 +3,7 @@ from flask.cli import with_appcontext
 
 from app.db.user import User
 from app.extensions import db
+from app.resources.authentication import password_matches_conditions
 
 
 @click.command("create-admin")
@@ -11,6 +12,12 @@ from app.extensions import db
 @with_appcontext
 def create_admin(email, password):
     """Create an initial admin user."""
+    if not password_matches_conditions(password):
+        raise click.UsageError(
+            "Password must be at least 8 characters and contain an uppercase "
+            "letter, a lowercase letter and a digit."
+        )
+
     user = User.query.filter_by(email=email).first()
     if user:
         click.echo(f"User with email {email} already exists. Updating admin status.")

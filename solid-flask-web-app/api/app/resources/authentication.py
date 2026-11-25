@@ -5,12 +5,13 @@ import pyotp
 from flask import current_app, request, session
 from flask_login import current_user, login_required, login_user, logout_user
 from flask_restx import Resource
-from marshmallow import Schema, fields
+from marshmallow import Schema, fields, validate
 
 from app.config import MY_SOLID_APP_PASSWORD_RESET_TOKEN_EXPIRE_HOURS
 from app.db.user import User, UserSchema
 from app.errors import APIError, APIErrorEnum
 from app.extensions import account_key, api, db, limiter, login_manager
+from app.resources.utils import load_or_400
 from app.tasks.mail_tasks import (
     send_email_verification_email,
     send_forgot_password_email,
@@ -35,15 +36,19 @@ def load_user(user_id):
     return User.query.get(user_id)
 
 
+EMAIL_VALIDATORS = [validate.Length(max=100), validate.Email()]
+
+
 class RegisterSchema(Schema):
-    email = fields.String(required=True)
+    email = fields.String(required=True, validate=EMAIL_VALIDATORS)
     password = fields.String(required=True)
 
 
 @api.route("/register")
 class Register(Resource):
     def post(self):
-        data: dict = RegisterSchema().load(request.get_json())
+        data: dict = load_or_400(RegisterSchema(), request.get_json())
+        ensure_password_matches_conditions(data.get("password"))
 
         if User.query.filter_by(email=data.get("email")).first() is not None:
             raise APIError(
@@ -323,6 +328,15 @@ class ResendEmailVerification(Resource):
         db.session.commit()
 
         return {}, 200
+
+
+def ensure_password_matches_conditions(password: str | None) -> None:
+    if password is None or not password_matches_conditions(password):
+        raise APIError(
+            APIErrorEnum.password_does_not_match_conditions,
+            "Password does not match conditions",
+            409,
+        )
 
 
 def password_matches_conditions(password: str) -> bool:

@@ -66,9 +66,11 @@ export const POST = async (req: NextRequest) => {
     
         const quota = await db.quota.findUnique({
             where: {
-                userId: user.id ,
-                month: currentMonth,
-                year: currentYear,
+                userId_year_month: {
+                    userId: user.id,
+                    year: currentYear,
+                    month: currentMonth,
+                },
             },
         })
     
@@ -148,7 +150,13 @@ export const POST = async (req: NextRequest) => {
             })
     
             await db.quota.upsert({
-                where: { userId: user.id, month: currentMonth, year: currentYear },
+                where: {
+                    userId_year_month: {
+                        userId: user.id,
+                        year: currentYear,
+                        month: currentMonth,
+                    },
+                },
                 update: { count: { increment: 1 } },
                 create: {
                     userId: user.id,
@@ -161,7 +169,7 @@ export const POST = async (req: NextRequest) => {
         } catch (error) {
             await db.event.update({
                 where: { id: event.id },
-                data: { deliveryStatus: "DELIVERED" }
+                data: { deliveryStatus: "FAILED" }
             })
     
             console.log(error)

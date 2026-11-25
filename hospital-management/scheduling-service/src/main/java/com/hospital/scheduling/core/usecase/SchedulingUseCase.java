@@ -1,8 +1,13 @@
 package com.hospital.scheduling.core.usecase;
 
 import com.hospital.scheduling.core.domain.entity.Appointment;
+import com.hospital.scheduling.core.domain.entity.AppointmentStatus;
+import com.hospital.scheduling.core.domain.exception.AppointmentNotFoundException;
+import com.hospital.scheduling.core.domain.exception.InvalidAppointmentException;
+import com.hospital.scheduling.core.domain.exception.SlotUnavailableException;
 import com.hospital.scheduling.core.domain.repository.AppointmentRepository;
 import lombok.RequiredArgsConstructor;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -13,36 +18,93 @@ public class SchedulingUseCase {
 
     private final AppointmentRepository repository;
 
+    private static final Duration DEFAULT_DURATION = Duration.ofMinutes(30);
+
+    private Appointment load(String id) {
+        return repository.findById(id).orElseThrow(() -> new AppointmentNotFoundException(id));
+    }
+
+    /** End of the appointment, falling back to a default slot length when none was given. */
+    private static LocalDateTime endOf(LocalDateTime start, LocalDateTime end) {
+        return end != null ? end : start.plus(DEFAULT_DURATION);
+    }
+
+    private static boolean isActive(Appointment a) {
+        return a.getStatus() != AppointmentStatus.CANCELLED;
+    }
+
+    /** True when the doctor has no non-cancelled appointment overlapping [start, end), ignoring {@code excludeId}. */
+    private boolean isFree(String doctorId, LocalDateTime start, LocalDateTime end, String excludeId) {
+        return repository.findAll().stream()
+                .filter(a -> a.getDoctorId().equals(doctorId))
+                .filter(SchedulingUseCase::isActive)
+                .filter(a -> excludeId == null || !excludeId.equals(a.getId()))
+                .noneMatch(a -> a.getStartTime().isBefore(end) && start.isBefore(endOf(a.getStartTime(), a.getEndTime())));
+    }
+
+    private static void requireTransition(Appointment appt, String operation, AppointmentStatus... allowed) {
+        for (var s : allowed) {
+            if (appt.getStatus() == s) {
+                return;
+            }
+        }
+        throw new InvalidAppointmentException(
+                "Cannot " + operation + " appointment " + appt.getId() + " in status " + appt.getStatus());
+    }
+
     // Use Case 31: Book Appointment
     public Appointment book(Appointment appointment) {
-        if (!isAvailable(appointment.getDoctorId(), appointment.getStartTime())) {
-            throw new RuntimeException("Doctor not available at this time");
+        if (appointment.getDoctorId() == null || appointment.getPatientId() == null
+                || appointment.getStartTime() == null) {
+            throw new InvalidAppointmentException("doctorId, patientId and startTime are required");
+        }
+        var end = endOf(appointment.getStartTime(), appointment.getEndTime());
+        if (!end.isAfter(appointment.getStartTime())) {
+            throw new InvalidAppointmentException("endTime must be after startTime");
+        }
+        if (!isFree(appointment.getDoctorId(), appointment.getStartTime(), end, null)) {
+            throw new SlotUnavailableException("Doctor not available at this time");
         }
         appointment.setId(UUID.randomUUID().toString());
         appointment.setCreatedAt(LocalDateTime.now());
-        // Simple logic for demo
+        appointment.setStatus(AppointmentStatus.SCHEDULED);
         return repository.save(appointment);
     }
 
     // Use Case 32: Cancel Appointment
     public void cancel(String id) {
-        var appt = repository.findById(id).orElseThrow();
-        // appt.setStatus(AppointmentStatus.CANCELLED);
+        var appt = load(id);
+        requireTransition(appt, "cancel", AppointmentStatus.SCHEDULED, AppointmentStatus.RESCHEDULED);
+        appt.setStatus(AppointmentStatus.CANCELLED);
         repository.save(appt);
     }
 
     // Use Case 33: Reschedule Appointment
     public Appointment reschedule(String id, LocalDateTime newTime) {
-        var appt = repository.findById(id).orElseThrow();
+        if (newTime == null) {
+            throw new InvalidAppointmentException("newTime is required");
+        }
+        var appt = load(id);
+        requireTransition(appt, "reschedule", AppointmentStatus.SCHEDULED, AppointmentStatus.RESCHEDULED);
+        // Keep the original duration (or the default slot length) at the new start.
+        var duration = appt.getEndTime() != null
+                ? Duration.between(appt.getStartTime(), appt.getEndTime())
+                : DEFAULT_DURATION;
+        var newEnd = newTime.plus(duration);
+        if (!isFree(appt.getDoctorId(), newTime, newEnd, appt.getId())) {
+            throw new SlotUnavailableException("Doctor not available at this time");
+        }
         appt.setStartTime(newTime);
-        // appt.setStatus(AppointmentStatus.RESCHEDULED);
+        appt.setEndTime(newEnd);
+        appt.setStatus(AppointmentStatus.RESCHEDULED);
         return repository.save(appt);
     }
 
     // Use Case 34: Complete Appointment
     public void complete(String id) {
-        var appt = repository.findById(id).orElseThrow();
-        // appt.setStatus(AppointmentStatus.COMPLETED);
+        var appt = load(id);
+        requireTransition(appt, "complete", AppointmentStatus.SCHEDULED, AppointmentStatus.RESCHEDULED);
+        appt.setStatus(AppointmentStatus.COMPLETED);
         repository.save(appt);
     }
 
@@ -62,8 +124,7 @@ public class SchedulingUseCase {
 
     // Use Case 37: Check Availability (Mock)
     public boolean isAvailable(String doctorId, LocalDateTime time) {
-        return repository.findAll().stream()
-                .noneMatch(a -> a.getDoctorId().equals(doctorId) && a.getStartTime().equals(time));
+        return isFree(doctorId, time, time.plus(DEFAULT_DURATION), null);
     }
 
     // Use Case 38: Get Today's Appointments
@@ -77,8 +138,9 @@ public class SchedulingUseCase {
 
     // Use Case 39: Mark as No-Show
     public void markNoShow(String id) {
-        var appt = repository.findById(id).orElseThrow();
-        // appt.setStatus(AppointmentStatus.NO_SHOW);
+        var appt = load(id);
+        requireTransition(appt, "mark no-show", AppointmentStatus.SCHEDULED, AppointmentStatus.RESCHEDULED);
+        appt.setStatus(AppointmentStatus.NO_SHOW);
         repository.save(appt);
     }
 
@@ -91,19 +153,19 @@ public class SchedulingUseCase {
 
     // Use Case 41: Get Appointment Status
     public String getStatus(String id) {
-        return repository.findById(id).map(a -> a.getStatus().toString()).orElse("Unknown");
+        return repository.findById(id).map(Appointment::getStatus).map(Enum::toString).orElse("Unknown");
     }
 
     // Use Case 42: List Cancelled
     public List<Appointment> getCancelledAppointments() {
         return repository.findAll().stream()
-                // .filter(a -> a.getStatus() == AppointmentStatus.CANCELLED)
+                .filter(a -> a.getStatus() == AppointmentStatus.CANCELLED)
                 .collect(Collectors.toList());
     }
 
     // Use Case 43: Get Appointment by ID
     public Appointment getById(String id) {
-        return repository.findById(id).orElseThrow();
+        return load(id);
     }
 
     // Use Case 44: Count Daily Appointments

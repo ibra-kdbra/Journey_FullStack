@@ -1,5 +1,5 @@
 # container to build application
-FROM node
+FROM node AS builder
 
 WORKDIR /usr/src/app
 
@@ -12,7 +12,7 @@ RUN npm install @vue/cli
 
 # build
 COPY ./app /usr/src/app/
-RUN npm run serve
+RUN npm run build
 
 ## nginx
 FROM nginx:stable-alpine

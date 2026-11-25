@@ -55,3 +55,6 @@ It should not be possible to register a new rental if there is already one open 
 ## Configuration
 
 Copy `.env.example` to `.env`. `JWT_SECRET` (random, at least 32 characters, for example `openssl rand -hex 32`) is required: the server refuses to start without it.
+
+**Seeding the admin user**
+`npm run seed:admin` reads `ADMIN_PASSWORD` (and optionally `ADMIN_EMAIL`, default `admin@ufc.br`). If `ADMIN_PASSWORD` is unset, a random password is generated and printed once; with `NODE_ENV=production` the seed refuses to run without it.

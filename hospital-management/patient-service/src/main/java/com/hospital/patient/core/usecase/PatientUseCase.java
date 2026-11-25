@@ -3,6 +3,8 @@ package com.hospital.patient.core.usecase;
 import com.hospital.patient.core.domain.entity.Patient;
 import com.hospital.patient.core.domain.entity.InsuranceDetails;
 import com.hospital.patient.core.domain.entity.EmergencyContact;
+import com.hospital.patient.core.domain.exception.DuplicateEmailException;
+import com.hospital.patient.core.domain.exception.PatientNotFoundException;
 import com.hospital.patient.core.domain.repository.PatientRepository;
 import lombok.RequiredArgsConstructor;
 import java.time.LocalDateTime;
@@ -18,7 +20,7 @@ public class PatientUseCase {
     // Use Case 1: Register a new patient
     public Patient registerPatient(Patient patient) {
         if (patientRepository.findByEmail(patient.getEmail()).isPresent()) {
-            throw new RuntimeException("Patient already exists");
+            throw new DuplicateEmailException(patient.getEmail());
         }
         patient.setId(UUID.randomUUID().toString());
         patient.setCreatedAt(LocalDateTime.now());
@@ -30,7 +32,7 @@ public class PatientUseCase {
     // Use Case 2: Get patient by ID
     public Patient getPatientById(String id) {
         return patientRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Patient not found"));
+                .orElseThrow(() -> new PatientNotFoundException(id));
     }
 
     // Use Case 3: List all active patients
@@ -99,7 +101,7 @@ public class PatientUseCase {
     // Use Case 11: Change patient email
     public Patient changeEmail(String id, String newEmail) {
         if (patientRepository.findByEmail(newEmail).isPresent()) {
-            throw new RuntimeException("Email already taken");
+            throw new DuplicateEmailException(newEmail);
         }
         var patient = getPatientById(id);
         patient.setEmail(newEmail);

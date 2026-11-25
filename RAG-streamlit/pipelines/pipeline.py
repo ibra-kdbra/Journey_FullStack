@@ -1,10 +1,13 @@
+import argparse
+import json
 import logging
 import os
 import re
+import sys
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 import frontmatter
 import markdown
@@ -36,6 +39,14 @@ class MilvusError(Exception):
 
 class ModelError(Exception):
     """Custom exception for model-related errors."""
+    pass
+
+class SchemaMismatchError(MilvusError):
+    """The existing collection's schema differs from the configured one."""
+    pass
+
+class IngestionError(Exception):
+    """One or more files failed to ingest."""
     pass
 
 @dataclass
@@ -165,19 +176,71 @@ class MilvusConnector:
             },
         )
 
-    def ensure_collection_exists(self) -> None:
-        """Ensure collection exists with correct schema."""
+    @staticmethod
+    def _field_signature(field: Any) -> dict[str, Any]:
+        """The parts of a FieldSchema that matter for compatibility.
+
+        Descriptions are deliberately left out: they are documentation, and
+        comparing them would flag a harmless edit as a schema change.
+        """
+        params = dict(field.params or {})
+        return {
+            "name": field.name,
+            "dtype": field.dtype,
+            "is_primary": bool(getattr(field, "is_primary", False)),
+            "auto_id": bool(getattr(field, "auto_id", False)),
+            "dim": params.get("dim"),
+            "max_length": params.get("max_length"),
+            "element_type": getattr(field, "element_type", None),
+            "max_capacity": params.get("max_capacity"),
+        }
+
+    @classmethod
+    def schema_differences(cls, existing: CollectionSchema, wanted: CollectionSchema) -> list[str]:
+        """Describe structural differences between two schemas (empty if equal).
+
+        Compares fields by name, so ordering and descriptions do not matter.
+        """
+        have = {f.name: cls._field_signature(f) for f in existing.fields}
+        want = {f.name: cls._field_signature(f) for f in wanted.fields}
+        diffs: list[str] = []
+        for name in sorted(want.keys() - have.keys()):
+            diffs.append(f"missing field '{name}'")
+        for name in sorted(have.keys() - want.keys()):
+            diffs.append(f"unexpected field '{name}'")
+        for name in sorted(want.keys() & have.keys()):
+            for key, value in want[name].items():
+                if have[name][key] != value:
+                    diffs.append(f"field '{name}': {key} is {have[name][key]!r}, config says {value!r}")
+        return diffs
+
+    def ensure_collection_exists(self, recreate: bool = False) -> None:
+        """Ensure collection exists with correct schema.
+
+        An existing collection whose schema differs structurally from the
+        configured one is never dropped unless ``recreate`` is True; otherwise
+        SchemaMismatchError is raised and the data is left untouched.
+        """
         try:
             if utility.has_collection(self.config.collection_name):
                 logger.info(f"Collection {self.config.collection_name} exists, checking schema...")
                 collection = Collection(name=self.config.collection_name)
-                collection.load()
-                
-                existing_schema = collection.schema
+
                 new_schema = self._create_collection_schema()
-                
-                if str(existing_schema) != str(new_schema):
-                    logger.warning(f"Collection {self.config.collection_name} has different schema. Recreating...")
+                diffs = self.schema_differences(collection.schema, new_schema)
+
+                if diffs:
+                    detail = "; ".join(diffs)
+                    if not recreate:
+                        raise SchemaMismatchError(
+                            f"Collection {self.config.collection_name} has a different schema ({detail}). "
+                            "Refusing to drop it; re-run with --recreate to drop and rebuild "
+                            "(this deletes all ingested data)."
+                        )
+                    logger.warning(
+                        f"Collection {self.config.collection_name} schema differs ({detail}); "
+                        "recreating because --recreate was passed."
+                    )
                     utility.drop_collection(self.config.collection_name)
                     collection = Collection(name=self.config.collection_name, schema=new_schema)
                     self._create_index(collection)
@@ -189,11 +252,29 @@ class MilvusConnector:
         except MilvusException as e:
             raise MilvusError(f"Failed to manage collection: {str(e)}") from e
 
-    def insert_data(self, chunks: list[str], metadata_list: list[dict]) -> None:
-        """Insert data into Milvus collection."""
+    def insert_data(
+        self,
+        chunks: list[str],
+        metadata_list: list[dict],
+        replace_source: Optional[str] = None,
+    ) -> None:
+        """Insert data into Milvus collection.
+
+        If ``replace_source`` is given, every existing entity whose
+        ``metadata["source"]`` equals it is deleted first, so re-ingesting a
+        file replaces its chunks instead of duplicating them. Embeddings are
+        computed before anything is deleted, so a model failure leaves the old
+        chunks in place.
+        """
         try:
             collection = Collection(name=self.config.collection_name)
             collection.load()
+
+            if not chunks:
+                if replace_source is not None:
+                    self._delete_source(collection, replace_source)
+                    collection.flush()
+                return
             
             # Generate embeddings
             logger.info("Generating embeddings...")
@@ -218,6 +299,9 @@ class MilvusConnector:
                 }
                 entities.append(entity)
             
+            if replace_source is not None:
+                self._delete_source(collection, replace_source)
+
             # Insert data
             logger.info(f"Inserting {len(entities)} entities...")
             collection.insert(entities)
@@ -227,6 +311,13 @@ class MilvusConnector:
             raise MilvusError(f"Failed to insert data into Milvus: {str(e)}") from e
         except Exception as e:
             raise ModelError(f"Failed to process data: {str(e)}") from e
+
+    @staticmethod
+    def _delete_source(collection: Collection, source: str) -> None:
+        """Delete all entities ingested from ``source``."""
+        expr = f'metadata["source"] == {json.dumps(source)}'
+        logger.info(f"Deleting existing entities for {source}")
+        collection.delete(expr)
 
 class MarkdownProcessor:
     def __init__(self, chunk_size: int = 500, chunk_overlap: int = 100):
@@ -318,11 +409,18 @@ def load_config(config_path="config.yaml") -> Config:
     except Exception as e:
         raise ConfigError(f"Failed to load config file: {str(e)}") from e
 
-def process_documents(config: Config, milvus_client: MilvusConnector) -> None:
-    """Process markdown documents and insert them into Milvus."""
+def process_documents(
+    config: Config, milvus_client: MilvusConnector, recreate: bool = False
+) -> None:
+    """Process markdown documents and insert them into Milvus.
+
+    Re-running is idempotent: each file's previous chunks are replaced.
+    Raises IngestionError after attempting every file if any of them failed.
+    """
+    failures: list[str] = []
     try:
         # Ensure collection exists with correct schema
-        milvus_client.ensure_collection_exists()
+        milvus_client.ensure_collection_exists(recreate=recreate)
         
         # Process markdown files
         markdown_files = list(Path(config.markdown_folder).rglob("*.md"))
@@ -340,14 +438,36 @@ def process_documents(config: Config, milvus_client: MilvusConnector) -> None:
             try:
                 logger.info(f"Processing {file}...")
                 chunks = markdown_processor.process_markdown(str(file))
-                milvus_client.insert_data([chunk['content'] for chunk in chunks], [chunk['metadata'] for chunk in chunks])
+                milvus_client.insert_data(
+                    [chunk['content'] for chunk in chunks],
+                    [chunk['metadata'] for chunk in chunks],
+                    replace_source=str(file),
+                )
             except Exception as e:
                 logger.error(f"Failed to process file {file}: {str(e)}")
-                continue
+                failures.append(f"{file}: {str(e)}")
+    except SchemaMismatchError:
+        raise
     except Exception as e:
         raise MilvusError(f"Failed to process documents: {str(e)}") from e
 
-def main():
+    if failures:
+        raise IngestionError(
+            f"{len(failures)} file(s) failed to ingest: " + "; ".join(failures)
+        )
+
+def parse_args(argv: Optional[list] = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Ingest markdown documents into Milvus.")
+    parser.add_argument(
+        "--recreate",
+        action="store_true",
+        help="Drop and rebuild the collection if its schema differs from config.yaml "
+        "(deletes all ingested data). Without it a mismatch is an error.",
+    )
+    return parser.parse_args(argv)
+
+def main(argv: Optional[list] = None):
+    args = parse_args(argv)
     try:
         # Load and validate config
         config = load_config()
@@ -356,20 +476,23 @@ def main():
         milvus_client = MilvusConnector(config)
         
         # Process documents
-        process_documents(config, milvus_client)
+        process_documents(config, milvus_client, recreate=args.recreate)
         
     except ConfigError as e:
         logger.error(f"Configuration error: {str(e)}")
-        exit(1)
+        sys.exit(1)
     except MilvusError as e:
         logger.error(f"Milvus error: {str(e)}")
-        exit(1)
+        sys.exit(1)
     except ModelError as e:
         logger.error(f"Model error: {str(e)}")
-        exit(1)
+        sys.exit(1)
+    except IngestionError as e:
+        logger.error(f"Ingestion error: {str(e)}")
+        sys.exit(1)
     except Exception as e:
         logger.error(f"Unexpected error: {str(e)}")
-        exit(1)
+        sys.exit(1)
     finally:
         try:
             connections.disconnect("default")

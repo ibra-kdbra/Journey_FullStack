@@ -57,6 +57,11 @@ jobs:
       - name: No credential-shaped strings in tracked files
         run: node .github/scripts/check-secrets.mjs
 
+      # Proves each rule fires on a sample and ignores the placeholder cases, and
+      # that a tracked .env file fails the scan. See issue #1969.
+      - name: Self-test the credential scanner
+        run: node --test .github/scripts/check-secrets.test.mjs
+
       - name: Validate workflow and Dependabot YAML
         run: |
           python3 - <<'PY'

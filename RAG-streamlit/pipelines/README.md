@@ -104,6 +104,12 @@ poetry shell
 python pipeline.py
 ```
 
+Re-running is safe: each file's previously ingested chunks are replaced rather
+than duplicated. If the existing collection's schema differs from
+`config.yaml`, the run fails and nothing is dropped; pass `--recreate` to drop
+and rebuild the collection (this deletes all ingested data). The exit code is
+non-zero if any file failed to ingest.
+
 ### Running as a Cron Job
 
 1. Create a shell script (e.g., `run_pipeline.sh`):

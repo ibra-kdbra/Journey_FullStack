@@ -12,56 +12,32 @@
  * so this looks for shapes that are credentials and almost nothing else, and
  * exempts the values a repository legitimately commits: localhost, placeholders
  * and .env.example.
+ *
+ * Besides content shapes it fails any tracked env file (.env, .env.local,
+ * prod.env ...) that is not a template, and any NAME=value line in an env-style
+ * file whose name says token/secret/password/api key and whose value is not a
+ * placeholder. The rules live in check-secrets-rules.mjs and are exercised by
+ * check-secrets.test.mjs.
  */
 import { execFileSync } from 'node:child_process';
 import { readFileSync, statSync } from 'node:fs';
+import {
+  ENV_FILE_ALLOWLIST,
+  RULES,
+  envAssignments,
+  isEnvStyle,
+  isEnvTemplate,
+  isForbiddenEnvFile,
+} from './check-secrets-rules.mjs';
 
 const failures = [];
 const fail = (file, line, what, text) =>
   failures.push({ file, line, what, text });
 
-// Hosts that are not a secret to reach, and values that announce themselves as
-// fake. A connection string to localhost is configuration, not a leak.
-const BENIGN_HOST = /^(localhost|127\.0\.0\.1|0\.0\.0\.0|db|database|postgres|mysql|redis|host\.docker\.internal|example\.(com|org|invalid)|.*\.example|.*\.invalid|.*\.local)$/i;
-const BENIGN_SECRET = /^(postgres|password|passwd|pass|secret|changeme|root|admin|test|example|placeholder|your[-_]?password|\$?\{[^}]+\}|<[^>]+>|\*+|x+)$/i;
-
-const RULES = [
-  {
-    what: 'connection string with an embedded password',
-    // scheme://user:secret@host - the host group decides whether it matters
-    re: /\b([a-z][a-z0-9+.-]*):\/\/([^\s:/@]+):([^\s:/@]+)@([^\s:/?#]+)/gi,
-    keep: (m) => {
-      const host = m[4].split(':')[0];
-      // `https://mailto:someone@example.com` parses as user "mailto" with the
-      // address as the password. It is a malformed link, not a credential.
-      if (m[2].toLowerCase() === 'mailto') return false;
-      return !BENIGN_HOST.test(host) && !BENIGN_SECRET.test(m[3]);
-    },
-    redact: (m) => `${m[1]}://${m[2]}:***@${m[4]}`,
-  },
-  {
-    what: 'AWS access key id',
-    re: /\b((?:AKIA|ASIA)[0-9A-Z]{16})\b/g,
-    keep: () => true,
-    redact: (m) => `${m[1].slice(0, 8)}...`,
-  },
-  {
-    what: 'GitHub token',
-    re: /\b((?:ghp|gho|ghu|ghs|ghr|github_pat)_[A-Za-z0-9_]{20,})\b/g,
-    keep: () => true,
-    redact: (m) => `${m[1].slice(0, 10)}...`,
-  },
-  {
-    what: 'private key block',
-    re: /-----BEGIN (?:RSA |EC |OPENSSH |PGP )?PRIVATE KEY-----/g,
-    keep: () => true,
-    redact: (m) => m[0],
-  },
-];
-
-// .env.example exists to name variables without values; docs quote incidents on
-// purpose. Both would otherwise be permanent false positives.
-const SKIP_PATH = /(^|\/)(\.env\.example|package-lock\.json|pnpm-lock\.yaml|yarn\.lock|bun\.lock|poetry\.lock)$|^docs\//;
+// Lockfiles are hashes, and docs quote incidents on purpose. Both would otherwise
+// be permanent false positives. Env templates are NOT skipped: they are scanned
+// for real values like any other env-style file.
+const SKIP_PATH = /(^|\/)(package-lock\.json|pnpm-lock\.yaml|yarn\.lock|bun\.lock|poetry\.lock)$|^docs\//;
 
 const files = execFileSync('git', ['ls-files', '-z'], { encoding: 'utf8' })
   .split('\0')
@@ -69,6 +45,16 @@ const files = execFileSync('git', ['ls-files', '-z'], { encoding: 'utf8' })
   .filter((f) => !SKIP_PATH.test(f));
 
 for (const file of files) {
+  if (isForbiddenEnvFile(file)) {
+    fail(
+      file,
+      1,
+      'tracked env file',
+      'Env files hold real values; commit a .env.example with placeholders instead.',
+    );
+    continue;
+  }
+
   let stat;
   try {
     stat = statSync(file);
@@ -95,6 +81,14 @@ for (const file of files) {
       }
     }
   }
+
+  if (isEnvStyle(file)) {
+    for (let i = 0; i < lines.length; i++) {
+      for (const hit of envAssignments(lines[i], { template: isEnvTemplate(file) })) {
+        fail(file, i + 1, 'secret-named variable with a real-looking value', `${hit.name}=***`);
+      }
+    }
+  }
 }
 
 if (failures.length) {
@@ -113,3 +107,4 @@ if (failures.length) {
 }
 
 console.log(`Scanned ${files.length} tracked files. No credential-shaped strings.`);
+console.log(`Allowlisted env files: ${[...ENV_FILE_ALLOWLIST.keys()].join(', ') || 'none'}.`);

@@ -1,20 +1,32 @@
 import { NextApiHandler } from 'next'
 
 import { prisma } from '@/utils/client'
+import { parsePagination } from '@/utils/pagination'
 
+// Public and unauthenticated, like /api/user: paginated, and `take` is capped.
 const postApiHandler: NextApiHandler = async (req, res) => {
 	try {
 		if (req.method === 'GET') {
-			const posts = await prisma.post.findMany({
-				orderBy: {
-					createdAt: 'desc',
-				},
-			})
+			const page = parsePagination(req.query)
+			if (!page.ok) {
+				return res.status(400).json({ success: false, message: page.message })
+			}
+			const { take, skip } = page.value
+
+			const [posts, total] = await Promise.all([
+				prisma.post.findMany({
+					orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+					take,
+					skip,
+				}),
+				prisma.post.count(),
+			])
 
 			return res.status(200).json({
 				success: true,
-				message: `Total ${posts.length} posts found`,
+				message: `Showing ${posts.length} of ${total} posts`,
 				data: posts,
+				pagination: { take, skip, total },
 			})
 		}
 

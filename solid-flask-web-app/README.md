@@ -17,11 +17,7 @@ A full stack template for an app and web application with backend. The repositor
   - 💿 Database migrations using [Alembic](https://alembic.sqlalchemy.org/en/latest/)
   - 🧪 Tests with [pytest](https://docs.pytest.org/en/stable/)
   - 📝 Code formatting with [ruff](https://docs.astral.sh/ruff/)
-- 🚀 CI/CD with pipelines for:
-  - 📝 Automatic linters for checking code format
-  - 🧪 Running tests
-  - 🐳 Building [Docker](https://www.docker.com/) containers
-  - 💻 Automated single VPS deployment
+- 🚀 CI: the repository-root workflow (`.github/workflows/ci.yml`, driven by `.github/projects.json`) runs ruff and pytest for `api` (including a check that the Alembic migrations match the models, `api/tests/test_migrations.py`) and install, build and type-check for `ui`. There is no automated deployment pipeline: the template's original per-project workflows (lint, Cypress e2e, Docker builds, VPS deploy) lived under `solid-flask-web-app/.github/workflows`, which GitHub never reads inside a monorepo, so they were removed. See the repository history if you want to adapt them for a standalone repo.
 - 👷 Background tasks with built in [Python](https://www.python.org/) with [Celery](https://docs.celeryq.dev/en/stable/) and [Redis](https://redis.io/):
   - 📬 Send mails in the background
   - ⌛ Run slow tasks in a background process
@@ -99,6 +95,6 @@ Now you can visit the local web application at http://localhost:5173
 
 ## Deployment
 
-This project currently supports deployment onto a single VPS, i.e. frontend, backend and database all running on that VPS, for both staging and production. For more information on how to do this, see the [deployment docs](docs/web_deployment.md).
+This project supports manual deployment onto a single VPS (no pipeline is active in this monorepo, see above), i.e. frontend, backend and database all running on that VPS, for both staging and production. For more information on how to do this, see the [deployment docs](docs/web_deployment.md).
 
 You can visit the running staging and production version of this application at [https://my-solid-app.nl](https://my-solid-app.nl) and [https://staging.my-solid-app.nl:8443](https://staging.my-solid-app.nl:8443).

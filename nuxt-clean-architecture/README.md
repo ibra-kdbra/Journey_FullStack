@@ -85,6 +85,13 @@ type, so a use case returns `success(subscriber)` or
 
 ### On the repository factory
 
+`nuxt.config.ts` registers `@nuxtjs/supabase` only when `SUPABASE_URL` and
+`SUPABASE_KEY` are set at build time (the module fails every request without them).
+The factory makes the matching choice: in a production run with the module present
+it uses the Supabase repository; otherwise it logs a warning and uses the in-memory
+one, so the form still works but nothing persists. Development and tests always use
+the in-memory repository.
+
 `useNewsletter` takes an optional use case and falls back to a factory:
 
 ```ts

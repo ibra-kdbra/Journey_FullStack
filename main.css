@@ -1,8 +1,6 @@
 /*
 ! tailwindcss v3.4.1 | MIT License | https://tailwindcss.com
-*/
-
-/*
+*//*
 1. Prevent padding and border from affecting element width. (https://github.com/mozdevs/cssremedy/issues/4)
 2. Allow adding a border to an element by just adding a border-width. (https://github.com/tailwindcss/tailwindcss/pull/116)
 */
@@ -10,14 +8,10 @@
 *,
 ::before,
 ::after {
-  box-sizing: border-box;
-  /* 1 */
-  border-width: 0;
-  /* 2 */
-  border-style: solid;
-  /* 2 */
-  border-color: #e5e7eb;
-  /* 2 */
+  box-sizing: border-box; /* 1 */
+  border-width: 0; /* 2 */
+  border-style: solid; /* 2 */
+  border-color: #e5e7eb; /* 2 */
 }
 
 ::before,
@@ -37,23 +31,15 @@
 
 html,
 :host {
-  line-height: 1.5;
-  /* 1 */
-  -webkit-text-size-adjust: 100%;
-  /* 2 */
-  -moz-tab-size: 4;
-  /* 3 */
+  line-height: 1.5; /* 1 */
+  -webkit-text-size-adjust: 100%; /* 2 */
+  -moz-tab-size: 4; /* 3 */
   -o-tab-size: 4;
-     tab-size: 4;
-  /* 3 */
-  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  /* 4 */
-  font-feature-settings: normal;
-  /* 5 */
-  font-variation-settings: normal;
-  /* 6 */
-  -webkit-tap-highlight-color: transparent;
-  /* 7 */
+     tab-size: 4; /* 3 */
+  font-family: ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"; /* 4 */
+  font-feature-settings: normal; /* 5 */
+  font-variation-settings: normal; /* 6 */
+  -webkit-tap-highlight-color: transparent; /* 7 */
 }
 
 /*
@@ -62,10 +48,8 @@ html,
 */
 
 body {
-  margin: 0;
-  /* 1 */
-  line-height: inherit;
-  /* 2 */
+  margin: 0; /* 1 */
+  line-height: inherit; /* 2 */
 }
 
 /*
@@ -75,12 +59,9 @@ body {
 */
 
 hr {
-  height: 0;
-  /* 1 */
-  color: inherit;
-  /* 2 */
-  border-top-width: 1px;
-  /* 3 */
+  height: 0; /* 1 */
+  color: inherit; /* 2 */
+  border-top-width: 1px; /* 3 */
 }
 
 /*
@@ -135,14 +116,10 @@ code,
 kbd,
 samp,
 pre {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  /* 1 */
-  font-feature-settings: normal;
-  /* 2 */
-  font-variation-settings: normal;
-  /* 3 */
-  font-size: 1em;
-  /* 4 */
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; /* 1 */
+  font-feature-settings: normal; /* 2 */
+  font-variation-settings: normal; /* 3 */
+  font-size: 1em; /* 4 */
 }
 
 /*
@@ -180,12 +157,9 @@ sup {
 */
 
 table {
-  text-indent: 0;
-  /* 1 */
-  border-color: inherit;
-  /* 2 */
-  border-collapse: collapse;
-  /* 3 */
+  text-indent: 0; /* 1 */
+  border-color: inherit; /* 2 */
+  border-collapse: collapse; /* 3 */
 }
 
 /*
@@ -199,24 +173,15 @@ input,
 optgroup,
 select,
 textarea {
-  font-family: inherit;
-  /* 1 */
-  font-feature-settings: inherit;
-  /* 1 */
-  font-variation-settings: inherit;
-  /* 1 */
-  font-size: 100%;
-  /* 1 */
-  font-weight: inherit;
-  /* 1 */
-  line-height: inherit;
-  /* 1 */
-  color: inherit;
-  /* 1 */
-  margin: 0;
-  /* 2 */
-  padding: 0;
-  /* 3 */
+  font-family: inherit; /* 1 */
+  font-feature-settings: inherit; /* 1 */
+  font-variation-settings: inherit; /* 1 */
+  font-size: 100%; /* 1 */
+  font-weight: inherit; /* 1 */
+  line-height: inherit; /* 1 */
+  color: inherit; /* 1 */
+  margin: 0; /* 2 */
+  padding: 0; /* 3 */
 }
 
 /*
@@ -237,12 +202,9 @@ button,
 [type='button'],
 [type='reset'],
 [type='submit'] {
-  -webkit-appearance: button;
-  /* 1 */
-  background-color: transparent;
-  /* 2 */
-  background-image: none;
-  /* 2 */
+  -webkit-appearance: button; /* 1 */
+  background-color: transparent; /* 2 */
+  background-image: none; /* 2 */
 }
 
 /*
@@ -284,10 +246,8 @@ Correct the cursor style of increment and decrement buttons in Safari.
 */
 
 [type='search'] {
-  -webkit-appearance: textfield;
-  /* 1 */
-  outline-offset: -2px;
-  /* 2 */
+  -webkit-appearance: textfield; /* 1 */
+  outline-offset: -2px; /* 2 */
 }
 
 /*
@@ -304,10 +264,8 @@ Remove the inner padding in Chrome and Safari on macOS.
 */
 
 ::-webkit-file-upload-button {
-  -webkit-appearance: button;
-  /* 1 */
-  font: inherit;
-  /* 2 */
+  -webkit-appearance: button; /* 1 */
+  font: inherit; /* 2 */
 }
 
 /*
@@ -358,7 +316,6 @@ menu {
 /*
 Reset default styling for dialogs.
 */
-
 dialog {
   padding: 0;
 }
@@ -377,18 +334,14 @@ textarea {
 */
 
 input::-moz-placeholder, textarea::-moz-placeholder {
-  opacity: 1;
-  /* 1 */
-  color: #9ca3af;
-  /* 2 */
+  opacity: 1; /* 1 */
+  color: #9ca3af; /* 2 */
 }
 
 input::placeholder,
 textarea::placeholder {
-  opacity: 1;
-  /* 1 */
-  color: #9ca3af;
-  /* 2 */
+  opacity: 1; /* 1 */
+  color: #9ca3af; /* 2 */
 }
 
 /*
@@ -403,7 +356,6 @@ button,
 /*
 Make sure disabled buttons don't get the pointer cursor.
 */
-
 :disabled {
   cursor: default;
 }
@@ -422,10 +374,8 @@ audio,
 iframe,
 embed,
 object {
-  display: block;
-  /* 1 */
-  vertical-align: middle;
-  /* 2 */
+  display: block; /* 1 */
+  vertical-align: middle; /* 2 */
 }
 
 /*
@@ -439,7 +389,6 @@ video {
 }
 
 /* Make elements with the HTML hidden attribute stay hidden by default */
-
 [hidden] {
   display: none;
 }
@@ -543,254 +492,220 @@ video {
   --tw-backdrop-saturate:  ;
   --tw-backdrop-sepia:  ;
 }
-
 .relative {
   position: relative;
 }
-
 .bottom-4 {
   bottom: 1rem;
 }
-
 .float-right {
   float: right;
 }
-
 .float-left {
   float: left;
 }
-
 .m-2 {
   margin: 0.5rem;
 }
-
 .inline-block {
   display: inline-block;
 }
-
 .flex {
   display: flex;
 }
-
 .w-full {
   width: 100%;
 }
-
 .animate-none {
   animation: none;
 }
-
 .resize {
   resize: both;
 }
-
 .flex-row {
   flex-direction: row;
 }
-
 .flex-col {
   flex-direction: column;
 }
-
 .items-end {
   align-items: flex-end;
 }
-
 .justify-end {
   justify-content: flex-end;
 }
-
 .justify-items-start {
   justify-items: start;
 }
-
 .overflow-hidden {
   overflow: hidden;
 }
-
 .overflow-y-scroll {
   overflow-y: scroll;
 }
-
 .whitespace-pre-wrap {
   white-space: pre-wrap;
 }
-
 .break-words {
   overflow-wrap: break-word;
 }
-
+.rounded-\[2px\] {
+  border-radius: 2px;
+}
 .rounded-\[7px\] {
   border-radius: 7px;
 }
-
 .border {
   border-width: 1px;
 }
-
-.border-\[\#c4a7e7\] {
+.border-\[\#7AE0CA\] {
   --tw-border-opacity: 1;
-  border-color: rgb(196 167 231 / var(--tw-border-opacity));
+  border-color: rgb(122 224 202 / var(--tw-border-opacity));
 }
-
-.border-\[\#e0def4\] {
-  --tw-border-opacity: 1;
-  border-color: rgb(224 222 244 / var(--tw-border-opacity));
-}
-
 .border-\[\#9893a5\] {
   --tw-border-opacity: 1;
   border-color: rgb(152 147 165 / var(--tw-border-opacity));
 }
-
+.border-\[\#c4a7e7\] {
+  --tw-border-opacity: 1;
+  border-color: rgb(196 167 231 / var(--tw-border-opacity));
+}
+.bg-\[\#061826a7\] {
+  background-color: #061826a7;
+}
+.bg-\[\#081d2dd8\] {
+  background-color: #081d2dd8;
+}
 .bg-\[\#1A1825D9\] {
   background-color: #1A1825D9;
 }
-
-.bg-\[\#1\] {
-  background-color: #1;
-}
-
 .p-1 {
   padding: 0.25rem;
 }
-
 .p-2 {
   padding: 0.5rem;
 }
-
 .p-4 {
   padding: 1rem;
 }
-
 .pb-5 {
   padding-bottom: 1.25rem;
 }
-
 .pl-2 {
   padding-left: 0.5rem;
 }
-
 .pr-\[0\.7rem\] {
   padding-right: 0.7rem;
 }
-
 .pr-\[0\.8rem\] {
   padding-right: 0.8rem;
 }
-
 .pr-\[0\.9rem\] {
   padding-right: 0.9rem;
 }
-
 .pr-\[1rem\] {
   padding-right: 1rem;
 }
-
 .pt-2 {
   padding-top: 0.5rem;
 }
-
 .pt-\[100\%\] {
   padding-top: 100%;
 }
-
 .pt-\[2\.5px\] {
   padding-top: 2.5px;
 }
-
 .text-center {
   text-align: center;
 }
-
+.indent-8 {
+  text-indent: 2rem;
+}
 .text-\[1\.1rem\] {
   font-size: 1.1rem;
 }
-
 .text-\[14\.8px\] {
   font-size: 14.8px;
 }
-
 .text-\[15px\] {
   font-size: 15px;
 }
-
 .text-\[17\.3px\] {
   font-size: 17.3px;
 }
-
 .text-\[3rem\] {
   font-size: 3rem;
 }
-
 .text-xl {
   font-size: 1.25rem;
   line-height: 1.75rem;
 }
-
 .leading-none {
   line-height: 1;
 }
-
-.text-\[\#9ccfd880\] {
-  color: #9ccfd880;
+.text-\[\#75e1e7\] {
+  --tw-text-opacity: 1;
+  color: rgb(117 225 231 / var(--tw-text-opacity));
 }
-
+.text-\[\#7AE0CA\] {
+  --tw-text-opacity: 1;
+  color: rgb(122 224 202 / var(--tw-text-opacity));
+}
+.text-\[\#7d82d7db\] {
+  color: #7d82d7db;
+}
+.text-\[\#8DE2D0\] {
+  --tw-text-opacity: 1;
+  color: rgb(141 226 208 / var(--tw-text-opacity));
+}
+.text-\[\#8de2d0ac\] {
+  color: #8de2d0ac;
+}
+.text-\[\#9ccfd8B3\] {
+  color: #9ccfd8B3;
+}
 .text-\[\#9ccfd8\] {
   --tw-text-opacity: 1;
   color: rgb(156 207 216 / var(--tw-text-opacity));
 }
-
-.text-\[\#c4a7e7\] {
-  --tw-text-opacity: 1;
-  color: rgb(196 167 231 / var(--tw-text-opacity));
-}
-
 .text-slate-400 {
   --tw-text-opacity: 1;
   color: rgb(148 163 184 / var(--tw-text-opacity));
 }
-
 .text-slate-500 {
   --tw-text-opacity: 1;
   color: rgb(100 116 139 / var(--tw-text-opacity));
 }
-
-.text-\[\#e0def4\] {
-  --tw-text-opacity: 1;
-  color: rgb(224 222 244 / var(--tw-text-opacity));
-}
-
-.text-\[\#56949f\] {
-  --tw-text-opacity: 1;
-  color: rgb(86 148 159 / var(--tw-text-opacity));
-}
-
-.text-\[\#9ccfd8B3\] {
-  color: #9ccfd8B3;
-}
-
 .underline {
   text-decoration-line: underline;
 }
-
 .shadow-xl {
   --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
-
 .shadow-\[\#1d1e1fb4\] {
   --tw-shadow-color: #1d1e1fb4;
   --tw-shadow: var(--tw-shadow-colored);
 }
-
+.ring-1 {
+  --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+  --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+  box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+}
+.ring-purple-500 {
+  --tw-ring-opacity: 1;
+  --tw-ring-color: rgb(168 85 247 / var(--tw-ring-opacity));
+}
 .backdrop-blur-none {
   --tw-backdrop-blur: blur(0);
-  -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
-          backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+  backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
 }
-
+.transition {
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
 .duration-700 {
   transition-duration: 700ms;
 }
@@ -804,32 +719,28 @@ body {
   margin: 0;
   min-height: 99%;
   width: 100%;
+
   -moz-text-size-adjust: auto;
   -webkit-text-size-adjust: auto;
   text-size-adjust: auto;
   overflow-x: hidden;
 }
-
 b {
   font-weight: bold;
   text-decoration: underline;
 }
 
 /* Hide scrollbar for webkit browsers */
-
 .overflow-y-scroll::-webkit-scrollbar {
   display: none;
 }
 
 /* Common styles */
-
 .ascii {
-  font-size: 20px;
-  /* Default font size */
+  font-size: 20px; /* Default font size */
 }
 
 /* Define breakpoints and font sizes */
-
 @media only screen and (min-width: 360px) {
   .ascii {
     font-size: 20px;
@@ -895,19 +806,16 @@ b {
   text-decoration: blink;
   animation: blinker 1s linear infinite;
 }
-
 @keyframes blinker {
   50% {
     opacity: 0;
   }
 }
-
 #command {
   cursor: text;
   height: 50px;
   color: #31748f;
 }
-
 #liner {
   line-height: 1.3em;
   margin-top: -2px;
@@ -915,33 +823,27 @@ b {
   animation-delay: 1.2s;
   opacity: 0;
 }
-
 #liner::before {
   color: #b4637a;
   content: "[ibra@metanti]~$";
 }
-
 #liner.password::before {
   content: "Password:";
 }
-
 @keyframes show {
   from {
     opacity: 0;
   }
-
   to {
     opacity: 1;
   }
 }
-
 /* Cursor End */
 
 @keyframes show {
   from {
     opacity: 0;
   }
-
   to {
     opacity: 1;
   }
@@ -950,29 +852,23 @@ b {
 .index {
   color: #dcdccc;
 }
-
 .color2 {
   color: #8285c1f0;
 }
-
 .command {
   color: #9ccfd8;
   text-shadow: 0 0 5px #31748f;
 }
-
 .error {
   color: #6d71b9d9;
 }
-
 .white {
   color: #fff;
 }
-
 .inherit,
 a {
   color: #9ccfd8;
 }
-
 a {
   text-decoration: inherit;
 }
@@ -980,34 +876,34 @@ a {
 a:hover {
   color: #211830;
 }
-
 a:focus {
   outline: 0;
 }
-
 .hover\:text-pink-800:hover {
   --tw-text-opacity: 1;
   color: rgb(157 23 77 / var(--tw-text-opacity));
 }
-
 .hover\:text-red-500:hover {
   --tw-text-opacity: 1;
   color: rgb(239 68 68 / var(--tw-text-opacity));
 }
-
 .hover\:backdrop-blur-lg:hover {
   --tw-backdrop-blur: blur(16px);
-  -webkit-backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
-          backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+  backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
 }
-
+.hover\:backdrop-blur-sm:hover {
+  --tw-backdrop-blur: blur(4px);
+  backdrop-filter: var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);
+}
 @media (min-width: 768px) {
+
   .md\:w-max {
     width: -moz-max-content;
     width: max-content;
   }
 
   @keyframes spin {
+
     to {
       transform: rotate(360deg);
     }
@@ -1037,8 +933,8 @@ a:focus {
     font-size: 5rem;
   }
 }
-
 @media (min-width: 1024px) {
+
   .lg\:pt-\[28\.5\%\] {
     padding-top: 28.5%;
   }

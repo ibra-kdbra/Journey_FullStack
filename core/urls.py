@@ -13,9 +13,14 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+import importlib
+import logging
+
 from django.contrib import admin
 from django.urls import include, path
 from rest_framework.authtoken.views import obtain_auth_token # <-- NEW
+
+logger = logging.getLogger(__name__)
 
 urlpatterns = [
     path('', include('home.urls')),
@@ -24,10 +29,18 @@ urlpatterns = [
     path('', include('django_dyn_dt.urls')), # <-- NEW: Dynamic_DT Routing   
 ]
 
-# Lazy-load on routing is needed
-# During the first build, API is not yet generated
+# The "api" app is produced by `python manage.py generate-api -f`, so it may
+# legitimately be missing (e.g. on the first build). Only a missing "api"
+# module is tolerated; any other import error inside it is raised.
 try:
-    urlpatterns.append( path("api/"      , include("api.urls"))    )
-    urlpatterns.append( path("login/jwt/", view=obtain_auth_token) )
-except:
-    pass
+    api_urls = importlib.import_module("api.urls")
+except ModuleNotFoundError as exc:
+    if exc.name not in ("api", "api.urls"):
+        raise
+    logger.warning(
+        "API routes disabled: the 'api' app was not found. "
+        "Run `python manage.py generate-api -f` to generate it."
+    )
+else:
+    urlpatterns.append(path("api/", include(api_urls)))
+    urlpatterns.append(path("login/jwt/", view=obtain_auth_token))

@@ -1,8 +1,8 @@
-FROM python:3.9
+FROM python:3.12-slim
 
 # set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
 COPY requirements.txt .
 
@@ -14,8 +14,13 @@ COPY . .
 
 # Build-time only placeholder so management commands can import settings;
 # not persisted in the image. The real SECRET_KEY comes from the runtime env.
-RUN SECRET_KEY=build-time-placeholder python manage.py makemigrations \
- && SECRET_KEY=build-time-placeholder python manage.py generate-api -f
+# Migrations are committed (home/migrations); never run makemigrations here.
+RUN SECRET_KEY=build-time-placeholder python manage.py collectstatic --noinput
 
-# The database is created at start-up (not baked into the image), then gunicorn
-CMD ["sh", "-c", "python manage.py migrate --noinput && exec gunicorn --config gunicorn-cfg.py core.wsgi"]
+# SQLite lives on a volume so data survives container restarts
+ENV SQLITE_PATH=/data/db.sqlite3
+VOLUME /data
+
+# At start-up (not at image build): apply migrations to the persistent DB,
+# generate the API app (generate-api needs migrated tables), then run gunicorn
+CMD ["sh", "-c", "python manage.py migrate --noinput && python manage.py generate-api -f && exec gunicorn --config gunicorn-cfg.py core.wsgi"]

@@ -21,6 +21,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { useRouter } from "next/navigation";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
+import { toast } from "sonner";
 
 export interface FILE {
   _id: string;
@@ -38,16 +42,37 @@ const DashboardTable = () => {
   const [fileList_, setFileList_] = useState([] as FILE[]);
   const { user } = useKindeBrowserClient();
   useEffect(() => {
-    fileList && setFileList_(fileList);
-    console.log(fileList);
+    fileList && setFileList_(fileList.filter((f: FILE) => !f.archieved));
   }, [fileList]);
 
-  const handleArchive = (id: string) => {
-    console.log("archived", id);
+  const archiveFile = useMutation(api.files.archiveFile);
+  const deleteFile = useMutation(api.files.deleteFile);
+
+  const removeFromList = (id: string) => {
+    setFileList_((list) => list.filter((f) => f._id !== id));
+    setFileList?.((list: FILE[] | undefined) =>
+      Array.isArray(list) ? list.filter((f) => f._id !== id) : list
+    );
   };
 
-  const handleDelete = (id: string) => {
-    console.log("deleted", id);
+  const handleArchive = async (id: string) => {
+    try {
+      await archiveFile({ _id: id as Id<"files"> });
+      removeFromList(id);
+      toast.success("File archived");
+    } catch (e) {
+      toast.error("Could not archive file");
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteFile({ _id: id as Id<"files"> });
+      removeFromList(id);
+      toast.success("File deleted");
+    } catch (e) {
+      toast.error("Could not delete file");
+    }
   };
 
   const router = useRouter();
@@ -102,8 +127,9 @@ const DashboardTable = () => {
                     <DropdownMenuContent className="bg-neutral-800 gap-1 rounded-lg text-white border-neutral-700 w-48 ml-4 mt-2">
                       <DropdownMenuItem
                         className="cursor-pointer focus:bg-neutral-700 focus:text-white"
-                        onClick={() => {
-                          console.log("clicked");
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleArchive(file._id);
                         }}
                       >
                         <Archive size={16} className="mr-2" />
@@ -111,8 +137,9 @@ const DashboardTable = () => {
                       </DropdownMenuItem>
                       <DropdownMenuItem
                         className="cursor-pointer focus:bg-red-500 focus:text-white hover:bg-red-500 hover:text-white"
-                        onClick={() => {
-                          console.log("clicked");
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(file._id);
                         }}
                       >
                         <Delete size={16} className="mr-2" />

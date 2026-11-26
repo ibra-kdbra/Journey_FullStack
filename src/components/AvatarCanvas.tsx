@@ -49,7 +49,7 @@ const Avatar = () => {
 
 export const AvatarCanvas = () => {
 	return (
-		<Canvas dpr={[0, 2]}>
+		<Canvas dpr={[1, 2]}>
 			<ambientLight intensity={0.5} />
 			<pointLight position={[1, 1, 1]} />
 			<OrbitControls enabled={false} />

@@ -6,6 +6,8 @@ services:
     build: .
     env_file:
       - .env # copy .env.sample to .env and set SECRET_KEY
+    volumes:
+      - app_data:/data # persists the SQLite database (SQLITE_PATH=/data/db.sqlite3)
     networks:
       - db_network
       - web_network
@@ -27,3 +29,5 @@ networks:
   web_network:
     driver: bridge
  
+volumes:
+  app_data:

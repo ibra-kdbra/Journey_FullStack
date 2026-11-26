@@ -1,10 +1,13 @@
 #!/bin/bash
+# shellcheck disable=SC1091  # Hestia files only exist on a server
 # info: add web to PM2
 # options: USER DOMAIN ENTRYPOINT
 #
-# example: v-add-pm2-app admin wonderland.com
+# example: v-add-pm2-app admin wonderland.com ecosystem.config.js
 #
-# This function adds an installed app to pm2
+# This function adds an installed app to pm2. ENTRYPOINT is the file name
+# (no path) of the pm2 ecosystem file inside the domain's private/nodeapp.
+# The app is started as USER and registered in pm2 under the domain name.
 #----------------------------------------------------------#
 #                Variables & Functions                     #
 #----------------------------------------------------------#
@@ -18,9 +21,9 @@ entrypoint=$3
 # shellcheck source=/etc/hestiacp/hestia.conf
 source /etc/hestiacp/hestia.conf
 # shellcheck source=/usr/local/hestia/func/main.sh
-source $HESTIA/func/main.sh
+source "$HESTIA/func/main.sh"
 # shellcheck source=/usr/local/hestia/func/domain.sh
-source $HESTIA/func/domain.sh
+source "$HESTIA/func/domain.sh"
 # load config file
 source_conf "$HESTIA/conf/hestia.conf"
 
@@ -33,6 +36,13 @@ format_domain
 
 check_args '3' "$#" 'USER DOMAIN ENTRYPOINT'
 is_format_valid 'user' 'domain'
+
+# ENTRYPOINT must be a plain file name: no path separators, no "..", and it
+# must not look like an option (pm2 would parse a leading "-" as a flag).
+if [[ ! "$entrypoint" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]*$ || "$entrypoint" == *..* ]]; then
+    check_result "$E_INVALID" "invalid entrypoint format :: $entrypoint"
+fi
+
 is_object_valid 'user' 'USER' "$user"
 is_object_unsuspended 'user' 'USER' "$user"
 is_package_full 'WEB_DOMAINS'
@@ -42,6 +52,13 @@ is_dir_symlink "$HOMEDIR/$user/web/$domain"
 
 is_base_domain_owner "$domain"
 
+nodeapp_dir="$HOMEDIR/$user/web/$domain/private/nodeapp"
+is_dir_symlink "$HOMEDIR/$user/web/$domain/private"
+is_dir_symlink "$nodeapp_dir"
+if [ -L "$nodeapp_dir/$entrypoint" ] || [ ! -f "$nodeapp_dir/$entrypoint" ]; then
+    check_result "$E_NOTEXIST" "entrypoint $entrypoint doesn't exist in $nodeapp_dir"
+fi
+
 # Perform verification if read-only mode is enabled
 check_hestia_demo_mode
 
@@ -49,15 +66,17 @@ check_hestia_demo_mode
 #                       Action                             #
 #----------------------------------------------------------#
 
-pm2 start $HOMEDIR/$user/web/$domain/private/nodeapp/$entrypoint
-pm2 save
+# Run pm2 as the domain owner (not root) so the app and its ~/.pm2 state belong to the user
+sudo -n -u "$user" -H -- pm2 start "$nodeapp_dir/$entrypoint" --name "$domain"
+check_result $? "pm2 failed to start $domain" "$E_RESTART"
+sudo -n -u "$user" -H -- pm2 save
 
 #----------------------------------------------------------#
 #                       Hestia                             #
 #----------------------------------------------------------#
 
 # Logging
-$BIN/v-log-action "$user" "Info" "Web" "Added web to PM2 (Name: $domain)."
+"$BIN/v-log-action" "$user" "Info" "Web" "Added web to PM2 (Name: $domain)."
 log_event "$OK" "$ARGUMENTS"
 
 exit

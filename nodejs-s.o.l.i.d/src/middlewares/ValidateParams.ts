@@ -7,7 +7,7 @@ export function ValidateParams(schema: Joi.ObjectSchema) {
 
         if (error) {
             // Handle validation error
-            return res.status(400).json({ error: error.details[0].message });
+            return res.status(400).json({ status: 'error', message: error.details[0].message });
         }
 
         // Params are valid, proceed to the next middleware

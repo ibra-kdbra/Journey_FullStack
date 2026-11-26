@@ -1,11 +1,12 @@
 import Joi from 'joi'
+import { AppError } from '../../shared/errors/AppError'
 import { User } from "../../models/User"
 
 // validate if email already exists
 const lookup = async (email: string) => {
   const user = await User.findOne({ where: { email } });
   if (user) {
-    throw new Error('Email Already Exists')
+    throw AppError.conflict('Email Already Exists')
   }
 }
 

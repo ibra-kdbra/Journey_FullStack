@@ -25,7 +25,19 @@ export function parseShortDate(dateString: string): Date | undefined {
     return undefined
   }
 
-  return new Date(year, month - 1, day, 0, 0, 0, 0)
+  const date = new Date(year, month - 1, day, 0, 0, 0, 0)
+
+  // new Date() rolls over impossible dates (2025-02-31 becomes March 3), and
+  // maps years 0-99 to 1900-1999, so make sure nothing was changed.
+  if (
+    date.getFullYear() !== year ||
+    date.getMonth() !== month - 1 ||
+    date.getDate() !== day
+  ) {
+    return undefined
+  }
+
+  return date
 }
 
 export function formatHour(hour: number): string {

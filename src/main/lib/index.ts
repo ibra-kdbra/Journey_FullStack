@@ -6,6 +6,7 @@ import { ensureDir, readFile, readdir, remove, stat, writeFile } from 'fs-extra'
 import { isEmpty } from 'lodash'
 import { homedir } from 'os'
 import path from 'path'
+import { resolveNotePath } from './notePath'
 import welcomeNoteFile from '../../../resources/welcomeNote.md?asset'
 
 export const getRootDir = () => {
@@ -48,16 +49,16 @@ export const getNoteInfoFromFilename = async (filename: string): Promise<NoteInf
 }
 
 export const readNote: ReadNote = async (filename) => {
-  const rootDir = getRootDir()
+  const notePath = resolveNotePath(getRootDir(), filename)
 
-  return readFile(`${rootDir}/${filename}.md`, { encoding: fileEncoding })
+  return readFile(notePath, { encoding: fileEncoding })
 }
 
 export const writeNote: WriteNote = async (filename, content) => {
-  const rootDir = getRootDir()
+  const notePath = resolveNotePath(getRootDir(), filename)
 
   console.info(`Writing note ${filename}`)
-  return writeFile(`${rootDir}/${filename}.md`, content, { encoding: fileEncoding })
+  return writeFile(notePath, content, { encoding: fileEncoding })
 }
 
 export const createNote: CreateNote = async () => {
@@ -99,7 +100,7 @@ export const createNote: CreateNote = async () => {
 }
 
 export const deleteNote: DeleteNote = async (filename) => {
-  const rootDir = getRootDir()
+  const notePath = resolveNotePath(getRootDir(), filename)
 
   const { response } = await dialog.showMessageBox({
     type: 'warning',
@@ -116,6 +117,6 @@ export const deleteNote: DeleteNote = async (filename) => {
   }
 
   console.info(`Deleting note: ${filename}`)
-  await remove(`${rootDir}/${filename}.md`)
+  await remove(notePath)
   return true
 }

@@ -68,6 +68,32 @@ export const updateWhiteboard = mutation({
   },
 });
 
+export const archiveFile = mutation({
+  args: {
+    _id: v.id("files"),
+  },
+  handler: async (ctx, args) => {
+    const { email } = await requireIdentity(ctx);
+    const file = await getAccessibleFile(ctx, args._id, email);
+    if (!file) throw new Error("Forbidden");
+    await ctx.db.patch(args._id, { archieved: true });
+    return args._id;
+  },
+});
+
+export const deleteFile = mutation({
+  args: {
+    _id: v.id("files"),
+  },
+  handler: async (ctx, args) => {
+    const { email } = await requireIdentity(ctx);
+    const file = await getAccessibleFile(ctx, args._id, email);
+    if (!file) throw new Error("Forbidden");
+    await ctx.db.delete(args._id);
+    return args._id;
+  },
+});
+
 export const getFilebyId = query({
   args: {
     _id: v.id("files"),

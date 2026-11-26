@@ -10,6 +10,8 @@ import {
   githubLoginCallbackController,
   googleLoginController,
   googleLoginCallbackController,
+  loginBodySchema,
+  signupBodySchema,
 } from "../controllers/auth.controller";
 
 export const authRouter = new Elysia()
@@ -23,6 +25,6 @@ export const authRouter = new Elysia()
   .get("/login/google/callback", googleLoginCallbackController)
 
   // Credentials
-  .post("/login", credentialsLoginController)
-  .post("/register", credentialsSignupController)
+  .post("/login", credentialsLoginController, { body: loginBodySchema })
+  .post("/register", credentialsSignupController, { body: signupBodySchema })
   .post("/logout", logoutController);

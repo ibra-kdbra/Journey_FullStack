@@ -4,11 +4,15 @@ import { libsql } from "@lucia-auth/adapter-sqlite";
 import { client } from "./drizzle";
 import { github, google } from "@lucia-auth/oauth/providers";
 
+// Derive environment-dependent security settings from NODE_ENV.
+export const isProduction = process.env.NODE_ENV === "production";
+
 export const auth = lucia({
-  env: "DEV",
+  env: isProduction ? "PROD" : "DEV", // "PROD" makes lucia set `Secure` on the session cookie
   middleware: web(),
+  // the cookie expires together with the session (lucia default) instead of never
   sessionCookie: {
-    expires: false,
+    expires: true,
   },
   adapter: libsql(client, {
     user: "user",

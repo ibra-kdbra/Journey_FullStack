@@ -69,11 +69,12 @@ Before starting the containers, create `.env` files based on the provided templa
 
 1. **Backend Environment Variables**:
    - Copy [backend/src/.env-template](backend/src/.env-template) and save it as `.env` in the same directory.
+   - Set `API_KEY` (at least 16 characters, e.g. `python -c "import secrets; print(secrets.token_urlsafe(32))"`). The backend refuses to start without it and requires it in the `X-API-Key` header on `/chat`, `/chat/stream` and `/config`.
    - Add your [LangSmith](https://www.langchain.com/langsmith) settings if applicable. Otherwise, leave the defaults.
 
 2. **Frontend Environment Variables**:
    - Copy [frontend/src/.env-template](frontend/src/.env-template) and save it as `.env` in the same directory.
-   - No changes are necessary.
+   - Set `API_KEY` to the same value as in the backend `.env`.
 
 #### Start the System
 

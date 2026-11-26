@@ -76,7 +76,7 @@ def test_chat_endpoint_passes_model_and_history(monkeypatch):
     monkeypatch.setattr(app, "create_agent_graph", fake_create)
     monkeypatch.setattr(app, "run_agent_graph", fake_run)
     monkeypatch.setattr(app.settings, "ALLOWED_MODELS", "other:1b")
-    client = TestClient(app.app)
+    client = TestClient(app.app, headers={"X-API-Key": app.settings.API_KEY})
 
     r = client.post(
         "/chat",
@@ -150,4 +150,4 @@ def test_health_ok_and_503(monkeypatch):
     monkeypatch.setattr(app, "check_dependencies", down)
     r = client.get("/health")
     assert r.status_code == 503
-    assert "Milvus" in r.json()["detail"]
+    assert r.json()["detail"] == "Service unhealthy"  # no dependency details on a public endpoint

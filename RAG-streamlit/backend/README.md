@@ -43,6 +43,9 @@ This is the backend service for the RAG (Retrieval-Augmented Generation) applica
 4. Create a `.env` file in the `src` directory with the following content:
 
    ```env
+   # Shared secret clients send in the X-API-Key header (min 16 chars, required)
+   API_KEY=change-me-to-a-long-random-value
+
    # Milvus Configuration
    MILVUS_HOST=localhost
    MILVUS_PORT=19530

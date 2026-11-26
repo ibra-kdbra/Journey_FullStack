@@ -40,6 +40,7 @@ Create a `.env` file in the `frontend` directory with the following variables:
 ```env
 STREAMLIT_PORT=8501  # Port number for the Streamlit server
 API_BASE_URL=http://localhost:8000  # URL of the backend API server
+API_KEY=...  # Same shared secret as the backend's API_KEY; sent as X-API-Key
 ```
 
 ## Running the Application

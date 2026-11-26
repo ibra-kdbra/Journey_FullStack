@@ -28,6 +28,16 @@ async function fetchWithRetry<T>(
   for (let i = 0; i < retries; i++) {
     try {
       const response = await fetch(url);
+      if (!response.ok) {
+        if (response.status === 429) {
+          if (i < retries - 1) {
+            await new Promise((r) => setTimeout(r, 2000 * (i + 1)));
+            continue;
+          }
+          throw new RateLimitError("Too many requests. Please wait 5 seconds and try again.");
+        }
+        throw new HttpError(response.status, `Trivia API request failed with HTTP ${response.status}.`);
+      }
       const data = await response.json();
       
       // OpenTDB specific: response_code 5 means rate limited
@@ -45,9 +55,34 @@ async function fetchWithRetry<T>(
         throw new NoResultsError("No questions available for this category/difficulty combination.");
       }
       
+      // response_code 2 = invalid parameter
+      if (data.response_code === 2) {
+        throw new InvalidParameterError("Invalid request parameter sent to the trivia API.");
+      }
+
+      // response_code 3 = token not found, 4 = token exhausted
+      if (data.response_code === 3 || data.response_code === 4) {
+        throw new TokenError(
+          data.response_code === 3
+            ? "Trivia API session token not found."
+            : "Trivia API session token has returned all available questions."
+        );
+      }
+
+      // Any other non-zero code is unknown; the category endpoint has no response_code
+      if (data.response_code !== undefined && data.response_code !== 0) {
+        throw new Error(`Trivia API returned unexpected response code ${data.response_code}.`);
+      }
+
       return data as T;
     } catch (error) {
-      if (error instanceof RateLimitError || error instanceof NoResultsError) {
+      if (
+        error instanceof RateLimitError ||
+        error instanceof NoResultsError ||
+        error instanceof InvalidParameterError ||
+        error instanceof TokenError ||
+        (error instanceof HttpError && error.status >= 400 && error.status < 500)
+      ) {
         throw error;
       }
       if (i === retries - 1) throw error;
@@ -69,6 +104,29 @@ export class NoResultsError extends Error {
   constructor(message: string) {
     super(message);
     this.name = "NoResultsError";
+  }
+}
+
+export class HttpError extends Error {
+  status: number;
+  constructor(status: number, message: string) {
+    super(message);
+    this.name = "HttpError";
+    this.status = status;
+  }
+}
+
+export class InvalidParameterError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "InvalidParameterError";
+  }
+}
+
+export class TokenError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "TokenError";
   }
 }
 

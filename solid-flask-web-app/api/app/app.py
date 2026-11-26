@@ -8,6 +8,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 
 from app.commands import register_commands
 from app.config import DevConfig, ProdConfig, TestConfig
+from app.csrf import init_csrf
 from app.errors import APIError, APIErrorEnum
 from app.extensions import api, db, limiter, login_manager, mail, migrate
 
@@ -39,6 +40,7 @@ def create_app(config_object: DevConfig | ProdConfig | TestConfig | None = None)
     limiter.init_app(app)
     init_celery_app(app)
 
+    init_csrf(app)
     register_commands(app)
 
     @api.errorhandler(APIError)

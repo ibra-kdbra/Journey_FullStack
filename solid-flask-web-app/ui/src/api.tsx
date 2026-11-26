@@ -168,6 +168,35 @@ export async function deleteUser(data: DeleteUserData) {
   return _delete(`api/user/${data.userID}`)
 }
 
+const CSRF_COOKIE_NAME = 'csrf_token'
+const CSRF_HEADER_NAME = 'X-CSRF-Token'
+
+function readCsrfToken(): string | undefined {
+  const prefix = `${CSRF_COOKIE_NAME}=`
+  const entry = document.cookie.split('; ').find((c) => c.startsWith(prefix))
+  return entry ? decodeURIComponent(entry.slice(prefix.length)) : undefined
+}
+
+// The API sets the csrf_token cookie on any response. If it is not there yet
+// (very first visit), make one cheap GET so a state-changing request can echo it.
+async function getCsrfToken(): Promise<string | undefined> {
+  let token = readCsrfToken()
+  if (!token) {
+    await fetch('api/whoami', { credentials: 'same-origin' })
+    token = readCsrfToken()
+  }
+  return token
+}
+
+async function unsafeHeaders(): Promise<Headers> {
+  const headers = new Headers({ 'Content-Type': 'application/json' })
+  const token = await getCsrfToken()
+  if (token) {
+    headers.set(CSRF_HEADER_NAME, token)
+  }
+  return headers
+}
+
 export async function get(url: string) {
   return fetch(url, {
     method: 'GET',
@@ -181,14 +210,14 @@ export async function post(url: string, data: object) {
     body: JSON.stringify({
       ...data,
     }),
-    headers: new Headers({ 'Content-Type': 'application/json' }),
+    headers: await unsafeHeaders(),
   })
 }
 
 export async function _delete(url: string) {
   return fetch(url, {
     method: 'DELETE',
-    headers: new Headers({ 'Content-Type': 'application/json' }),
+    headers: await unsafeHeaders(),
   })
 }
 

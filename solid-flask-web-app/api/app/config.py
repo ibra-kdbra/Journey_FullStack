@@ -107,12 +107,30 @@ class BaseConfig:
     TRUSTED_PROXY_COUNT = int(os.environ.get("MY_SOLID_APP_TRUSTED_PROXY_COUNT", "0"))
     MAX_2FA_ATTEMPTS = int(os.environ.get("MY_SOLID_APP_MAX_2FA_ATTEMPTS", "5"))
 
+    # Session / remember-me cookies are never readable by scripts and are not
+    # sent on cross-site subrequests. `Secure` is added by ProdConfig.
+    SESSION_COOKIE_HTTPONLY = True
+    SESSION_COOKIE_SAMESITE = "Lax"
+    REMEMBER_COOKIE_HTTPONLY = True
+    REMEMBER_COOKIE_SAMESITE = "Lax"
+
+    # Double-submit CSRF token, see app/csrf.py. The cookie must be readable by
+    # the SPA, so it is not HttpOnly.
+    CSRF_PROTECTION = True
+    CSRF_COOKIE_SECURE = False
+    CSRF_COOKIE_SAMESITE = "Lax"
+
 
 class ProdConfig(BaseConfig):
     """Production settings: every secret must come from the environment."""
 
     ENV = "prod"
     DEBUG = False
+
+    # Production is served over HTTPS only (nginx redirects port 80).
+    SESSION_COOKIE_SECURE = True
+    REMEMBER_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 
     _SECRET_DEFAULTS = {name: None for name in BaseConfig._SECRET_DEFAULTS}
 

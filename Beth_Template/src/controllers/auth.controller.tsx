@@ -166,11 +166,12 @@ export const googleLoginController = async () => {
 
 export const googleLoginCallbackController = async ({ request }: Context) => {
   const cookies = parseCookie(request.headers.get("Cookie") ?? "");
-  const storedState = cookies.github_oauth_state;
+  const storedState = cookies.google_oauth_state;
   const url = new URL(request.url);
   const state = url.searchParams.get("state");
   const code = url.searchParams.get("code");
-  if (!state || !code) {
+  // validate state (CSRF protection)
+  if (!storedState || !state || storedState !== state || !code) {
     return new Response(null, {
       status: 400,
     });

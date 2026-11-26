@@ -1,0 +1,49 @@
+rules_version = '2';
+
+// Mirrors how the app reads/writes Firestore:
+//  - users/{uid}: created at signup and updated (liked/disliked/starred/solved
+//    arrays) only by the signed-in owner.
+//  - problems/{id}: public catalogue; any signed-in user may only adjust the
+//    like/dislike counters, by at most 1 per write (transactional like/dislike).
+// Note: solvedProblems is written by the client, so a user can still mark
+// their own progress as solved; that needs a trusted backend to enforce.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /users/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+
+      allow create: if request.auth != null
+        && request.auth.uid == uid
+        && request.resource.data.uid == uid
+        && request.resource.data.keys().hasOnly([
+          'uid', 'email', 'displayName', 'createdAt', 'updatedAt',
+          'likedProblems', 'dislikedProblems', 'solvedProblems', 'starredProblems'
+        ]);
+
+      allow update: if request.auth != null
+        && request.auth.uid == uid
+        && request.resource.data.uid == resource.data.uid
+        && request.resource.data.email == resource.data.email
+        && request.resource.data.createdAt == resource.data.createdAt
+        && request.resource.data.keys().hasOnly(resource.data.keys());
+
+      allow delete: if false;
+    }
+
+    match /problems/{problemId} {
+      allow read: if true;
+
+      allow update: if request.auth != null
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['likes', 'dislikes'])
+        && math.abs(request.resource.data.get('likes', 0) - resource.data.get('likes', 0)) <= 1
+        && math.abs(request.resource.data.get('dislikes', 0) - resource.data.get('dislikes', 0)) <= 1;
+
+      allow create, delete: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

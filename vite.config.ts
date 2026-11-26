@@ -26,10 +26,10 @@ export default () => {
         output: {
           chunkFileNames: 'static/js/[name]-[hash].js',
           entryFileNames: 'static/js/[name]-[hash].js',
-          assetFileNames: 'static/[ext]/name-[hash].[ext]'
+          assetFileNames: 'static/[ext]/[name]-[hash].[ext]'
         }
       },
-      // 混淆器(构建后文件体积更小)
+      // Minify with terser (smaller output; this does not obfuscate)
       minify: 'terser',
       terserOptions: {
         compress: {

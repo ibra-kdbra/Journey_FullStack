@@ -57,3 +57,12 @@ To address these challenges, we have developed a Node.js application integrated 
 - `GET /notifications/message/test` needs a JWT and is disabled when `NODE_ENV=production`.
 
 See `.env.example` for the variable names.
+
+## Database and migrations
+
+The schema is managed only by TypeORM migrations in `src/migration` (`synchronize` is always off). Pending migrations run automatically at startup; you can also run them by hand:
+
+- `npm run migration:run` / `npm run migration:revert`
+- after changing an entity: `npm run migration:generate -- src/migration/<Name>` against a database that is up to date, then review the generated SQL.
+
+`MYSQLDB_HOST`, `MYSQLDB_USER`, `MYSQLDB_PASSWORD` and `MYSQLDB_NAME` are required; the app aborts at startup if any is missing (`MYSQLDB_PORT` defaults to 3306). Dependencies are installed from the committed `package-lock.json` (`npm ci`, also in the Dockerfile).

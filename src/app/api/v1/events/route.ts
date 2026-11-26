@@ -59,53 +59,24 @@ export const POST = async (req: NextRequest) => {
         }
     
         // Actual Logic after checking the validity of user and apikey
-    
-        const currentDate = new Date()
-        const currentMonth = currentDate.getMonth() + 1
-        const currentYear = currentDate.getFullYear()
-    
-        const quota = await db.quota.findUnique({
-            where: {
-                userId_year_month: {
-                    userId: user.id,
-                    year: currentYear,
-                    month: currentMonth,
-                },
-            },
-        })
-    
-        const quotaLimit = user.plan === "FREE" ? FREE_QUOTA.maxEventsPerMonth : PRO_QUOTA.maxEventsPerMonth
-    
-        if(quota && quota.count >= quotaLimit){
-            return NextResponse.json({
-                message: "Monthly qouta reached. Please upgrade your plan for more events."
-            }, {
-                status: 429
-            })
-        }
-    
-        const discord = new DiscordClient(process.env.DISCORD_BOT_TOKEN)
-    
-        const dmChannel = await discord.createDM(user.discordId)
-    
+
+        // Validate the request before touching quota or Discord
         let requestData: unknown
-    
+
         try {
-    
             requestData = await req.json()
-            
         } catch (error) {
             return NextResponse.json({
-                message: "Invalid JSON request body" 
+                message: "Invalid JSON request body"
             }, { status: 400 })
         }
-    
+
         const validationResults = REQUEST_VALIDATOR.parse(requestData)
-    
+
         const category = user.EventCategories.find(
             (cat) => cat.name === validationResults.category
         )
-    
+
         if(!category){
             return NextResponse.json({
                 message: `You have no category named ${validationResults.category}`
@@ -113,7 +84,72 @@ export const POST = async (req: NextRequest) => {
                 status: 404
             })
         }
-    
+
+        const currentDate = new Date()
+        const currentMonth = currentDate.getMonth() + 1
+        const currentYear = currentDate.getFullYear()
+        const quotaKey = {
+            userId_year_month: {
+                userId: user.id,
+                year: currentYear,
+                month: currentMonth,
+            },
+        }
+
+        const quotaLimit = user.plan === "FREE" ? FREE_QUOTA.maxEventsPerMonth : PRO_QUOTA.maxEventsPerMonth
+
+        // Make sure the row exists, then reserve one unit with a single
+        // conditional UPDATE so concurrent requests cannot exceed the limit.
+        await db.quota.upsert({
+            where: quotaKey,
+            update: {},
+            create: {
+                userId: user.id,
+                month: currentMonth,
+                year: currentYear,
+                count: 0,
+            },
+        })
+
+        const reserved = await db.quota.updateMany({
+            where: {
+                userId: user.id,
+                year: currentYear,
+                month: currentMonth,
+                count: { lt: quotaLimit },
+            },
+            data: { count: { increment: 1 } },
+        })
+
+        if(reserved.count === 0){
+            return NextResponse.json({
+                message: "Monthly qouta reached. Please upgrade your plan for more events."
+            }, {
+                status: 429
+            })
+        }
+
+        const releaseQuota = () =>
+            db.quota.updateMany({
+                where: {
+                    userId: user.id,
+                    year: currentYear,
+                    month: currentMonth,
+                    count: { gt: 0 },
+                },
+                data: { count: { decrement: 1 } },
+            })
+
+        const discord = new DiscordClient(process.env.DISCORD_BOT_TOKEN)
+
+        let dmChannel
+        try {
+            dmChannel = await discord.createDM(user.discordId)
+        } catch (error) {
+            await releaseQuota()
+            throw error
+        }
+
         const eventData = {
             title: `${category.emoji || "🔔"} ${category.name.charAt(0).toUpperCase() + category.name.slice(1)}`,
             description: validationResults.description || `A new ${category.name} event occurred!`,
@@ -148,29 +184,14 @@ export const POST = async (req: NextRequest) => {
                 where: { id: event.id },
                 data: { deliveryStatus: "DELIVERED" }
             })
-    
-            await db.quota.upsert({
-                where: {
-                    userId_year_month: {
-                        userId: user.id,
-                        year: currentYear,
-                        month: currentMonth,
-                    },
-                },
-                update: { count: { increment: 1 } },
-                create: {
-                    userId: user.id,
-                    month: currentMonth,
-                    year: currentYear,
-                    count: 1
-                }
-            })
-    
+
         } catch (error) {
             await db.event.update({
                 where: { id: event.id },
                 data: { deliveryStatus: "FAILED" }
             })
+
+            await releaseQuota()
     
             console.log(error)
     

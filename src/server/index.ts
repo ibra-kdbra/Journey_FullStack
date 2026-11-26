@@ -6,7 +6,16 @@ import { categoryRouter } from "./routers/category-router"
 import { paymentRouter } from "./routers/payment-router"
 import { projectRouter } from "./routers/project-router"
 
-const app = new Hono().basePath("/api").use(cors())
+const app = new Hono().basePath("/api").use(
+    cors({
+        // Only the app's own origin may call the API from a browser.
+        origin: (origin) =>
+            process.env.NEXT_PUBLIC_APP_URL &&
+            origin === process.env.NEXT_PUBLIC_APP_URL.replace(/\/+$/, "")
+                ? origin
+                : null,
+    })
+)
 
 /**
  * This is the primary router for your server.

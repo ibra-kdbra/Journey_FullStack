@@ -4,18 +4,8 @@ import { currentUser } from "@clerk/nextjs/server"
 import { HTTPException } from "hono/http-exception"
 
 const authMiddleware = j.middleware(async ({ c, next }) => {
-    const authHeader = c.req.header("Authorization")
-
-    if (authHeader) {
-        const apiKey = authHeader.split(" ")[1] // bearer <API_KEY>
-
-        const user = await db.user.findUnique({
-            where: { apiKey },
-        })
-
-        if (user) return next({ user })
-    }
-
+    // Dashboard procedures authenticate with the Clerk session only. The
+    // event-ingest API key is accepted solely by /api/v1/events.
     const auth = await currentUser()
 
     if (!auth) {

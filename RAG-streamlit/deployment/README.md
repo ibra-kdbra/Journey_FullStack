@@ -52,6 +52,8 @@ cd deployment
 mkdir -p vols/{etcd,minio,milvus}
 ```
 
+1. Create `deployment/.env` from `.env-template` and set `MINIO_ACCESS_KEY_ID` and `MINIO_SECRET_ACCESS_KEY`.
+
 1. Build and start all services:
    The `EMBEDDING_MODEL` environment variable is used in both the runtime and the build environment.  In order to define it once, we will pull it from the `.env` file before we run the Docker Compose command.  This enables us define the environment varialbe once and use it throughout the system.  You can do this by exporting the environment variable:
 
@@ -135,7 +137,7 @@ The deployment uses the following configuration files:
 
 1. `docker-compose.yml`: Defines all services and their relationships
 2. `milvus.yaml`: Contains Milvus-specific configuration
-   - No SSL or authentication enabled
+   - No SSL enabled; Milvus authorization is off by default (ports are bound to localhost only)
    - Local storage paths configured
    - Basic logging settings
 
@@ -143,7 +145,8 @@ The deployment uses the following configuration files:
 
 1. **Security**
    - Update CORS settings in backend/app.py
-   - Set secure passwords for MinIO
+   - MinIO credentials are required env vars (`MINIO_ACCESS_KEY_ID`, `MINIO_SECRET_ACCESS_KEY` in `deployment/.env`); there are no defaults
+   - Milvus (19530) and Attu (8088) publish to 127.0.0.1 only; use an SSH tunnel or reverse proxy with auth for remote access, and enable `security.authorizationEnabled` in milvus.yaml (clients then need credentials)
    - Configure proper network isolation
 
 2. **Performance**

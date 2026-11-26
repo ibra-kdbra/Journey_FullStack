@@ -9,7 +9,7 @@ import { Problem } from "@/utils/types/problem";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth, firestore } from "@/firebase/firebase";
 import { toast } from "react-toastify";
-import { problems } from "@/utils/problems";
+import { runSubmission } from "@/utils/runSubmission";
 import { useRouter } from "next/router";
 import { arrayUnion, doc, updateDoc } from "firebase/firestore";
 import useLocalStorage from "@/hooks/useLocalStorage";
@@ -54,11 +54,12 @@ const Playground: React.FC<PlaygroundProps> = ({ problem, setSuccess, setSolved 
 		}
 		try {
 			userCode = userCode.slice(userCode.indexOf(problem.starterFunctionName));
-			const cb = new Function(`return ${userCode}`)();
-			const handler = problems[pid as string].handlerFunction;
+			// Submitted code runs in a Web Worker with a timeout, not on the main thread.
+			const result = await runSubmission(pid as string, userCode);
+			if (!result.ok) throw new Error(result.message);
 
-			if (typeof handler === "function") {
-				const success = handler(cb);
+			{
+				const success = result.success;
 				if (success) {
 					toast.success("Congrats! All tests passed!", {
 						position: "top-center",

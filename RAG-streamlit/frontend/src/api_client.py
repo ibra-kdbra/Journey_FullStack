@@ -25,11 +25,12 @@ class APIClientInterface(ABC):
         pass
 
 class RAGAPIClient(APIClientInterface):
-    def __init__(self, base_url: Optional[str] = None, max_retries: int = 3, retry_delay: float = 1.0):
+    def __init__(self, base_url: Optional[str] = None, max_retries: int = 3, retry_delay: float = 1.0, api_key: Optional[str] = None):
         load_dotenv()
         self.base_url = base_url or os.getenv("API_BASE_URL", "http://localhost:8000")
         self.max_retries = max_retries
         self.retry_delay = retry_delay
+        self.api_key = api_key if api_key is not None else os.getenv("API_KEY", "")
 
     def get_response(self, user_input: str, history: Optional[list] = None) -> str:
         loop = asyncio.new_event_loop()
@@ -42,6 +43,10 @@ class RAGAPIClient(APIClientInterface):
     async def get_streaming_response(self, user_input: str, callback: Optional[Callable[[str], None]] = None, history: Optional[list] = None) -> AsyncGenerator[str, None]:
         async for chunk in self._get_streaming_response_async(user_input, callback, history):
             yield chunk
+
+    def _headers(self) -> dict:
+        """Auth header for the backend; empty when no key is configured."""
+        return {"X-API-Key": self.api_key} if self.api_key else {}
 
     @staticmethod
     def _build_payload(user_input: str, history: Optional[list]) -> dict:
@@ -60,7 +65,7 @@ class RAGAPIClient(APIClientInterface):
         for attempt in range(self.max_retries):
             try:
                 async with aiohttp.ClientSession() as session:
-                    async with session.post(url, json=payload) as response:
+                    async with session.post(url, json=payload, headers=self._headers()) as response:
                         if response.status == 200:
                             data = await response.json()
                             return data.get("response", "")
@@ -83,7 +88,7 @@ class RAGAPIClient(APIClientInterface):
         for attempt in range(self.max_retries):
             try:
                 async with aiohttp.ClientSession() as session:
-                    async with session.post(url, json=payload) as response:
+                    async with session.post(url, json=payload, headers=self._headers()) as response:
                         if response.status == 200:
                             async for chunk in self._handle_response_stream(response, callback):
                                 yielded_any = True

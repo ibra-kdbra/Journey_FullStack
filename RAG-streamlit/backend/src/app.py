@@ -2,13 +2,15 @@ import asyncio
 import json
 import logging
 import os
+import secrets
 import urllib.request
 from typing import Any, Literal
 
 import yaml
-from fastapi import FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Security
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
+from fastapi.security import APIKeyHeader
 from pydantic import BaseModel, Field
 from pydantic_settings import BaseSettings
 
@@ -58,6 +60,11 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = Field(default="INFO", description="Logging level")
     
     # Security Configuration
+    API_KEY: str = Field(
+        ...,
+        min_length=16,
+        description="Shared secret clients must send in the X-API-Key header (required; no default)",
+    )
     CORS_ORIGINS: str = Field(
         default="http://localhost:8501,http://localhost:3000",
         description="Comma-separated list of allowed CORS origins"
@@ -88,10 +95,27 @@ except Exception as e:
     logger.error(f"Failed to load settings: {str(e)}")
     raise
 
+MAX_PROMPT_CHARS = 8000
+INTERNAL_ERROR = "Internal server error"
+MAX_HISTORY_TURNS = 100
+
+api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
+
+async def require_api_key(provided: str | None = Security(api_key_header)) -> None:
+    """Reject requests that do not carry the configured API key."""
+    if provided is None or not secrets.compare_digest(
+        provided.encode(), settings.API_KEY.encode()
+    ):
+        raise HTTPException(
+            status_code=401,
+            detail="Invalid or missing API key",
+            headers={"WWW-Authenticate": "ApiKey"},
+        )
+
 class ChatTurn(BaseModel):
     """One earlier turn of the conversation."""
     role: Literal["user", "assistant"]
-    content: str
+    content: str = Field(max_length=MAX_PROMPT_CHARS)
 
 class ChatRequest(BaseModel):
     """Request model for chat endpoint."""
@@ -99,9 +123,10 @@ class ChatRequest(BaseModel):
         default=None,
         description="Ollama model to use; must be in the server's allow-list. Defaults to OLLAMA_MODEL.",
     )
-    user_prompt: str
+    user_prompt: str = Field(max_length=MAX_PROMPT_CHARS)
     history: list[ChatTurn] = Field(
         default_factory=list,
+        max_length=MAX_HISTORY_TURNS,
         description="Earlier turns of the conversation, oldest first, excluding user_prompt.",
     )
 
@@ -134,8 +159,8 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.allowed_origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Content-Type", "X-API-Key"],
 )
 
 # Initialize the agent graph
@@ -167,19 +192,14 @@ async def health_check() -> dict[str, str]:
         await asyncio.to_thread(check_dependencies)
         return {"status": "healthy"}
     except Exception as e:
-        logger.error(f"Health check failed: {str(e)}")
-        raise HTTPException(status_code=503, detail=f"Service unhealthy: {e}") from e
+        logger.error(f"Health check failed: {e}")
+        raise HTTPException(status_code=503, detail="Service unhealthy") from e
 
-@app.get("/config")
+@app.get("/config", dependencies=[Depends(require_api_key)])
 async def get_config() -> dict[str, Any]:
-    """Get current configuration (excluding sensitive data)."""
+    """Get current RAG configuration (no infrastructure hostnames or secrets)."""
     return {
-        "milvus": {
-            "host": settings.MILVUS_HOST,
-            "port": settings.MILVUS_PORT
-        },
         "ollama": {
-            "host": settings.OLLAMA_HOST,
             "model": settings.OLLAMA_MODEL
         },
         "rag": {
@@ -193,7 +213,7 @@ async def get_config() -> dict[str, Any]:
 def _history(request: ChatRequest) -> list[dict[str, str]]:
     return [turn.model_dump() for turn in request.history]
 
-@app.post("/chat", response_model=ChatResponse)
+@app.post("/chat", response_model=ChatResponse, dependencies=[Depends(require_api_key)])
 async def chat(request: ChatRequest) -> ChatResponse:
     """Handle chat requests with tool support.
 
@@ -215,10 +235,10 @@ async def chat(request: ChatRequest) -> ChatResponse:
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error in chat: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e)) from e
+        logger.exception("Error in chat")
+        raise HTTPException(status_code=500, detail=INTERNAL_ERROR) from e
 
-@app.post("/chat/stream")
+@app.post("/chat/stream", dependencies=[Depends(require_api_key)])
 async def chat_stream(request: ChatRequest):
     """Handle streaming chat requests with tool support."""
     try:
@@ -231,9 +251,9 @@ async def chat_stream(request: ChatRequest):
                 async for chunk in run_agent_graph_streaming(agent_graph, request.user_prompt, _history(request)):
                     if chunk:
                         yield f"data: {json.dumps({'content': chunk})}\n\n"
-            except Exception as e:
-                logger.error(f"Error in stream generator: {str(e)}")
-                yield f"data: {json.dumps({'error': str(e)})}\n\n"
+            except Exception:
+                logger.exception("Error in stream generator")
+                yield f"data: {json.dumps({'error': INTERNAL_ERROR})}\n\n"
             finally:
                 # Send an end-of-stream marker
                 yield "data: [DONE]\n\n"
@@ -251,8 +271,8 @@ async def chat_stream(request: ChatRequest):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error in chat stream: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e)) from e
+        logger.exception("Error in chat stream")
+        raise HTTPException(status_code=500, detail=INTERNAL_ERROR) from e
 
 
 if __name__ == "__main__":

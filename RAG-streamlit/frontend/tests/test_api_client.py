@@ -44,7 +44,7 @@ class FakeSession:
         self.responses = responses
         self.calls = 0
 
-    def post(self, url, json=None):
+    def post(self, url, json=None, headers=None):
         resp = self.responses[min(self.calls, len(self.responses) - 1)]
         self.calls += 1
         return resp
@@ -127,9 +127,9 @@ def test_history_is_sent_in_payload():
     sent = []
 
     class Spy(FakeSession):
-        def post(self, url, json=None):
+        def post(self, url, json=None, headers=None):
             sent.append(json)
-            return super().post(url, json=json)
+            return super().post(url, json=json, headers=headers)
 
     history = [{"role": "user", "content": "a"}, {"role": "assistant", "content": "b"}]
     with patch("src.api_client.aiohttp.ClientSession", return_value=Spy([FakeResponse()])):
@@ -139,3 +139,17 @@ def test_history_is_sent_in_payload():
 
 def test_no_history_sends_empty_list():
     assert RAGAPIClient._build_payload("q", None) == {"user_prompt": "q", "history": []}
+
+
+def test_api_key_is_sent_as_header():
+    seen = []
+
+    class Spy(FakeSession):
+        def post(self, url, json=None, headers=None):
+            seen.append(headers)
+            return super().post(url, json=json, headers=headers)
+
+    client = RAGAPIClient(base_url="http://test", max_retries=1, retry_delay=0, api_key="k" * 16)
+    with patch("src.api_client.aiohttp.ClientSession", return_value=Spy([FakeResponse()])):
+        asyncio.run(client._get_response_async("hi"))
+    assert seen == [{"X-API-Key": "k" * 16}]

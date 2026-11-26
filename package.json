@@ -11,7 +11,11 @@
     "start:dev": "nest start --watch",
     "start:prod": "NODE_OPTIONS='--max-old-space-size=4096 --unhandled-rejections=warn' node dist/main",
     "build": "nest build",
-    "test:dev": "jest --watch"
+    "test:dev": "jest --watch",
+    "typeorm": "NODE_PATH=. typeorm-ts-node-commonjs -d src/util/data-source.ts",
+    "migration:run": "npm run typeorm -- migration:run",
+    "migration:revert": "npm run typeorm -- migration:revert",
+    "migration:generate": "npm run typeorm -- migration:generate"
   },
   "author": "calvin_tsang",
   "license": "UNLICENSED",
@@ -29,7 +33,7 @@
     "axios": "^1.5.1",
     "builder-pattern": "^2.2.0",
     "canvas": "^2.11.2",
-    "chart.js": "^4.4.2",
+    "chart.js": "^3.5.1",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "cls-rtracer": "^2.6.3",
@@ -49,7 +53,6 @@
     "twilio": "^4.19.0",
     "typeorm": "^0.3.17",
     "chartjs-node-canvas": "^4.1.6",
-    "chart.js": "^3.5.1",
     "aws-sdk": "^2.1589.0"
   },
   "devDependencies": {

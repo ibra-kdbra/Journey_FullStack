@@ -241,7 +241,8 @@ export class ProductService {
     this.logger.log(`product id: ${JSON.stringify(await dataSource.manager.find(OrderProductEntity, {where:{product: {id: productId}}}))}`)
     const occupiedQuantity = await dataSource.manager.sum(OrderProductEntity, "quantity", {product: {id: productId}, status: In([OrderProductStatusEnum.WAITING, OrderProductStatusEnum.HOLDING])}) ?? 0;
 
-    return (totalQuantity.stockQuantity - occupiedQuantity) ?? 0;
+    if (!totalQuantity) return 0;
+    return totalQuantity.stockQuantity - occupiedQuantity;
   }
 
   public async getImportedProductInventory(productId?: string) {

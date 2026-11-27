@@ -87,7 +87,7 @@ const WeekCalendar: FC<WeekCalendarProps> = ({ startDate, events }) => {
               <div class="day-column">
                 <div class="day-column-header">
                   <span>{format(day, 'EE')}</span>
-                  <span class={isToday(day) ? 'today-date' : null}>
+                  <span class={isToday(day) ? 'today-date' : undefined}>
                     {format(day, 'd')}
                   </span>
                 </div>
